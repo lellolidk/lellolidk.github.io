@@ -138,16 +138,6 @@ const commands = [
         category: "Jeder",
     },
     {
-        name: "+gamba",
-        description: "Du gambast Döner Haram.",
-        category: "Jeder",
-    },
-    {
-        name: "+give",
-        description: "Du gibst jemanden Döner.",
-        category: "Jeder",
-    },
-    {
         name: "+restart",
         description: "Restartet den Bot.",
         category: "Owner",
