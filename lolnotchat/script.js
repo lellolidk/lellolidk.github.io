@@ -2,17 +2,16 @@ var emote_links = {};
 var customBadges = {};
 var OwnerBadge = 'https://cdn.7tv.app/emote/6449c3b5d5d04bca06242d39/4x.webp'; // ok
 var userIdsWithOwnerBadge = ['636823070']; // Userids mit Owner badge
-var ChatterinoBadge = 'https://fourtf.com/chatterino/badges/supporter3x.png'; // Chatterino Badge URL
-var userIdsWithChatterinoBadge = ['636823070']; // Userids mit Chatterino badge
 var DankChatBadge = 'https://flxrs.com/dankchat/badges/dank.png'; // Chatterino Badge URL
-var userIdsWithDankBadge = ['636823070']; // Userids mit Chatterino badge
+var userIdsWithDankBadge = []; // Userids mit Chatterino badge
 var FFZBadge = 'https://cdn.frankerfacez.com/badge/3/4'; // Chatterino Badge URL
-var FFZBadgeBackgroundColor = '#8B4513'; // Braun
-var userIdsWithFFZBadge = ['636823070']; // Userids mit Chatterino badge
-var sevenTVBadge = 'https://cdn.7tv.app/badge/62f97c05e46eb00e438a696a/3x'
+var userIdsWithFFZBadge = []; // Userids mit Chatterino badge
+var userIdsWithChatterinoBadge = []; // Userids mit Chatterino badge (initial leer)
+var sevenTVBadge = 'https://cdn.7tv.app/badge/62f97c05e46eb00e438a696a/3x';
+var ChatterinoBadge = 'https://fourtf.com/chatterino/badges/supporter3x.png';
 var FreeBadge = ''; // FreeBadgeURL
 var userIdsWithCommonBadge = ['520219697']; // Userids mit free badge
-var ignoredUserIds = ['']; // UserIds die ignoriert werden
+var ignoredUserIds = []; // UserIds die ignoriert werden
 
 async function fetchBadges() {
   try {
@@ -20,6 +19,36 @@ async function fetchBadges() {
     customBadges = await customResponse.json();
   } catch (error) {
     console.error(error);
+  }
+} 
+
+async function loadChatterinoBadges() {
+  try {
+    const response = await fetch('chatterino_badges.json');
+    const data = await response.json();
+    userIdsWithChatterinoBadge = data.userIdsWithChatterinoBadge;
+  } catch (error) {
+    console.error('Fehler beim Laden der Chatterino-Badges:', error);
+  }
+}
+
+async function loadDankBadges() {
+  try {
+    const response = await fetch('Dank_badges.json');
+    const data = await response.json();
+    userIdsWithDankBadge = data.userIdsWithDankBadge;
+  } catch (error) {
+    console.error('Fehler beim Laden der Chatterino-Badges:', error);
+  }
+}
+
+async function loadFFZBadges() {
+  try {
+    const response = await fetch('FFZ_badges.json');
+    const data = await response.json();
+    userIdsWithFFZBadge = data.userIdsWithFFZBadge;
+  } catch (error) {
+    console.error('Fehler beim Laden der FFZ-Badges:', error);
   }
 }
 
@@ -125,20 +154,34 @@ const url = new URL(window.location.href);
 const searchParams = url.searchParams;
 index = 0
 
-if (searchParams.has('c')) {
-  channel = searchParams.get('c').toLowerCase();
-} else {
-}
+channel = searchParams.get('ch').toLowerCase();
+if (size = searchParams.get('si').toLowerCase() == "0"){document.querySelector(':root').style.setProperty('--text-size', '20px');}
+if (size = searchParams.get('si').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-size', '40px');}
+if (size = searchParams.get('si').toLowerCase() == "2"){document.querySelector(':root').style.setProperty('--text-size', '60px');}
+shadow = searchParams.get('sh').toLowerCase();
+background = searchParams.get('bg').toLowerCase();
+font = searchParams.get('fo').toLowerCase();
+if (searchParams.get('an').toLowerCase() == "1"){document.getElementById("chat").style.scrollBehavior = "smooth"}
+show_badges = searchParams.get('ba').toLowerCase();
+show_special_badges = searchParams.get('sb').toLowerCase();
+show_bots = searchParams.get('bo').toLowerCase();
+show_commands = searchParams.get('co').toLowerCase();
+
+
+
+//link = `https://lellolik.de/lolnotchat?ch=${values['channel']}&si=${values['size']}&sh=${values['shadow']}&bg=${values['background']}&fo=${values['font']}&an=${values['animated']}&ba=${values['badges']}&sb=${values['special_badges']}&bo=${values['bots']}&co=${values['commands']}`;
 
 const socket = new WebSocket("wss://irc-ws.chat.twitch.tv:443");
+
 
 socket.addEventListener('open', () =>{
   socket.send(`PASS oauth:leckeier`);
   socket.send(`NICK justinfan65345`);
   socket.send(`JOIN #${channel}`);
   socket.send(`CAP REQ :twitch.tv/commands twitch.tv/membership twitch.tv/tags`);
-  document.getElementById("chat").innerHTML = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-  fetch7tv(channel)
+  document.getElementById("chat").innerHTML = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+  fetch7tv(channel);
+  fetchChatterinoBadges(); // Füge das Laden der Chatterino-Badges hinzu
 })
 
 socket.addEventListener('message', event => {
@@ -167,10 +210,6 @@ socket.addEventListener('message', event => {
       badgesImg += `<img class="badge" src="${OwnerBadge}">`;
     }
 
-    if (userId && userIdsWithChatterinoBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${ChatterinoBadge}">`;
-    }
-
     if (userId && userIdsWithDankBadge.includes(userId)) {
       badgesImg += `<img class="badge" src="${DankChatBadge}">`;
     }
@@ -178,23 +217,32 @@ socket.addEventListener('message', event => {
     if (userId && userIdsWithFFZBadge.includes(userId)) {
       badgesImg += `<img class="badge" src="${FFZBadge}" style="height: 40px; background-color: rgb(117, 80, 0); border-radius: 10%;">`;
     }
+
+    if (userId && userIdsWithChatterinoBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${ChatterinoBadge}" style="height: 40px; border-radius: 10%;">`;
+    }
     
     // Hier wird das 7TV-Badge hinzugefügt
     fetch7tvBadge(userId).then(sevenTVBadge => {
       if (sevenTVBadge) {
         badgesImg += `<img class="badge" src="${sevenTVBadge}">`;
       }
-      
-      const usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : '';
-      
-      document.getElementById("chat").innerHTML += (
-        `<span ${usernameStyle}>${badgesImg} ${username}:</span> <span style="color: white;">${replaceEmotes(message, emote_links)}</span><br>`
-      );
-
-      document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
     });
+          
+    const usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : '';
+      
+    document.getElementById("chat").innerHTML += (
+      `<span ${usernameStyle}>${badgesImg} ${username}:</span> <span style="color: white;">${replaceEmotes(message, emote_links)}</span><br>`
+    );
+
+    document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
   }
 });
 
 setInterval(cleanup, 5000);
 fetchBadges();
+loadChatterinoBadges();
+loadDankBadges();
+loadFFZBadges();
+
+
