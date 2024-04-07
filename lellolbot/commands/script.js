@@ -12,17 +12,12 @@ const commands = [
         category: "Jeder",
     },    
     {
-        name: "+ping | +uptime",
+        name: "+ping",
         description: "Joa halt Ping Command.",
         category: "Jeder",
     },   
     {
-        name: "+version",
-        description: "Die aktuelle Version vom Bot.",
-        category: "Jeder",
-    }, 
-    {
-        name: "+help | +commands",
+        name: "+commands",
         description: "Diese Website.",
         category: "Jeder",
     },    
@@ -59,7 +54,7 @@ const commands = [
     },
     {
         name: "+fill [nachricht]",
-        description: "Alle channel in dem der Bot aktiv ist.",
+        description: "Füllt deine Nachricht.",
         category: "Jeder",
     },
     {
@@ -68,37 +63,17 @@ const commands = [
         category: "Jeder",
     },
     {
-        name: "+stalk [username]",
-        description: "Stalkt ein User.",
-        category: "Jeder",
-    },
-    {
         name: "+spam [anzahl] [nachricht]",
         description: "Spammt deine Nachricht.",
         category: "Moderator",
     },
     {
-        name: "+channelid",
-        description: "Deine Twitch ID.",
-        category: "Jeder",
-    },
-    {
-        name: "+hug",
-        description: "Huggt ein random User im Channel.",
-        category: "Jeder",
-    },
-    {
-        name: "+love",
-        description: "Liebt ein random User im Channel.",
-        category: "Jeder",
-    },
-    {
-        name: "+time",
-        description: "Die Uhrzeit.",
-        category: "Moderator",
-    },
-    {
         name: "+ffzsa",
+        description: "Schaut ob du ffz Sub bist.",
+        category: "Jeder",
+    },
+        {
+        name: "+7tvsa",
         description: "Schaut ob du ffz Sub bist.",
         category: "Jeder",
     },
@@ -108,33 +83,98 @@ const commands = [
         category: "Jeder",
     },
     {
-        name: "+followers",
-        description: "Deine Follower anzahl.",
+        name: "+followers [username]",
+        description: "Follower anzahl.",
         category: "Jeder",
     },
     {
-        name: "+suggest",
-        description: "Du suggestest was für den Bot.",
+        name: "+accountage [username]",
+        description: "Follower anzahl.",
         category: "Jeder",
     },
     {
-        name: "+glitch",
+        name: "+cat",
+        description: "Random Katze.",
+        category: "Jeder",
+    },
+    {
+        name: "+dog",
+        description: "Random Hund.",
+        category: "Jeder",
+    },
+    {
+        name: "+chatters",
+        description: "Anzahl der Chatter in deinem Chat.",
+        category: "Jeder",
+    },
+    {
+        name: "+checkstreak",
+        description: "Wie lange deine Streak schon geht.",
+        category: "Jeder",
+    },
+    {
+        name: "+clip",
+        description: "Clippt die letzten 30 Sekunden",
+        category: "Jeder",
+    },
+    {
+        name: "+copypasta",
+        description: "Random Nachricht.",
+        category: "Jeder",
+    },
+    {
+        name: "+followage | +followage [username]",
+        description: "Wie lang du Folgst.",
+        category: "Jeder",
+    },
+    {
+        name: "+glitch [nachricht]",
         description: "Glitch deine Nachricht.",
+        category: "Jeder",
+    },
+    {
+        name: "+gomme",
+        description: "Gomme R/Place map.",
+        category: "Jeder",
+    },
+    {
+        name: "+suggest [nachricht]",
+        description: "Requeste was für den Bot.",
+        category: "Jeder",
+    },
+    {
+        name: "+isbanned",
+        description: "Guckt ob der User banned ist von Twitch.",
+        category: "Jeder",
+    },
+    {
+        name: "+islive",
+        description: "Guckt ob der User live ist.",
+        category: "Jeder",
+    },
+    {
+        name: "+subage | +subage [username]",
+        description: "Wie lang du Sub bist.",
+        category: "Jeder",
+    },
+    {
+        name: "+streak",
+        description: "TwitchTracker Streak link.",
+        category: "Jeder",
+    },
+    {
+        name: "+checkstreak",
+        description: "Wie lang deine Daily Streak geht.",
+        category: "Jeder",
+    },
+    {
+        name: "+stats",
+        description: "Stats für Döner.",
         category: "Jeder",
     },
     {
         name: "+döner",
         description: "Deine Daily Döner sammeln.",
-        category: "Jeder",
-    },
-    {
-        name: "+gamba",
-        description: "Du gambast Döner Haram.",
-        category: "Jeder",
-    },
-    {
-        name: "+give",
-        description: "Du gibst jemanden Döner.",
         category: "Jeder",
     },
     {
@@ -145,6 +185,16 @@ const commands = [
     {
         name: "+stop",
         description: "Stoppt den Bot.",
+        category: "Owner",
+    },
+        {
+        name: "+adminjoin",
+        description: "Add den bot bei ein Channel.",
+        category: "Owner",
+    },
+    {
+        name: "+adminpart",
+        description: "Leavt ein Channel.",
         category: "Owner",
     },
 ];
