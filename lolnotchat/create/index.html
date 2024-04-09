@@ -19,8 +19,8 @@
 <body id="body">
     <div id="main">
         <h1 id="title">lolnotChat</h1>
-        <p id="description">leck eier</p>
-        <div id="create_box">
+        <span id="description">This Chat Overlay is for Twitch and is made by NotLe0nard and lellolidk <img src="https://cdn.7tv.app/emote/609eec98b55466cf074f729b/4x.webp" alt="lol" class="emote"></span>
+        <div id="create_box" class="drop_shadow">
             <div id="left_side">
                 <input type="text" id="channel" placeholder="Channel">
                 <label>Size: <select name="font" id="size" class="select">
@@ -53,8 +53,8 @@
                 <label>Commands: <div class="switch"        id="commands"       onclick="toggle('commands')"></div></label>
             </div>
         </div>
-        <div id="generate" onclick="document.getElementById('output_link').value = createLink()">Generate</div>
-        <input type="text" id="output_link" onclick="copyLink()" placeholder="https://lellolidk.de/lolnotchat?c=eierlecken">
+        <div id="generate" onclick="document.getElementById('output_link').value = createLink()" class="drop_shadow">Generate</div>
+        <input type="text" id="output_link" onclick="copyLink()" placeholder="https://lellolidk.de/lolnotchat?c=eierlecken" class="drop_shadow">
     </div>
     <script src="script.js"></script>
 </body>
