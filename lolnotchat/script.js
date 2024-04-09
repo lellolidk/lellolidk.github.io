@@ -1,17 +1,59 @@
 var emote_links = {};
 var customBadges = {};
-var OwnerBadge = 'https://lellolidk.de/img/lolnotChat.png'; // ok
-var userIdsWithOwnerBadge = ['636823070', '896702538']; // Userids mit Owner badge
-var DankChatBadge = 'https://flxrs.com/dankchat/badges/dank.png'; // Chatterino Badge URL
-var userIdsWithDankBadge = []; // Userids mit Chatterino badge
-var FFZBadge = 'https://cdn.frankerfacez.com/badge/3/4'; // Chatterino Badge URL
-var userIdsWithFFZBadge = []; // Userids mit Chatterino badge
-var userIdsWithChatterinoBadge = []; // Userids mit Chatterino badge (initial leer)
-var sevenTVBadge = 'https://cdn.7tv.app/badge/62f97c05e46eb00e438a696a/3x';
+var AdminBadge = 'https://lellolidk.de/img/lolnotAdmin.png';
+var ModBadge = 'https://lellolidk.de/img/lolnotMod.png';
+var FounderBadge = 'https://lellolidk.de/img/lolnotFounder.png';
+//Chatterino
 var ChatterinoBadge = 'https://fourtf.com/chatterino/badges/supporter3x.png';
-var FreeBadge = ''; // FreeBadgeURL
-var userIdsWithCommonBadge = ['520219697']; // Userids mit free badge
-var ignoredUserIds = []; // UserIds die ignoriert werden
+var ChatterinoTopDonaterBadge = 'https://fourtf.com/chatterino/badges/topd3x.png';
+var ChatterinoContributerBadge = 'https://fourtf.com/chatterino/badges/helper3x.png';
+var ChatterinoDevBadge = 'https://fourtf.com/chatterino/badges/dev3x.png';
+var ChatterinoPepeBadge = 'https://fourtf.com/chatterino/badges/pepe3x.png';
+//7tv
+var sevenTVBadge = 'https://cdn.7tv.app/badge/62f97c05e46eb00e438a696a/3x';
+var FFZBadge = 'https://cdn.frankerfacez.com/badge/3/4';
+//Homies
+var HomiesSubBadge = 'https://itzalex.github.io/badgesusers/supporter2/badge3x.png';
+var HomiesModBadge = 'https://itzalex.github.io/badgesusers/mod/badge3x.png';
+var HomiesSeniorModBadge = 'https://itzalex.github.io/badgesusers/senior_mod/badge3x.png';
+var HomiesSubBadgeOG = 'https://itzalex.github.io/badgesusers/supporter_founder2/badge3x.png';
+var HomiesDevBadge = 'https://itzalex.github.io/badgesusers/dev/badge3x.png';
+//Dankchat
+var DankChatBadge = 'https://flxrs.com/dankchat/badges/dank.png';
+var DankChatenteBadge = 'https://flxrs.com/dankchat/badges/ente.gif';
+var DankChatBorgirBadge = 'https://flxrs.com/dankchat/badges/borgir.gif';
+var DankChatmaxBadge = 'https://flxrs.com/dankchat/badges/max.gif';
+var DankChatqaBadge = 'https://flxrs.com/dankchat/badges/qa.png';
+var DankChatKKrikeyBadge = 'https://flxrs.com/dankchat/badges/kkrikey.png';
+var DankChatDevBadge = 'https://flxrs.com/dankchat/badges/gold.png';
+var DankChatContributorBadge = 'https://flxrs.com/dankchat/badges/contributor.png';
+//lolnot
+var userIdsWithAdminBadge = ['636823070', '896702538'];
+var userIdsWithModBadge = ['648984729', '840365435'];
+//Homies
+var userIdsWithHomiesSubBadge = [];
+var userIdsWithHomiesModBadge = [];
+var userIdsWithHomiesSeniorModBadge = [];
+var userIdsWithHomiesSubOGBadge = [];
+var userIdsWithHomiesDevBadge = [];
+//Dankchat
+var userIdsWithDankBadge = [];
+var userIdsWithDankChatenteBadge = [];
+var userIdsWithDankChatborgirBadge = [];
+var userIdsWithDankChatmaxBadge = [];
+var userIdsWithDankChatqaBadge = [];
+var userIdsWithDankChatkkrikeyBadge = [];
+var userIdsWithDankChatDeveloperBadge = [];
+var userIdsWithDankChatcontributorBadge = [];
+//Chatterino
+var userIdsWithChatterinoBadge = [];
+var userIdsWithtopdonaterChatterinoBadge = [];
+var userIdsWithChatterinoContibuterBadge = [];
+var userIdsWithChatterinoDevBadge = [];
+var userIdsWithChatterinopepeBadge = [];
+//FFZ
+var userIdsWithFFZBadge = [];
+var ignoredUserIds = []; 
 
 async function fetchBadges() {
   try {
@@ -27,8 +69,27 @@ async function loadChatterinoBadges() {
     const response = await fetch('chatterino_badges.json');
     const data = await response.json();
     userIdsWithChatterinoBadge = data.userIdsWithChatterinoBadge;
+    userIdsWithtopdonaterChatterinoBadge = data.userIdsWithtopdonaterChatterinoBadge;
+    userIdsWithChatterinoContibuterBadge = data.userIdsWithChatterinoContibuterBadge;
+    userIdsWithChatterinoDevBadge = data.userIdsWithChatterinoDevBadge;
+    userIdsWithChatterinopepeBadge = data.userIdsWithChatterinopepeBadge;
   } catch (error) {
     console.error('Fehler beim Laden der Chatterino-Badges:', error);
+  }
+}
+
+
+async function loadHomiesSubBadges() {
+  try {
+    const response = await fetch('HomiesSub_badges.json');
+    const data = await response.json();
+    userIdsWithHomiesSubBadge = data.userIdsWithHomiesSubBadge;
+    userIdsWithHomiesModBadge = data.userIdsWithHomiesModBadge;
+    userIdsWithHomiesSeniorModBadge = data.userIdsWithHomiesSeniorModBadge;
+    userIdsWithHomiesSubOGBadge = data.userIdsWithHomiesSubOGBadge
+    userIdsWithHomiesDevBadge = data.userIdsWithHomiesDevBadge
+  } catch (error) {
+    console.error('Fehler beim Laden der Homies-Badges:', error);
   }
 }
 
@@ -37,6 +98,13 @@ async function loadDankBadges() {
     const response = await fetch('Dank_badges.json');
     const data = await response.json();
     userIdsWithDankBadge = data.userIdsWithDankBadge;
+    userIdsWithDankChatenteBadge = data.userIdsWithDankChatenteBadge;
+    userIdsWithDankChatborgirBadge = data.userIdsWithDankChatborgirBadge;
+    userIdsWithDankChatmaxBadge = data.userIdsWithDankChatmaxBadge;
+    userIdsWithDankChatqaBadge = data.userIdsWithDankChatqaBadge;
+    userIdsWithDankChatkkrikeyBadge = data.userIdsWithDankChatkkrikeyBadge
+    userIdsWithDankChatDeveloperBadge = data.userIdsWithDankChatDeveloperBadge
+    userIdsWithDankChatcontributorBadge = data.userIdsWithDankChatcontributorBadge
   } catch (error) {
     console.error('Fehler beim Laden der Chatterino-Badges:', error);
   }
@@ -201,6 +269,7 @@ socket.addEventListener('message', async event => {
 
     const userIdMatch = event.data.match(/user-id=(\d+);/);
     let userId = null;
+
     if (userIdMatch) {
       userId = userIdMatch[1];
     }
@@ -211,23 +280,76 @@ socket.addEventListener('message', async event => {
 
     let badgesImg = badgesInfo;
 
-    if (userId && userIdsWithOwnerBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${OwnerBadge}">`;
+    //lolnot
+    if (userId && userIdsWithAdminBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${AdminBadge}">`;
+    }
+    if (userId && userIdsWithModBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${ModBadge}">`;
     }
 
-    if (userId && userIdsWithDankBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${DankChatBadge}">`;
+    //Chatterino
+    if (userId && userIdsWithChatterinoBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${ChatterinoBadge}">`;
+    }
+    if (userId && userIdsWithtopdonaterChatterinoBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${ChatterinoTopDonaterBadge}">`;
+    }
+    if (userId && userIdsWithChatterinoContibuterBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${ChatterinoContributerBadge}">`;
+    }
+    if (userId && userIdsWithChatterinoDevBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${ChatterinoDevBadge}">`;
+    }
+    if (userId && userIdsWithChatterinopepeBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${ChatterinoPepeBadge}">`;
     }
 
+    //FFZ
     if (userId && userIdsWithFFZBadge.includes(userId)) {
       badgesImg += `<img class="badge" src="${FFZBadge}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
     }
 
-    if (userId && userIdsWithChatterinoBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${ChatterinoBadge}">`;
+    //dankchat
+    if (userId && userIdsWithDankBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${DankChatBadge}">`;
+    }
+    if (userId && userIdsWithDankChatenteBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${DankChatenteBadge}">`;
+    }
+    if (userId && DankChatBorgirBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${DankChatBorgirBadge}">`;
+    }
+    if (userId && userIdsWithDankChatmaxBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${DankChatmaxBadge}">`;
+    }
+    if (userId && userIdsWithDankChatqaBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${DankChatqaBadge}">`;
+    }
+    if (userId && userIdsWithDankChatkkrikeyBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${DankChatKKrikeyBadge}">`;
+    }
+    if (userId && userIdsWithDankChatDeveloperBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${DankChatDevBadge}">`;
+    }
+    if (userId && userIdsWithDankChatcontributorBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${DankChatContributorBadge}">`;
+    }
+
+    //homies
+    if (userId && userIdsWithHomiesSubBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${HomiesSubBadge}">`;
+    }
+    if (userId && userIdsWithHomiesModBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${HomiesModBadge}">`;
+    }
+    if (userId && userIdsWithHomiesSeniorModBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${HomiesSeniorModBadge}">`;
+    }
+    if (userId && userIdsWithHomiesSubOGBadge.includes(userId)) {
+      badgesImg += `<img class="badge" src="${HomiesSubBadgeOG}">`;
     }
     
-    // Hier wird das 7TV-Badge hinzugefügt
     const sevenTVBadgeUrl = await fetch7tvBadge(userId);
     if (sevenTVBadgeUrl) {
       badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
@@ -248,4 +370,4 @@ fetchBadges();
 loadChatterinoBadges();
 loadDankBadges();
 loadFFZBadges();
-
+loadHomiesSubBadges();
