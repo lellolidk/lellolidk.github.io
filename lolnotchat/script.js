@@ -1,7 +1,7 @@
 var emote_links = {};
 var customBadges = {};
 var OwnerBadge = 'https://lellolidk.de/img/lolnotChat.png'; // ok
-var userIdsWithOwnerBadge = ['636823070']; // Userids mit Owner badge
+var userIdsWithOwnerBadge = ['636823070', '896702538']; // Userids mit Owner badge
 var DankChatBadge = 'https://flxrs.com/dankchat/badges/dank.png'; // Chatterino Badge URL
 var userIdsWithDankBadge = []; // Userids mit Chatterino badge
 var FFZBadge = 'https://cdn.frankerfacez.com/badge/3/4'; // Chatterino Badge URL
