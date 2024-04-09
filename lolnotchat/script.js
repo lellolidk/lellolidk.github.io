@@ -1,6 +1,6 @@
 var emote_links = {};
 var customBadges = {};
-var OwnerBadge = 'https://cdn.7tv.app/emote/6449c3b5d5d04bca06242d39/4x.webp'; // ok
+var OwnerBadge = 'https://lellolidk.de/img/lolnotChat.png'; // ok
 var userIdsWithOwnerBadge = ['636823070']; // Userids mit Owner badge
 var DankChatBadge = 'https://flxrs.com/dankchat/badges/dank.png'; // Chatterino Badge URL
 var userIdsWithDankBadge = []; // Userids mit Chatterino badge
