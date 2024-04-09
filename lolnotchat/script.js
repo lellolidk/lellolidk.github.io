@@ -106,10 +106,16 @@ function cleanup() {
 async function fetch7tvBadge(userId) {
   try {
     const response = await fetch(`https://7tv.io/v3/users/twitch/${userId}`);
+    if (!response.ok) {
+      throw new Error('Fehler beim Abrufen der 7TV-Daten');
+    }
     const data = await response.json();
     const sevenTVUserId = data.user.id;
     
     const subscriptionResponse = await fetch(`https://egvault.7tv.io/v1/subscriptions/${sevenTVUserId}`);
+    if (!subscriptionResponse.ok) {
+      throw new Error('Fehler beim Abrufen der Abonnementdaten für 7TV');
+    }
     const subscriptionData = await subscriptionResponse.json();
     
     if (subscriptionData.active === true) {
@@ -181,10 +187,9 @@ socket.addEventListener('open', () =>{
   socket.send(`CAP REQ :twitch.tv/commands twitch.tv/membership twitch.tv/tags`);
   document.getElementById("chat").innerHTML = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
   fetch7tv(channel);
-  fetchChatterinoBadges(); // Füge das Laden der Chatterino-Badges hinzu
 })
 
-socket.addEventListener('message', event => {
+socket.addEventListener('message', async event => {
   if (event.data.includes("PING")) {
     socket.send(`PING`);
   }
@@ -215,19 +220,18 @@ socket.addEventListener('message', event => {
     }
 
     if (userId && userIdsWithFFZBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${FFZBadge}" style="height: 40px; background-color: rgb(117, 80, 0); border-radius: 10%;">`;
+      badgesImg += `<img class="badge" src="${FFZBadge}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
     }
 
     if (userId && userIdsWithChatterinoBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${ChatterinoBadge}" style="height: 40px; border-radius: 10%;">`;
+      badgesImg += `<img class="badge" src="${ChatterinoBadge}">`;
     }
     
     // Hier wird das 7TV-Badge hinzugefügt
-    fetch7tvBadge(userId).then(sevenTVBadge => {
-      if (sevenTVBadge) {
-        badgesImg += `<img class="badge" src="${sevenTVBadge}">`;
-      }
-    });
+    const sevenTVBadgeUrl = await fetch7tvBadge(userId);
+    if (sevenTVBadgeUrl) {
+      badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
+    }
           
     const usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : '';
       
@@ -244,5 +248,4 @@ fetchBadges();
 loadChatterinoBadges();
 loadDankBadges();
 loadFFZBadges();
-
 
