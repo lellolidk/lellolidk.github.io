@@ -259,6 +259,16 @@ async function fetchEmotes(channel){
   }
 }
 
+function reloadOverlay() {
+  location.reload();
+}
+
+function handleChatCommand(command) {
+  if (command === '!reloadoverlay') {
+    reloadOverlay();
+  }
+}
+
 function replaceEmotes(message, emoteLinks) {
   let newMessage = "";
 
@@ -316,6 +326,11 @@ socket.addEventListener('message', async event => {
     const badgesInfo = getBadgeNames(event.data);
     const usernameColor = getUsernameColor(event.data);
 
+
+    if (message.startsWith('!')) {
+      handleChatCommand(message.trim());
+    }
+    
     let userId = null;
     const userIdMatch = event.data.match(/user-id=(\d+);/);
     if (userIdMatch) {
