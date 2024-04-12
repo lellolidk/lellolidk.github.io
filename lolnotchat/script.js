@@ -263,12 +263,11 @@ function reloadOverlay() {
   location.reload();
 }
 
-function handleChatCommand(command) {
-  if (command === '!reloadoverlay') {
+function handleChatCommand(command, userId) {
+  if (command === '!reloadoverlay' && (userId === broadcasterId || userIdsWithModBadge.includes(userId))) {
     reloadOverlay();
   }
 }
-
 function replaceEmotes(message, emoteLinks) {
   let newMessage = "";
 
@@ -330,7 +329,7 @@ socket.addEventListener('message', async event => {
     if (message.startsWith('!')) {
       handleChatCommand(message.trim());
     }
-    
+
     let userId = null;
     const userIdMatch = event.data.match(/user-id=(\d+);/);
     if (userIdMatch) {
