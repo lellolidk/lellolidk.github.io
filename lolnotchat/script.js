@@ -110,20 +110,30 @@ async function loadDankBadges() {
   }
 }
 
+// FFZ Supporter Badge
+var FFZSupporterBadge = 'https://cdn.frankerfacez.com/badge/3/1';
+
+// Funktion zum Laden der FFZ-Badges
 async function loadFFZBadges() {
   try {
-    const response = await fetch('FFZ_badges.json');
+    const response = await fetch('https://api.frankerfacez.com/v1/badges');
     const data = await response.json();
-    userIdsWithFFZBadge = data.userIdsWithFFZBadge;
+    const ffzBadges = data.badges;
+    const ffzSupporterBadge = ffzBadges.find(badge => badge.name === 'supporter');
+    if (ffzSupporterBadge) {
+      for (const userId in data.users) {
+        if (data.users.hasOwnProperty(userId)) {
+          const badges = data.users[userId];
+          if (badges.includes(ffzSupporterBadge.id)) {
+            userIdsWithFFZBadge.push(userId);
+          }
+        }
+      }
+    }
   } catch (error) {
     console.error('Fehler beim Laden der FFZ-Badges:', error);
   }
 }
-
-function sleep(milliseconds) {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
-}
-
 function getUserName(message) {
   const parts = message.split('display-name=');
   if (parts.length > 1) {
@@ -197,16 +207,55 @@ async function fetch7tvBadge(userId) {
   }
 }
 
-async function fetch7tv(channel){
-  try{
-      const response = await fetch(`https://emotes.crippled.dev/v1/channel/${channel}/7tv`);
-      const data = await response.json();
-      for (let i = 0; i < data.length; i++){
-        emote_links[data[i].code] = data[i].urls[1].url
-      }
+
+async function fetchEmotes(channel){
+  //Emotes
+  try {
+    const response = await fetch(`https://emotes.crippled.dev/v1/channel/${channel}/all`);
+    const data = await response.json();
+    for (let i = 0; i < data.length; i++){
+      emote_links[data[i].code] = data[i].urls[1].url
+    }
+  } catch(error) {
+    console.error(error);
   }
-  catch(error){
-      console.error(error);
+
+  //Global
+  try {
+    const response = await fetch(`https://emotes.crippled.dev/v1/global/7tv`);
+    const data = await response.json();
+    for (let i = 0; i < data.length; i++){
+      emote_links[data[i].code] = data[i].urls[1].url
+    }
+  } catch(error) {
+    console.error(error);
+  }
+  try {
+    const response = await fetch(`https://emotes.crippled.dev/v1/global/twitch`);
+    const data = await response.json();
+    for (let i = 0; i < data.length; i++){
+      emote_links[data[i].code] = data[i].urls[1].url
+    }
+  } catch(error) {
+    console.error(error);
+  }
+  try {
+    const response = await fetch(`https://emotes.crippled.dev/v1/global/bttv`);
+    const data = await response.json();
+    for (let i = 0; i < data.length; i++){
+      emote_links[data[i].code] = data[i].urls[1].url
+    }
+  } catch(error) {
+    console.error(error);
+  }
+  try {
+    const response = await fetch(`https://emotes.crippled.dev/v1/global/ffz`);
+    const data = await response.json();
+    for (let i = 0; i < data.length; i++){
+      emote_links[data[i].code] = data[i].urls[1].url
+    }
+  } catch(error) {
+    console.error(error);
   }
 }
 
@@ -253,8 +302,8 @@ socket.addEventListener('open', () =>{
   socket.send(`NICK justinfan65345`);
   socket.send(`JOIN #${channel}`);
   socket.send(`CAP REQ :twitch.tv/commands twitch.tv/membership twitch.tv/tags`);
-  document.getElementById("chat").innerHTML = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-  fetch7tv(channel);
+  document.getElementById("chat").innerHTML = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+  fetchEmotes(channel);
 })
 
 socket.addEventListener('message', async event => {
@@ -267,14 +316,14 @@ socket.addEventListener('message', async event => {
     const badgesInfo = getBadgeNames(event.data);
     const usernameColor = getUsernameColor(event.data);
 
-    const userIdMatch = event.data.match(/user-id=(\d+);/);
     let userId = null;
-
+    const userIdMatch = event.data.match(/user-id=(\d+);/);
     if (userIdMatch) {
       userId = userIdMatch[1];
     }
 
-    if (userId && ignoredUserIds.includes(userId)) {
+    // Überprüfen, ob der Benutzer ignoriert werden soll
+    if (userId && ignoredUserIds.includes(userId) && show_bots === '1') {
       return;
     }
 
@@ -371,3 +420,4 @@ loadChatterinoBadges();
 loadDankBadges();
 loadFFZBadges();
 loadHomiesSubBadges();
+fetch7tvBadge();
