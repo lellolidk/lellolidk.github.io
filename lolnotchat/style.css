@@ -1,5 +1,6 @@
 :root{
     --text-size: 20px;
+    --text-shadow: 1px 1px 5px black;
 }
 body{
     padding: 0;
@@ -26,19 +27,19 @@ body{
     font-variation-settings:"wdth" 100;
 }
 p, span{
-    text-shadow: 1px 1px 5px black;
+    text-shadow: var(--text-shadow);
     margin: 0;
     padding: 0;
     margin-left: calc(var(--text-size) / 10);
 }
 .emote{
-    filter: drop-shadow(1px 1px 5px #222);
+    filter: drop-shadow(var(--text-shadow));
     height: var(--text-size);
     margin-left: calc(var(--text-size) / 8);
     margin-right: calc(var(--text-size) / 8);
 }
 .badge{
-    filter: drop-shadow(1px 1px 5px #222);
+    filter: drop-shadow(var(--text-shadow));
     height: var(--text-size);
     margin-left: calc(var(--text-size) / 10);
     position: relative;

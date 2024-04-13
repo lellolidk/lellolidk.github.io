@@ -290,13 +290,24 @@ channel = searchParams.get('ch').toLowerCase();
 if (size = searchParams.get('si').toLowerCase() == "0"){document.querySelector(':root').style.setProperty('--text-size', '20px');}
 if (size = searchParams.get('si').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-size', '40px');}
 if (size = searchParams.get('si').toLowerCase() == "2"){document.querySelector(':root').style.setProperty('--text-size', '60px');}
-shadow = searchParams.get('sh').toLowerCase();
-background = searchParams.get('bg').toLowerCase();
+
+if (shadow = searchParams.get('sh').toLowerCase() == "0"){document.querySelector(':root').style.setProperty('--text-shadow', 'none');}
+if (shadow = searchParams.get('sh').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-shadow', `1px 1px 5px black`);}
+if (shadow = searchParams.get('sh').toLowerCase() == "2"){document.querySelector(':root').style.setProperty('--text-shadow', `1px 1px 10px black`);}
+
+if (background = searchParams.get('bg').toLowerCase() == "0"){document.querySelector('#chat').style.setProperty('background', 'transparent');}
+if (background = searchParams.get('bg').toLowerCase() == "1"){document.querySelector('#chat').style.setProperty('background', `rgba(0, 0, 0, 0.25)`);}
+if (background = searchParams.get('bg').toLowerCase() == "2"){document.querySelector('#chat').style.setProperty('background', `rgba(0, 0, 0, 0.5)`);}
+if (background = searchParams.get('bg').toLowerCase() == "3"){document.querySelector('#chat').style.setProperty('background', `rgba(0, 0, 0, 0.75)`);}
+if (background = searchParams.get('bg').toLowerCase() == "4"){document.querySelector('#chat').style.setProperty('background', `black`);}
+
 font = searchParams.get('fo').toLowerCase();
 if (searchParams.get('an').toLowerCase() == "1"){document.getElementById("chat").style.scrollBehavior = "smooth"}
 show_badges = searchParams.get('ba').toLowerCase();
 show_special_badges = searchParams.get('sb').toLowerCase();
-show_bots = searchParams.get('bo').toLowerCase();
+
+show_bots = searchParams.get('bo').toLowerCase()
+
 show_commands = searchParams.get('co').toLowerCase();
 
 
@@ -316,6 +327,7 @@ socket.addEventListener('open', () =>{
 })
 
 socket.addEventListener('message', async event => {
+  console.log(event.data)
   if (event.data.includes("PING")) {
     socket.send(`PING`);
   }
@@ -331,13 +343,13 @@ socket.addEventListener('message', async event => {
     }
 
     let userId = null;
-    const userIdMatch = event.data.match(/user-id=(\d+);/);
+    const userIdMatch = event.data.match(/;user-id=(\d+);/);
     if (userIdMatch) {
       userId = userIdMatch[1];
     }
 
     // Überprüfen, ob der Benutzer ignoriert werden soll
-    if (userId && ignoredUserIds.includes(userId) && show_bots === '1') {
+    if (userId && ignoredUserIds.includes(userId) && show_bots === '0') {
       return;
     }
 
