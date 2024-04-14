@@ -165,11 +165,15 @@ function getBadgeNames(message) {
   let imgString = "";
 
   for (let i = 0; i < badgeNames.length; i++) {
-    if (badgeNames[i] in customBadges) {
-      imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}">`;
+    if(badgeNames[i].includes("moderator")){
+      imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}" style="background: #00ad03; border-radius:20%;">`;
+      console.log(badgeNames[i])
     }
+    else if (badgeNames[i] in customBadges) {
+      imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}">`;
+      console.log(badgeNames[i])
+    } 
   }
-
   return imgString;
 }
 
@@ -260,15 +264,16 @@ async function fetchEmotes(channel){
 }
 
 async function fetchFFZModVipBadges(channel){
-  //Emotes
-  try {
+  try{
     const response = await fetch(`https://api.frankerfacez.com/v1/room/${channel}`);
     const data = await response.json();
-    customBadges['mod'] = data.room.mod_urls[4];
+    customBadges['moderator'] = data.room.mod_urls[4];
     customBadges['vip'] = data.room.vip_badge[4];
-  } catch(error) {
-    console.error(error);
   }
+  catch(error){
+
+  }
+
 }
 
 
@@ -340,6 +345,7 @@ socket.addEventListener('open', () =>{
 
 socket.addEventListener('message', async event => {
   console.log(event.data)
+  
   if (event.data.includes("PING")) {
     socket.send(`PING`);
   }
@@ -348,7 +354,6 @@ socket.addEventListener('message', async event => {
     const username = getUserName(event.data);
     const badgesInfo = getBadgeNames(event.data);
     const usernameColor = getUsernameColor(event.data);
-
 
     if (message.startsWith('!')) {
       handleChatCommand(message.trim());
@@ -447,10 +452,17 @@ socket.addEventListener('message', async event => {
     
           
     const usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : '';
-      
-    document.getElementById("chat").innerHTML += (
-      `<span ${usernameStyle}>${badgesImg} ${username}:</span> <span style="color: white;">${replaceEmotes(message, emote_links)}</span><br>`
-    );
+    
+    if(message.includes("ACTION")){
+      document.getElementById("chat").innerHTML += (
+        `<span ${usernameStyle}>${badgesImg} ${username}:</span><span ${usernameStyle}>${replaceEmotes(message.slice(1).slice(0, -1).slice(0, -1).slice(0, -1).replace("ACTION",""), emote_links)}</span><br>`
+      );
+    } 
+    else{   
+      document.getElementById("chat").innerHTML += (
+        `<span ${usernameStyle}>${badgesImg} ${username}:</span> <span style="color: white;">${replaceEmotes(message, emote_links)}</span><br>`
+      );
+    }
 
     document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
   }
@@ -463,3 +475,4 @@ loadDankBadges();
 loadFFZBadges();
 loadHomiesSubBadges();
 fetch7tvBadge();
+fetchFFZModVipBadges(channel);
