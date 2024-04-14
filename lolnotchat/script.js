@@ -443,10 +443,10 @@ socket.addEventListener('message', async event => {
         badgesImg += `<img class="badge" src="${HomiesSubBadgeOG}">`;
       }
       
-      const sevenTVBadgeUrl = await fetch7tvBadge(userId);
-      if (sevenTVBadgeUrl) {
-        badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
-      }
+      //const sevenTVBadgeUrl = await fetch7tvBadge(userId);
+      //if (sevenTVBadgeUrl) {
+      // badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
+      //}
     }
     
           
