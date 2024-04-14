@@ -53,7 +53,7 @@ var userIdsWithChatterinoDevBadge = [];
 var userIdsWithChatterinopepeBadge = [];
 //FFZ
 var userIdsWithFFZBadge = [];
-var ignoredUserIds = []; 
+var ignoredUserIds = ['840051009', '754201843', '778353697', '1003451306','237719657', '100135110', '625016038', '46209051', '1564983', '105166207', '19264788', '216527497', '70885754', '52268235', '223196484', '95941264', '68136884', '865895441']; 
 
 async function fetchBadges() {
   try {
@@ -259,6 +259,19 @@ async function fetchEmotes(channel){
   }
 }
 
+async function fetchFFZModVipBadges(channel){
+  //Emotes
+  try {
+    const response = await fetch(`https://api.frankerfacez.com/v1/room/${channel}`);
+    const data = await response.json();
+    customBadges['mod'] = data.room.mod_urls[4];
+    customBadges['vip'] = data.room.vip_badge[4];
+  } catch(error) {
+    console.error(error);
+  }
+}
+
+
 function reloadOverlay() {
   location.reload();
 }
@@ -304,7 +317,6 @@ if (background = searchParams.get('bg').toLowerCase() == "4"){document.querySele
 font = searchParams.get('fo').toLowerCase();
 if (searchParams.get('an').toLowerCase() == "1"){document.getElementById("chat").style.scrollBehavior = "smooth"}
 show_badges = searchParams.get('ba').toLowerCase();
-show_special_badges = searchParams.get('sb').toLowerCase();
 
 show_bots = searchParams.get('bo').toLowerCase()
 
@@ -354,81 +366,85 @@ socket.addEventListener('message', async event => {
     }
 
     let badgesImg = badgesInfo;
+    
+    if(show_badges == "1"){// Überprüfen ob Bages gezeigt werden sollen und sie hinzufügen
 
-    //lolnot
-    if (userId && userIdsWithAdminBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${AdminBadge}">`;
-    }
-    if (userId && userIdsWithModBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${ModBadge}">`;
-    }
+      //lolnot
+      if (userId && userIdsWithAdminBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${AdminBadge}">`;
+      }
+      if (userId && userIdsWithModBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${ModBadge}">`;
+      }
 
-    //Chatterino
-    if (userId && userIdsWithChatterinoBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${ChatterinoBadge}">`;
-    }
-    if (userId && userIdsWithtopdonaterChatterinoBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${ChatterinoTopDonaterBadge}">`;
-    }
-    if (userId && userIdsWithChatterinoContibuterBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${ChatterinoContributerBadge}">`;
-    }
-    if (userId && userIdsWithChatterinoDevBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${ChatterinoDevBadge}">`;
-    }
-    if (userId && userIdsWithChatterinopepeBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${ChatterinoPepeBadge}">`;
-    }
+      //Chatterino
+      if (userId && userIdsWithChatterinoBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${ChatterinoBadge}">`;
+      }
+      if (userId && userIdsWithtopdonaterChatterinoBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${ChatterinoTopDonaterBadge}">`;
+      }
+      if (userId && userIdsWithChatterinoContibuterBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${ChatterinoContributerBadge}">`;
+      }
+      if (userId && userIdsWithChatterinoDevBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${ChatterinoDevBadge}">`;
+      }
+      if (userId && userIdsWithChatterinopepeBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${ChatterinoPepeBadge}">`;
+      }
 
-    //FFZ
-    if (userId && userIdsWithFFZBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${FFZBadge}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
-    }
+      //FFZ
+      if (userId && userIdsWithFFZBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${FFZBadge}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
+      }
 
-    //dankchat
-    if (userId && userIdsWithDankBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${DankChatBadge}">`;
-    }
-    if (userId && userIdsWithDankChatenteBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${DankChatenteBadge}">`;
-    }
-    if (userId && DankChatBorgirBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${DankChatBorgirBadge}">`;
-    }
-    if (userId && userIdsWithDankChatmaxBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${DankChatmaxBadge}">`;
-    }
-    if (userId && userIdsWithDankChatqaBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${DankChatqaBadge}">`;
-    }
-    if (userId && userIdsWithDankChatkkrikeyBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${DankChatKKrikeyBadge}">`;
-    }
-    if (userId && userIdsWithDankChatDeveloperBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${DankChatDevBadge}">`;
-    }
-    if (userId && userIdsWithDankChatcontributorBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${DankChatContributorBadge}">`;
-    }
+      //dankchat
+      if (userId && userIdsWithDankBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${DankChatBadge}">`;
+      }
+      if (userId && userIdsWithDankChatenteBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${DankChatenteBadge}">`;
+      }
+      if (userId && DankChatBorgirBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${DankChatBorgirBadge}">`;
+      }
+      if (userId && userIdsWithDankChatmaxBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${DankChatmaxBadge}">`;
+      }
+      if (userId && userIdsWithDankChatqaBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${DankChatqaBadge}">`;
+      }
+      if (userId && userIdsWithDankChatkkrikeyBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${DankChatKKrikeyBadge}">`;
+      }
+      if (userId && userIdsWithDankChatDeveloperBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${DankChatDevBadge}">`;
+      }
+      if (userId && userIdsWithDankChatcontributorBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${DankChatContributorBadge}">`;
+      }
 
-    //homies
-    if (userId && userIdsWithHomiesSubBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${HomiesSubBadge}">`;
-    }
-    if (userId && userIdsWithHomiesModBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${HomiesModBadge}">`;
-    }
-    if (userId && userIdsWithHomiesSeniorModBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${HomiesSeniorModBadge}">`;
-    }
-    if (userId && userIdsWithHomiesSubOGBadge.includes(userId)) {
-      badgesImg += `<img class="badge" src="${HomiesSubBadgeOG}">`;
+      //homies
+      if (userId && userIdsWithHomiesSubBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${HomiesSubBadge}">`;
+      }
+      if (userId && userIdsWithHomiesModBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${HomiesModBadge}">`;
+      }
+      if (userId && userIdsWithHomiesSeniorModBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${HomiesSeniorModBadge}">`;
+      }
+      if (userId && userIdsWithHomiesSubOGBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${HomiesSubBadgeOG}">`;
+      }
+      
+      const sevenTVBadgeUrl = await fetch7tvBadge(userId);
+      if (sevenTVBadgeUrl) {
+        badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
+      }
     }
     
-    const sevenTVBadgeUrl = await fetch7tvBadge(userId);
-    if (sevenTVBadgeUrl) {
-      badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
-    }
           
     const usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : '';
       
