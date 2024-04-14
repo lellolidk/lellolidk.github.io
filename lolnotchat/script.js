@@ -254,8 +254,22 @@ async function fetchFFZModVipBadges(channel){
   try{
     const response = await fetch(`https://api.frankerfacez.com/v1/room/${channel}`);
     const data = await response.json();
-    customBadges['moderator'] = data.room.mod_urls[4];
-    customBadges['vip'] = data.room.vip_badge[4];
+    try{
+      customBadges['moderator'] = data.room.mod_urls[4];
+    }catch(error){}
+    try{
+      customBadges['vip'] = data.room.vip_badge[4];
+    }catch(error){}
+  }
+  catch(error){
+  }
+}
+
+async function fetchSubBadges(channel){
+  try{
+    const response = await fetch(`https://api.ivr.fi/v2/twitch/badges/channel?login=${channel}`);
+    const data = await response.json();
+    customBadges['subscriber'] = data[0].versions[0].image_url_4x;
   }
   catch(error){
   }
@@ -326,7 +340,6 @@ socket.addEventListener('open', () =>{
   socket.send(`JOIN #${channel}`);
   socket.send(`CAP REQ :twitch.tv/commands twitch.tv/membership twitch.tv/tags`);
   document.getElementById("chat").innerHTML = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-  fetchEmotes(channel);
 })
 
 socket.addEventListener('message', async event => {
@@ -453,11 +466,28 @@ socket.addEventListener('message', async event => {
   }
 });
 
-setInterval(cleanup, 5000);
-fetchBadges();
-loadChatterinoBadges();
-loadDankBadges();
-loadHomiesSubBadges();
-fetch7tvBadge();
-loadFFZBadge();
-fetchFFZModVipBadges(channel)
+async function start(){
+  loadingStatus = document.getElementById("loadingStatus");
+  loadingStatus.innerHTML = "Loading Emotes"
+  await fetchEmotes(channel);
+  loadingStatus.innerHTML = "Twitch Badges"
+  await fetchBadges();
+  loadingStatus.innerHTML = "Chatterino Badges"
+  await loadChatterinoBadges();
+  loadingStatus.innerHTML = "DankChat Badges"
+  await loadDankBadges();
+  loadingStatus.innerHTML = "FFZ Badges"
+  await loadFFZBadge();
+  loadingStatus.innerHTML = "Homies Badges"
+  await loadHomiesSubBadges();
+  loadingStatus.innerHTML = "7tv Badges"
+  await fetch7tvBadge();
+  loadingStatus.innerHTML = "FFZ VIP / Mod Badges"
+  await fetchFFZModVipBadges(channel);
+  loadingStatus.innerHTML = "Sub Badges"
+  await fetchSubBadges(channel);
+  loadingStatus.remove()
+  document.getElementById("ppcircle").remove()
+  document.getElementById("chat").style.boxShadow = "none"
+}
+start()
