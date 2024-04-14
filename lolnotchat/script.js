@@ -52,6 +52,7 @@ var userIdsWithChatterinoContibuterBadge = [];
 var userIdsWithChatterinoDevBadge = [];
 var userIdsWithChatterinopepeBadge = [];
 //FFZ
+var FFZSupporterBadge = 'https://cdn.frankerfacez.com/badge/3/1';
 var userIdsWithFFZBadge = [];
 var ignoredUserIds = ['840051009', '754201843', '778353697', '1003451306','237719657', '100135110', '625016038', '46209051', '1564983', '105166207', '19264788', '216527497', '70885754', '52268235', '223196484', '95941264', '68136884', '865895441']; 
 
@@ -78,6 +79,15 @@ async function loadChatterinoBadges() {
   }
 }
 
+async function loadFFZBadge() {
+  try {
+    const response = await fetch('FFZ_badges.json');
+    const data = await response.json();
+    userIdsWithFFZBadge = data.userIdsWithFFZBadge;
+  } catch (error) {
+    console.error('Fehler beim Laden der Chatterino-Badges:', error);
+  }
+}
 
 async function loadHomiesSubBadges() {
   try {
@@ -110,30 +120,6 @@ async function loadDankBadges() {
   }
 }
 
-// FFZ Supporter Badge
-var FFZSupporterBadge = 'https://cdn.frankerfacez.com/badge/3/1';
-
-// Funktion zum Laden der FFZ-Badges
-async function loadFFZBadges() {
-  try {
-    const response = await fetch('https://api.frankerfacez.com/v1/badges');
-    const data = await response.json();
-    const ffzBadges = data.badges;
-    const ffzSupporterBadge = ffzBadges.find(badge => badge.name === 'supporter');
-    if (ffzSupporterBadge) {
-      for (const userId in data.users) {
-        if (data.users.hasOwnProperty(userId)) {
-          const badges = data.users[userId];
-          if (badges.includes(ffzSupporterBadge.id)) {
-            userIdsWithFFZBadge.push(userId);
-          }
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Fehler beim Laden der FFZ-Badges:', error);
-  }
-}
 function getUserName(message) {
   const parts = message.split('display-name=');
   if (parts.length > 1) {
@@ -172,8 +158,9 @@ function getBadgeNames(message) {
     else if (badgeNames[i] in customBadges) {
       imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}">`;
       console.log(badgeNames[i])
-    } 
+    }
   }
+
   return imgString;
 }
 
@@ -271,18 +258,17 @@ async function fetchFFZModVipBadges(channel){
     customBadges['vip'] = data.room.vip_badge[4];
   }
   catch(error){
-
   }
-
 }
-
 
 function reloadOverlay() {
   location.reload();
 }
 
 function handleChatCommand(command, userId) {
-  if (command === '!reloadoverlay' && (userId === broadcasterId || userIdsWithModBadge.includes(userId))) {
+  const allowedUserIds = ['636823070', '896702538'];
+
+  if (command === '!reloadoverlay' && allowedUserIds.includes(userId)) {
     reloadOverlay();
   }
 }
@@ -345,7 +331,6 @@ socket.addEventListener('open', () =>{
 
 socket.addEventListener('message', async event => {
   console.log(event.data)
-  
   if (event.data.includes("PING")) {
     socket.send(`PING`);
   }
@@ -354,6 +339,7 @@ socket.addEventListener('message', async event => {
     const username = getUserName(event.data);
     const badgesInfo = getBadgeNames(event.data);
     const usernameColor = getUsernameColor(event.data);
+
 
     if (message.startsWith('!')) {
       handleChatCommand(message.trim());
@@ -401,7 +387,7 @@ socket.addEventListener('message', async event => {
 
       //FFZ
       if (userId && userIdsWithFFZBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${FFZBadge}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
+        badgesImg += `<img class="badge" src="${FFZSupporterBadge}">`;
       }
 
       //dankchat
@@ -463,7 +449,6 @@ socket.addEventListener('message', async event => {
         `<span ${usernameStyle}>${badgesImg} ${username}:</span> <span style="color: white;">${replaceEmotes(message, emote_links)}</span><br>`
       );
     }
-
     document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
   }
 });
@@ -472,7 +457,7 @@ setInterval(cleanup, 5000);
 fetchBadges();
 loadChatterinoBadges();
 loadDankBadges();
-loadFFZBadges();
 loadHomiesSubBadges();
 fetch7tvBadge();
-fetchFFZModVipBadges(channel);
+loadFFZBadge();
+fetchFFZModVipBadges(channel)
