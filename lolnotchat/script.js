@@ -52,7 +52,7 @@ var userIdsWithChatterinoContibuterBadge = [];
 var userIdsWithChatterinoDevBadge = [];
 var userIdsWithChatterinopepeBadge = [];
 //FFZ
-var FFZSupporterBadge = 'https://cdn.frankerfacez.com/badge/3/1';
+var FFZSupporterBadge = 'https://cdn.frankerfacez.com/badge/3/4';
 var userIdsWithFFZBadge = [];
 var ignoredUserIds = ['840051009', '754201843', '778353697', '1003451306','237719657', '100135110', '625016038', '46209051', '1564983', '105166207', '19264788', '216527497', '70885754', '52268235', '223196484', '95941264', '68136884', '865895441']; 
 
