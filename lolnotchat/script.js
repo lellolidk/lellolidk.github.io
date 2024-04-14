@@ -487,7 +487,6 @@ async function start(){
   loadingStatus.innerHTML = "Sub Badges"
   await fetchSubBadges(channel);
   loadingStatus.remove()
-  document.getElementById("ppcircle").remove()
-  document.getElementById("chat").style.boxShadow = "none"
+  document.getElementById("loading").remove()
 }
 start()
