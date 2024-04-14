@@ -488,5 +488,6 @@ async function start(){
   await fetchSubBadges(channel);
   loadingStatus.remove()
   document.getElementById("loading").remove()
+  document.getElementById("chat").style.boxShadow = "none"
 }
 start()
