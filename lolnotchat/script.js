@@ -400,7 +400,7 @@ socket.addEventListener('message', async event => {
 
       //FFZ
       if (userId && userIdsWithFFZBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${FFZSupporterBadge}" style="height: 40px; background-color: rgb(117, 80, 0); border-radius: 10%;">`;
+        badgesImg += `<img class="badge" src="${FFZSupporterBadge}" style=" background-color: rgb(117, 80, 0); border-radius: 10%;">`;
       }
 
       //dankchat
