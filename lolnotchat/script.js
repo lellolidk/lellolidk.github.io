@@ -30,6 +30,7 @@ var DankChatContributorBadge = 'https://flxrs.com/dankchat/badges/contributor.pn
 //lolnot
 var userIdsWithAdminBadge = ['636823070', '896702538'];
 var userIdsWithModBadge = ['648984729', '840365435'];
+var userIdsWithFounderBadge = ['656642847'];
 //Homies
 var userIdsWithHomiesSubBadge = [];
 var userIdsWithHomiesModBadge = [];
@@ -379,6 +380,9 @@ socket.addEventListener('message', async event => {
       }
       if (userId && userIdsWithModBadge.includes(userId)) {
         badgesImg += `<img class="badge" src="${ModBadge}">`;
+      }
+      if (userId && userIdsWithFounderBadge.includes(userId)) {
+        badgesImg += `<img class="badge" src="${FounderBadge}">`;
       }
 
       //Chatterino
