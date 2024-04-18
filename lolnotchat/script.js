@@ -57,6 +57,8 @@ var FFZSupporterBadge = 'https://cdn.frankerfacez.com/badge/3/4';
 var userIdsWithFFZBadge = [];
 var ignoredUserIds = ['840051009', '754201843', '778353697', '1003451306','237719657', '100135110', '625016038', '46209051', '1564983', '105166207', '19264788', '216527497', '70885754', '52268235', '223196484', '95941264', '68136884', '865895441']; 
 
+const SubBadgeDict = {};
+
 async function fetchBadges() {
   try {
     const customResponse = await fetch(`badges.json`);
@@ -155,6 +157,10 @@ function getBadgeNames(message) {
     if(badgeNames[i].includes("moderator")){
       imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}" style="background: #00ad03; border-radius:20%;">`;
       console.log(badgeNames[i])
+    }
+    else if(badgeNames[i].includes("subscriber")){
+      imgString += `<img class="badge" src="${SubBadgeDict[parseInt(message.split("badges=")[1].split("subscriber/")[1].match(/^\d+/)[0])]}">`;
+      console.log(message.split("badges=")[1].split("subscriber/")[1].match(/^\d+/)[0])
     }
     else if (badgeNames[i] in customBadges) {
       imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}">`;
@@ -271,6 +277,13 @@ async function fetchSubBadges(channel){
     const response = await fetch(`https://api.ivr.fi/v2/twitch/badges/channel?login=${channel}`);
     const data = await response.json();
     customBadges['subscriber'] = data[0].versions[0].image_url_4x;
+
+    for (const version of data[0].versions) {
+      const id = version.id;
+      const imageUrl = version.image_url_4x;
+      SubBadgeDict[id] = imageUrl;
+    }
+    console.log(SubBadgeDict)
   }
   catch(error){
   }
@@ -304,28 +317,28 @@ const url = new URL(window.location.href);
 const searchParams = url.searchParams;
 index = 0
 
-channel = searchParams.get('ch').toLowerCase();
-if (size = searchParams.get('si').toLowerCase() == "0"){document.querySelector(':root').style.setProperty('--text-size', '20px');}
-if (size = searchParams.get('si').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-size', '40px');}
-if (size = searchParams.get('si').toLowerCase() == "2"){document.querySelector(':root').style.setProperty('--text-size', '60px');}
+channel = searchParams.get('channel').toLowerCase();
+if (size = searchParams.get('size').toLowerCase() == "0"){document.querySelector(':root').style.setProperty('--text-size', '20px');}
+if (size = searchParams.get('size').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-size', '40px');}
+if (size = searchParams.get('size').toLowerCase() == "2"){document.querySelector(':root').style.setProperty('--text-size', '60px');}
 
-if (shadow = searchParams.get('sh').toLowerCase() == "0"){document.querySelector(':root').style.setProperty('--text-shadow', 'none');}
-if (shadow = searchParams.get('sh').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-shadow', `1px 1px 5px black`);}
-if (shadow = searchParams.get('sh').toLowerCase() == "2"){document.querySelector(':root').style.setProperty('--text-shadow', `1px 1px 10px black`);}
+if (shadow = searchParams.get('shadow').toLowerCase() == "0"){document.querySelector(':root').style.setProperty('--text-shadow', 'none');}
+if (shadow = searchParams.get('shadow').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-shadow', `1px 1px 5px black`);}
+if (shadow = searchParams.get('shadow').toLowerCase() == "2"){document.querySelector(':root').style.setProperty('--text-shadow', `1px 1px 10px black`);}
 
-if (background = searchParams.get('bg').toLowerCase() == "0"){document.querySelector('#chat').style.setProperty('background', 'transparent');}
-if (background = searchParams.get('bg').toLowerCase() == "1"){document.querySelector('#chat').style.setProperty('background', `rgba(0, 0, 0, 0.25)`);}
-if (background = searchParams.get('bg').toLowerCase() == "2"){document.querySelector('#chat').style.setProperty('background', `rgba(0, 0, 0, 0.5)`);}
-if (background = searchParams.get('bg').toLowerCase() == "3"){document.querySelector('#chat').style.setProperty('background', `rgba(0, 0, 0, 0.75)`);}
-if (background = searchParams.get('bg').toLowerCase() == "4"){document.querySelector('#chat').style.setProperty('background', `black`);}
+if (background = searchParams.get('background').toLowerCase() == "0"){document.querySelector('#chat').style.setProperty('background', 'transparent');}
+if (background = searchParams.get('background').toLowerCase() == "1"){document.querySelector('#chat').style.setProperty('background', `rgba(0, 0, 0, 0.25)`);}
+if (background = searchParams.get('background').toLowerCase() == "2"){document.querySelector('#chat').style.setProperty('background', `rgba(0, 0, 0, 0.5)`);}
+if (background = searchParams.get('background').toLowerCase() == "3"){document.querySelector('#chat').style.setProperty('background', `rgba(0, 0, 0, 0.75)`);}
+if (background = searchParams.get('background').toLowerCase() == "4"){document.querySelector('#chat').style.setProperty('background', `black`);}
 
-font = searchParams.get('fo').toLowerCase();
-if (searchParams.get('an').toLowerCase() == "1"){document.getElementById("chat").style.scrollBehavior = "smooth"}
-show_badges = searchParams.get('ba').toLowerCase();
+font = searchParams.get('font').toLowerCase();
+if (searchParams.get('animated').toLowerCase() == "1"){document.getElementById("chat").style.scrollBehavior = "smooth"}
+show_badges = searchParams.get('badges').toLowerCase();
 
-show_bots = searchParams.get('bo').toLowerCase()
+show_bots = searchParams.get('bots').toLowerCase()
 
-show_commands = searchParams.get('co').toLowerCase();
+show_commands = searchParams.get('commands').toLowerCase();
 
 
 
@@ -381,6 +394,11 @@ socket.addEventListener('message', async event => {
       //lolnot
       if (userId && userIdsWithAdminBadge.includes(userId)) {
         badgesImg += `<img class="badge" src="${AdminBadge}">`;
+        usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
+        //usernameStyle = `style="background-image: url('https://kappa.lol/O9rOG.gif');background-clip: text;-webkit-background-clip: text;color: transparent;"`
+      }
+      else{
+        usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
       }
       if (userId && userIdsWithModBadge.includes(userId)) {
         badgesImg += `<img class="badge" src="${ModBadge}">`;
@@ -457,14 +475,13 @@ socket.addEventListener('message', async event => {
       //}
     }
     
-          
-    const usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : '';
     
+   
     if(message.includes("ACTION")){
       document.getElementById("chat").innerHTML += (
         `<span ${usernameStyle}>${badgesImg} ${username}:</span><span ${usernameStyle}>${replaceEmotes(message.slice(1).slice(0, -1).slice(0, -1).slice(0, -1).replace("ACTION",""), emote_links)}</span><br>`
       );
-    } 
+    }
     else{   
       document.getElementById("chat").innerHTML += (
         `<span ${usernameStyle}>${badgesImg} ${username}:</span> <span style="color: white;">${replaceEmotes(message, emote_links)}</span><br>`

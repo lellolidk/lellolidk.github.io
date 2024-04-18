@@ -32,7 +32,7 @@ function createLink() {
   values['background'] = document.getElementById("background").value;
   values['font'] = document.getElementById("font").value;
 
-  link = `https://lellolidk.de/lolnotchat?ch=${values['channel']}&si=${values['size']}&sh=${values['shadow']}&bg=${values['background']}&fo=${values['font']}&an=${values['animated']}&ba=${values['badges']}&sb=${values['special_badges']}&bo=${values['bots']}&co=${values['commands']}`;
+  link = `https://lellolidk.de/lolnotchat?channel=${values['channel']}&size=${values['size']}&shadow=${values['shadow']}&background=${values['background']}&font=${values['font']}&animated=${values['animated']}&badges=${values['badges']}&special_badges=${values['special_badges']}&bots=${values['bots']}&commands=${values['commands']}`;
   return link;
 }
 
