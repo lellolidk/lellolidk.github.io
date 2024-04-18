@@ -281,11 +281,10 @@ function reloadOverlay() {
 }
 
 function handleChatCommand(command, userId) {
-  const allowedUserIds = ['636823070', '896702538'];
-
-  if (command === '!reloadoverlay' && allowedUserIds.includes(userId)) {
-    reloadOverlay();
-  }
+  //const allowedUserIds = ['636823070', '896702538'];
+  //if (command == '!reloadoverlay' && allowedUserIds.includes(userId)) {
+  //  reloadOverlay();
+  //} lellol das geht nicht
 }
 function replaceEmotes(message, emoteLinks) {
   let newMessage = "";
@@ -355,14 +354,19 @@ socket.addEventListener('message', async event => {
     const usernameColor = getUsernameColor(event.data);
 
 
-    if (message.startsWith('!')) {
-      handleChatCommand(message.trim());
-    }
+
 
     let userId = null;
     const userIdMatch = event.data.match(/;user-id=(\d+);/);
     if (userIdMatch) {
       userId = userIdMatch[1];
+    }
+
+    if (message.startsWith('!reloadoverlay')) {
+      //handleChatCommand(message.trim());
+      if (userIdsWithAdminBadge.includes(userId)){
+        location.reload()
+      }
     }
 
     // Überprüfen, ob der Benutzer ignoriert werden soll
