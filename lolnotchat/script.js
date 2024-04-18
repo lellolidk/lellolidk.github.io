@@ -340,7 +340,7 @@ socket.addEventListener('open', () =>{
   socket.send(`NICK justinfan65345`);
   socket.send(`JOIN #${channel}`);
   socket.send(`CAP REQ :twitch.tv/commands twitch.tv/membership twitch.tv/tags`);
-  document.getElementById("chat").innerHTML = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+  document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
 })
 
 socket.addEventListener('message', async event => {
