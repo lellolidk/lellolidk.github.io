@@ -1,4 +1,4 @@
-y:root{
+:root{
     --text-size: 20px;
     --text-shadow: 1px 1px 5px black;
 }
@@ -19,7 +19,6 @@ body{
     top: 0;
     left: 0;
     font-size: var(--text-size);
-
     font-family: "Noto Sans", sans-serif;
     font-optical-sizing: auto;
     font-weight: 700;
@@ -27,25 +26,25 @@ body{
     font-variation-settings:"wdth" 100;
     box-shadow: inset 0 0 100px #00ff80;
 }
-p, span{
-    filter: drop-shadow(var(--text-shadow));
-    margin: 0;
-    padding: 0;
-    margin-left: calc(var(--text-size) / 10);
-}
 .emote{
-    filter: drop-shadow(var(--text-shadow));
     height: var(--text-size);
     margin-left: calc(var(--text-size) / 8);
     margin-right: calc(var(--text-size) / 8);
 }
 .badge{
-    filter: drop-shadow(var(--text-shadow));
     height: var(--text-size);
-    margin-left: calc(var(--text-size) / 10);
+    margin-left: calc(var(--text-size) / 5);
+
     position: relative;
     top: calc(var(--text-size) / 6);
 }
+.message{
+    filter: drop-shadow(var(--text-shadow));
+    margin: calc(var(--text-size) / 4.5);
+    width: fit-content;
+    overflow-wrap: break-word;
+}
+
 #loading{
     width: 100vw;
     height: 100vh;

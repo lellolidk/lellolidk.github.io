@@ -27,10 +27,6 @@ var DankChatqaBadge = 'https://flxrs.com/dankchat/badges/qa.png';
 var DankChatKKrikeyBadge = 'https://flxrs.com/dankchat/badges/kkrikey.png';
 var DankChatDevBadge = 'https://flxrs.com/dankchat/badges/gold.png';
 var DankChatContributorBadge = 'https://flxrs.com/dankchat/badges/contributor.png';
-//lolnot
-var userIdsWithAdminBadge = ['636823070', '896702538'];
-var userIdsWithModBadge = ['648984729', '840365435'];
-var userIdsWithFounderBadge = ['656642847'];
 //Homies
 var userIdsWithHomiesSubBadge = [];
 var userIdsWithHomiesModBadge = [];
@@ -58,6 +54,19 @@ var userIdsWithFFZBadge = [];
 var ignoredUserIds = ['840051009', '754201843', '778353697', '1003451306','237719657', '100135110', '625016038', '46209051', '1564983', '105166207', '19264788', '216527497', '70885754', '52268235', '223196484', '95941264', '68136884', '865895441']; 
 
 const SubBadgeDict = {};
+
+async function fetchlolnotAPI() {
+  try {
+    const response = await fetch('https://raw.githubusercontent.com/notLe0nard/lolnotapi/main/users.json');
+    const data = await response.json();
+    lolnotAdmins = data.admin;
+    lolnotMods = data.mod;
+    lolnotFounders = data.founder;
+    botsIds = data.bot;
+  } catch (error) {
+    console.error('Failed to Fetch lolnot', error);
+  }
+}
 
 async function fetchBadges() {
   try {
@@ -377,7 +386,7 @@ socket.addEventListener('message', async event => {
 
     if (message.startsWith('!reloadoverlay')) {
       //handleChatCommand(message.trim());
-      if (userIdsWithAdminBadge.includes(userId)){
+      if (lolnotAdmins.includes(userId)){
         location.reload()
       }
     }
@@ -392,7 +401,7 @@ socket.addEventListener('message', async event => {
     if(show_badges == "1"){// Überprüfen ob Bages gezeigt werden sollen und sie hinzufügen
 
       //lolnot
-      if (userId && userIdsWithAdminBadge.includes(userId)) {
+      if (userId && lolnotAdmins.includes(userId)) {
         badgesImg += `<img class="badge" src="${AdminBadge}">`;
         usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
         //usernameStyle = `style="background-image: url('https://kappa.lol/O9rOG.gif');background-clip: text;-webkit-background-clip: text;color: transparent;"`
@@ -400,10 +409,10 @@ socket.addEventListener('message', async event => {
       else{
         usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
       }
-      if (userId && userIdsWithModBadge.includes(userId)) {
+      if (userId && lolnotMods.includes(userId)) {
         badgesImg += `<img class="badge" src="${ModBadge}">`;
       }
-      if (userId && userIdsWithFounderBadge.includes(userId)) {
+      if (userId && lolnotFounders.includes(userId)) {
         badgesImg += `<img class="badge" src="${FounderBadge}">`;
       }
 
@@ -484,7 +493,7 @@ socket.addEventListener('message', async event => {
     }
     else{   
       document.getElementById("chat").innerHTML += (
-        `<span ${usernameStyle}>${badgesImg} ${username}:</span> <span style="color: white;">${replaceEmotes(message, emote_links)}</span><br>`
+        `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}:</span> <span style="color: white;">${replaceEmotes(message, emote_links)}</span></p>`
       );
     }
     document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
@@ -497,6 +506,8 @@ async function start(){
   await fetchEmotes(channel);
   loadingStatus.innerHTML = "Twitch Badges"
   await fetchBadges();
+  loadingStatus.innerHTML = "lolnot Badges"
+  await fetchlolnotAPI();
   loadingStatus.innerHTML = "Chatterino Badges"
   await loadChatterinoBadges();
   loadingStatus.innerHTML = "DankChat Badges"
@@ -516,3 +527,4 @@ async function start(){
   document.getElementById("chat").style.boxShadow = "none"
 }
 start()
+setInterval(cleanup, 3000)
