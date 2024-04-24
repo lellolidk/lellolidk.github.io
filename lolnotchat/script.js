@@ -215,7 +215,7 @@ async function fetch7tvBadge(userId) {
 }
 
 
-async function fetchEmotes(channel){
+async function fetchEmotes(){
   //Emotes
   try {
     const response = await fetch(`https://emotes.crippled.dev/v1/channel/${channel}/all`);
@@ -353,8 +353,40 @@ show_commands = searchParams.get('commands').toLowerCase();
 
 //link = `https://lellolik.de/lolnotchat?ch=${values['channel']}&si=${values['size']}&sh=${values['shadow']}&bg=${values['background']}&fo=${values['font']}&an=${values['animated']}&ba=${values['badges']}&sb=${values['special_badges']}&bo=${values['bots']}&co=${values['commands']}`;
 
-const socket = new WebSocket("wss://irc-ws.chat.twitch.tv:443");
 
+
+
+
+
+async function start(){
+  loadingStatus = document.getElementById("loadingStatus");
+  loadingStatus.innerHTML = "Loading Emotes"
+  await fetchEmotes(channel);
+  loadingStatus.innerHTML = "Twitch Badges"
+  await fetchBadges();
+  loadingStatus.innerHTML = "lolnot Badges"
+  await fetchlolnotAPI();
+  loadingStatus.innerHTML = "Chatterino Badges"
+  await loadChatterinoBadges();
+  loadingStatus.innerHTML = "DankChat Badges"
+  await loadDankBadges();
+  loadingStatus.innerHTML = "FFZ Badges"
+  await loadFFZBadge();
+  loadingStatus.innerHTML = "Homies Badges"
+  await loadHomiesSubBadges();
+  //loadingStatus.innerHTML = "7tv Badges"
+  //await fetch7tvBadge();
+  loadingStatus.innerHTML = "FFZ VIP / Mod Badges"
+  await fetchFFZModVipBadges(channel);
+  loadingStatus.innerHTML = "Sub Badges"
+  await fetchSubBadges(channel);
+  loadingStatus.remove()
+  document.getElementById("loading").remove()
+  document.getElementById("chat").style.boxShadow = "none"
+}
+start()
+
+const socket = new WebSocket("wss://irc-ws.chat.twitch.tv:443");
 
 socket.addEventListener('open', () =>{
   socket.send(`PASS oauth:leckeier`);
@@ -496,35 +528,15 @@ socket.addEventListener('message', async event => {
         `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}:</span> <span style="color: white;">${replaceEmotes(message, emote_links)}</span></p>`
       );
     }
-    document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
+
+    
   }
 });
 
-async function start(){
-  loadingStatus = document.getElementById("loadingStatus");
-  loadingStatus.innerHTML = "Loading Emotes"
-  await fetchEmotes(channel);
-  loadingStatus.innerHTML = "Twitch Badges"
-  await fetchBadges();
-  loadingStatus.innerHTML = "lolnot Badges"
-  await fetchlolnotAPI();
-  loadingStatus.innerHTML = "Chatterino Badges"
-  await loadChatterinoBadges();
-  loadingStatus.innerHTML = "DankChat Badges"
-  await loadDankBadges();
-  loadingStatus.innerHTML = "FFZ Badges"
-  await loadFFZBadge();
-  loadingStatus.innerHTML = "Homies Badges"
-  await loadHomiesSubBadges();
-  loadingStatus.innerHTML = "7tv Badges"
-  await fetch7tvBadge();
-  loadingStatus.innerHTML = "FFZ VIP / Mod Badges"
-  await fetchFFZModVipBadges(channel);
-  loadingStatus.innerHTML = "Sub Badges"
-  await fetchSubBadges(channel);
-  loadingStatus.remove()
-  document.getElementById("loading").remove()
-  document.getElementById("chat").style.boxShadow = "none"
+function scrollToBottom(){
+  document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
 }
-start()
+
 setInterval(cleanup, 3000)
+setInterval(fetchEmotes, 60000)
+setInterval(scrollToBottom, 100)
