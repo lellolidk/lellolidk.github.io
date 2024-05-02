@@ -342,6 +342,12 @@ if (background = searchParams.get('background').toLowerCase() == "3"){document.q
 if (background = searchParams.get('background').toLowerCase() == "4"){document.querySelector('#chat').style.setProperty('background', `black`);}
 
 font = searchParams.get('font').toLowerCase();
+console.log(font)
+if (font == "0"){document.querySelector('body').style.fontFamily = 'noto';}
+if (font == "1"){document.querySelector('body').style.fontFamily = 'minecraft';}
+if (font == "2"){document.querySelector('body').style.fontFamily = 'shantell';}
+
+
 if (searchParams.get('animated').toLowerCase() == "1"){document.getElementById("chat").style.scrollBehavior = "smooth"}
 show_badges = searchParams.get('badges').toLowerCase();
 
@@ -515,17 +521,15 @@ socket.addEventListener('message', async event => {
       // badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
       //}
     }
-    
-    
-   
+
     if(message.includes("ACTION")){
       document.getElementById("chat").innerHTML += (
-        `<span ${usernameStyle}>${badgesImg} ${username}:</span><span ${usernameStyle}>${replaceEmotes(message.slice(1).slice(0, -1).slice(0, -1).slice(0, -1).replace("ACTION",""), emote_links)}</span><br>`
+        `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}</span><span ${usernameStyle}>${replaceEmotes(message.slice(1).slice(0, -1).slice(0, -1).slice(0, -1).replace("ACTION",""), emote_links)}</span><br>`
       );
     }
     else{   
       document.getElementById("chat").innerHTML += (
-        `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}:</span> <span style="color: white;">${replaceEmotes(message, emote_links)}</span></p>`
+        `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}:</span><span style="color: white;">${replaceEmotes(message, emote_links)}</span></p>`
       );
     }
 

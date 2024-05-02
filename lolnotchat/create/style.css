@@ -42,7 +42,7 @@ body{
     background: #1b1b1b;
     border-radius: 1vmin;
     height: 40vmin;
-    width: 80vmin;
+    width: 100vmin;
     flex-direction: row;
     font-size: 3vmin;
     margin: 1vmin;
@@ -198,3 +198,4 @@ label{
 .drop_shadow{
     box-shadow: black .5vmin .5vmin 4vmin;
 }
+
