@@ -12,6 +12,8 @@ var ChatterinoPepeBadge = 'https://fourtf.com/chatterino/badges/pepe3x.png';
 //7tv
 var sevenTVBadge = 'https://cdn.7tv.app/badge/62f97c05e46eb00e438a696a/3x';
 var FFZBadge = 'https://cdn.frankerfacez.com/badge/3/4';
+var testBadge = 'https://itzalex.github.io/badgesusers/supporter2/badge3x.png';
+var userIdsWithtestBadge = ['lellolidk'];
 //Homies
 var HomiesSubBadge = 'https://itzalex.github.io/badgesusers/supporter2/badge3x.png';
 var HomiesModBadge = 'https://itzalex.github.io/badgesusers/mod/badge3x.png';
@@ -49,11 +51,15 @@ var userIdsWithChatterinoContibuterBadge = [];
 var userIdsWithChatterinoDevBadge = [];
 var userIdsWithChatterinopepeBadge = [];
 //FFZ
-var FFZSupporterBadge = 'https://cdn.frankerfacez.com/badge/3/4';
-var userIdsWithFFZBadge = [];
+var FFZ1Badge = 'https://cdn.frankerfacez.com/badge/1/4';
+var FFZ2Badge = 'https://cdn.frankerfacez.com/badge/2/4';
+var FFZ3Badge = 'https://cdn.frankerfacez.com/badge/3/4';
+var FFZ4Badge = 'https://cdn.frankerfacez.com/badge/4/4';
+//Bots
 var ignoredUserIds = ['840051009', '754201843', '778353697', '1003451306','237719657', '100135110', '625016038', '46209051', '1564983', '105166207', '19264788', '216527497', '70885754', '52268235', '223196484', '95941264', '68136884', '865895441']; 
 
 const SubBadgeDict = {};
+var HomiesBadges = {};
 
 async function fetchlolnotAPI() {
   try {
@@ -65,6 +71,21 @@ async function fetchlolnotAPI() {
     botsIds = data.bot;
   } catch (error) {
     console.error('Failed to Fetch lolnot', error);
+  }
+}
+
+async function fetchFFZAPI() {
+  try {
+    const response = await fetch('https://api.frankerfacez.com/v1/badges');
+    const data = await response.json();
+    const ffzUsers = data.users;
+    ffz1 = ffzUsers[1]
+    ffz2 = ffzUsers[2]
+    ffz3 = ffzUsers[3]
+    ffz4 = ffzUsers[1]
+
+  } catch (error) {
+    console.error('Failed to Fetch FFZ', error);
   }
 }
 
@@ -91,13 +112,15 @@ async function loadChatterinoBadges() {
   }
 }
 
-async function loadFFZBadge() {
+async function fetchHomiesBadges() {
   try {
-    const response = await fetch('FFZ_badges.json');
+    const response = await fetch('https://chatterinohomies.com/api/badges/list');
     const data = await response.json();
-    userIdsWithFFZBadge = data.userIdsWithFFZBadge;
+    for (let i = 0; i < data.badges.length; i++){
+      HomiesBadges[data.badges[i].userId] = data.badges[i].image3
+    }
   } catch (error) {
-    console.error('Fehler beim Laden der Chatterino-Badges:', error);
+    console.error('Fehler beim Laden der Homies-Badges:', error);
   }
 }
 
@@ -165,15 +188,12 @@ function getBadgeNames(message) {
   for (let i = 0; i < badgeNames.length; i++) {
     if(badgeNames[i].includes("moderator")){
       imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}" style="background: #00ad03; border-radius:20%;">`;
-      console.log(badgeNames[i])
     }
     else if(badgeNames[i].includes("subscriber")){
       imgString += `<img class="badge" src="${SubBadgeDict[parseInt(message.split("badges=")[1].split("subscriber/")[1].match(/^\d+/)[0])]}">`;
-      console.log(message.split("badges=")[1].split("subscriber/")[1].match(/^\d+/)[0])
     }
     else if (badgeNames[i] in customBadges) {
       imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}">`;
-      console.log(badgeNames[i])
     }
   }
 
@@ -204,7 +224,7 @@ async function fetch7tvBadge(userId) {
     const subscriptionData = await subscriptionResponse.json();
     
     if (subscriptionData.active === true) {
-      return sevenTVBadge; // Verwenden Sie die vordefinierte URL für das 7TV-Badge
+      return sevenTVBadge;
     } else {
       return null;
     }
@@ -292,7 +312,6 @@ async function fetchSubBadges(channel){
       const imageUrl = version.image_url_4x;
       SubBadgeDict[id] = imageUrl;
     }
-    console.log(SubBadgeDict)
   }
   catch(error){
   }
@@ -302,12 +321,6 @@ function reloadOverlay() {
   location.reload();
 }
 
-function handleChatCommand(command, userId) {
-  //const allowedUserIds = ['636823070', '896702538'];
-  //if (command == '!reloadoverlay' && allowedUserIds.includes(userId)) {
-  //  reloadOverlay();
-  //} lellol das geht nicht
-}
 function replaceEmotes(message, emoteLinks) {
   let newMessage = "";
 
@@ -342,7 +355,6 @@ if (background = searchParams.get('background').toLowerCase() == "3"){document.q
 if (background = searchParams.get('background').toLowerCase() == "4"){document.querySelector('#chat').style.setProperty('background', `black`);}
 
 font = searchParams.get('font').toLowerCase();
-console.log(font)
 if (font == "0"){document.querySelector('body').style.fontFamily = 'noto';}
 if (font == "1"){document.querySelector('body').style.fontFamily = 'minecraft';}
 if (font == "2"){document.querySelector('body').style.fontFamily = 'shantell';}
@@ -377,9 +389,10 @@ async function start(){
   loadingStatus.innerHTML = "DankChat Badges"
   await loadDankBadges();
   loadingStatus.innerHTML = "FFZ Badges"
-  await loadFFZBadge();
+  await fetchFFZAPI();
   loadingStatus.innerHTML = "Homies Badges"
   await loadHomiesSubBadges();
+  await fetchHomiesBadges();
   //loadingStatus.innerHTML = "7tv Badges"
   //await fetch7tvBadge();
   loadingStatus.innerHTML = "FFZ VIP / Mod Badges"
@@ -403,7 +416,6 @@ socket.addEventListener('open', () =>{
 })
 
 socket.addEventListener('message', async event => {
-  console.log(event.data)
   if (event.data.includes("PING")) {
     socket.send(`PING`);
   }
@@ -472,8 +484,17 @@ socket.addEventListener('message', async event => {
       }
 
       //FFZ
-      if (userId && userIdsWithFFZBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${FFZSupporterBadge}" style=" background-color: rgb(117, 80, 0); border-radius: 10%;">`;
+      if (username && ffz1.includes(username)) {
+        badgesImg += `<img class="badge" src="${FFZ1Badge}" style="background-color: rgb(250, 175, 25); border-radius: 10%;">`;
+      }
+      if (username && ffz2.includes(username)) {
+        badgesImg += `<img class="badge" src="${FFZ2Badge}" style="background-color: rgb(89, 89, 89); border-radius: 10%;">`;
+      }
+      if (username && ffz3.includes(username)) {
+        badgesImg += `<img class="badge" src="${FFZ3Badge}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
+      }
+      if (username && ffz4.includes(username)) {
+        badgesImg += `<img class="badge" src="${FFZ4Badge}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
       }
 
       //dankchat
@@ -514,6 +535,10 @@ socket.addEventListener('message', async event => {
       }
       if (userId && userIdsWithHomiesSubOGBadge.includes(userId)) {
         badgesImg += `<img class="badge" src="${HomiesSubBadgeOG}">`;
+      }
+
+      if (userId && userId in HomiesBadges) {
+        badgesImg += `<img class="badge" src="${HomiesBadges[userId]}">`;
       }
       
       //const sevenTVBadgeUrl = await fetch7tvBadge(userId);
