@@ -204,31 +204,6 @@ function cleanup() {
   document.getElementById("chat").innerHTML = document.getElementById("chat").innerHTML.slice(-30000)
 }
 
-async function fetch7tvBadge(userId) {
-  try {
-    const response = await fetch(`https://7tv.io/v3/users/twitch/${userId}`);
-    if (!response.ok) {
-      throw new Error('Fehler beim Abrufen der 7TV-Daten');
-    }
-    const data = await response.json();
-    const sevenTVUserId = data.user.id;
-    
-    const subscriptionResponse = await fetch(`https://egvault.7tv.io/v1/subscriptions/${sevenTVUserId}`);
-    if (!subscriptionResponse.ok) {
-      throw new Error('Fehler beim Abrufen der Abonnementdaten für 7TV');
-    }
-    const subscriptionData = await subscriptionResponse.json();
-    
-    if (subscriptionData.active === true) {
-      return sevenTVBadge;
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
 
 
 async function fetchEmotes(){
@@ -389,8 +364,6 @@ async function start(){
   loadingStatus.innerHTML = "Homies Badges"
   await loadHomiesSubBadges();
   await fetchHomiesBadges();
-  //loadingStatus.innerHTML = "7tv Badges"
-  //await fetch7tvBadge();
   loadingStatus.innerHTML = "FFZ VIP / Mod Badges"
   await fetchFFZModVipBadges(channel);
   loadingStatus.innerHTML = "Sub Badges"
@@ -416,145 +389,145 @@ socket.addEventListener('message', async event => {
     socket.send(`PING`);
   }
   if (event.data.includes("PRIVMSG")) {
-    const message = getMessage(event.data);
-    const username = getUserName(event.data);
-    const username2 = getUserName(event.data).toLowerCase();
-    const badgesInfo = getBadgeNames(event.data);
-    const usernameColor = getUsernameColor(event.data);
+      const message = getMessage(event.data);
+      const username = getUserName(event.data);
+      const username2 = getUserName(event.data).toLowerCase();
+      const badgesInfo = getBadgeNames(event.data);
+      const usernameColor = getUsernameColor(event.data);
 
-
-
-
-    let userId = null;
-    const userIdMatch = event.data.match(/;user-id=(\d+);/);
-    if (userIdMatch) {
-      userId = userIdMatch[1];
-    }
-
-    if (message.startsWith('!lolnot reload')) {
-      //handleChatCommand(message.trim());
-      if (lolnotAdmins.includes(userId)){
-        location.reload()
-      }
-    }
-
-    // Überprüfen, ob der Benutzer ignoriert werden soll
-    if (userId && ignoredUserIds.includes(userId) && show_bots === '0') {
-      return;
-    }
-
-    let badgesImg = badgesInfo;
-    
-    if(show_badges == "1"){// Überprüfen ob Bages gezeigt werden sollen und sie hinzufügen
-
-      //lolnot
-      if (userId && lolnotAdmins.includes(userId)) {
-        badgesImg += `<img class="badge" src="${AdminBadge}">`;
-        usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
-        //usernameStyle = `style="background-image: url('https://kappa.lol/O9rOG.gif');background-clip: text;-webkit-background-clip: text;color: transparent;"`
+      if (message.startsWith("!") && show_commands == "0"){
+        console.log("ok")
       }
       else{
-        usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
+        let userId = null;
+        const userIdMatch = event.data.match(/;user-id=(\d+);/);
+        if (userIdMatch) {
+          userId = userIdMatch[1];
+        }
+    
+        if (message.startsWith('!lolnot reload')) {
+          //handleChatCommand(message.trim());
+          if (lolnotAdmins.includes(userId)){
+            location.reload()
+          }
+        }
+    
+        if (userId && ignoredUserIds.includes(userId) && show_bots === '0') {
+          return;
+        }
+    
+        let badgesImg = badgesInfo;
+        
+        if(show_badges == "1"){// Überprüfen ob Bages gezeigt werden sollen und sie hinzufügen
+    
+          //lolnot
+          if (userId && lolnotAdmins.includes(userId)) {
+            badgesImg += `<img class="badge" src="${AdminBadge}">`;
+            usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
+            //usernameStyle = `style="background-image: url('https://kappa.lol/O9rOG.gif');background-clip: text;-webkit-background-clip: text;color: transparent;"`
+          }
+          else{
+            usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
+          }
+          if (userId && lolnotMods.includes(userId)) {
+            badgesImg += `<img class="badge" src="${ModBadge}">`;
+          }
+          if (userId && lolnotFounders.includes(userId)) {
+            badgesImg += `<img class="badge" src="${FounderBadge}">`;
+          }
+    
+          //Chatterino
+          if (userId && userIdsWithChatterinoBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${ChatterinoBadge}">`;
+          }
+          if (userId && userIdsWithtopdonaterChatterinoBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${ChatterinoTopDonaterBadge}">`;
+          }
+          if (userId && userIdsWithChatterinoContibuterBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${ChatterinoContributerBadge}">`;
+          }
+          if (userId && userIdsWithChatterinoDevBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${ChatterinoDevBadge}">`;
+          }
+          if (userId && userIdsWithChatterinopepeBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${ChatterinoPepeBadge}">`;
+          }
+    
+          //FFZ
+          if (username2 && ffzdeveloper.includes(username2)) {
+            badgesImg += `<img class="badge" src="${FFZdeveloperBadge}" style="background-color: rgb(250, 175, 25); border-radius: 10%;">`;
+          }
+          if (username2 && ffzBot.includes(username2)) {
+            badgesImg += `<img class="badge" src="${FFZBotBadge}" style="background-color: rgb(89, 89, 89); border-radius: 10%;">`;
+          }
+          if (username2 && ffzSupporter.includes(username2)) {
+            badgesImg += `<img class="badge" src="${FFZSupporterBadge}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
+          }
+          if (username2 && ffzSubwoofer.includes(username2)) {
+            badgesImg += `<img class="badge" src="${FFZSubwooferBadge}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
+          }
+    
+          //dankchat
+          if (userId && userIdsWithDankBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${DankChatBadge}">`;
+          }
+          if (userId && userIdsWithDankChatenteBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${DankChatenteBadge}">`;
+          }
+          if (userId && DankChatBorgirBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${DankChatBorgirBadge}">`;
+          }
+          if (userId && userIdsWithDankChatmaxBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${DankChatmaxBadge}">`;
+          }
+          if (userId && userIdsWithDankChatqaBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${DankChatqaBadge}">`;
+          }
+          if (userId && userIdsWithDankChatkkrikeyBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${DankChatKKrikeyBadge}">`;
+          }
+          if (userId && userIdsWithDankChatDeveloperBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${DankChatDevBadge}">`;
+          }
+          if (userId && userIdsWithDankChatcontributorBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${DankChatContributorBadge}">`;
+          }
+    
+          //homies
+          if (userId && userIdsWithHomiesSubBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${HomiesSubBadge}">`;
+          }
+          if (userId && userIdsWithHomiesModBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${HomiesModBadge}">`;
+          }
+          if (userId && userIdsWithHomiesSeniorModBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${HomiesSeniorModBadge}">`;
+          }
+          if (userId && userIdsWithHomiesSubOGBadge.includes(userId)) {
+            badgesImg += `<img class="badge" src="${HomiesSubBadgeOG}">`;
+          }
+    
+          if (userId && userId in HomiesBadges) {
+            badgesImg += `<img class="badge" src="${HomiesBadges[userId]}">`;
+          }
+          
+          //const sevenTVBadgeUrl = await fetch7tvBadge(userId);
+          //if (sevenTVBadgeUrl) {
+            //badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
+          //}
+        }
+    
+        if(message.includes("ACTION")){
+          document.getElementById("chat").innerHTML += (
+            `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}</span><span ${usernameStyle}>${replaceEmotes(message.slice(1).slice(0, -1).slice(0, -1).slice(0, -1).replace("ACTION",""), emote_links)}</span><br>`
+          );
+        }
+        else{   
+          document.getElementById("chat").innerHTML += (
+            `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}:</span><span style="color: white;">${replaceEmotes(message, emote_links)}</span></p>`
+          );
+        }
       }
-      if (userId && lolnotMods.includes(userId)) {
-        badgesImg += `<img class="badge" src="${ModBadge}">`;
-      }
-      if (userId && lolnotFounders.includes(userId)) {
-        badgesImg += `<img class="badge" src="${FounderBadge}">`;
-      }
-
-      //Chatterino
-      if (userId && userIdsWithChatterinoBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${ChatterinoBadge}">`;
-      }
-      if (userId && userIdsWithtopdonaterChatterinoBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${ChatterinoTopDonaterBadge}">`;
-      }
-      if (userId && userIdsWithChatterinoContibuterBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${ChatterinoContributerBadge}">`;
-      }
-      if (userId && userIdsWithChatterinoDevBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${ChatterinoDevBadge}">`;
-      }
-      if (userId && userIdsWithChatterinopepeBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${ChatterinoPepeBadge}">`;
-      }
-
-      //FFZ
-      if (username2 && ffzdeveloper.includes(username2)) {
-        badgesImg += `<img class="badge" src="${FFZdeveloperBadge}" style="background-color: rgb(250, 175, 25); border-radius: 10%;">`;
-      }
-      if (username2 && ffzBot.includes(username2)) {
-        badgesImg += `<img class="badge" src="${FFZBotBadge}" style="background-color: rgb(89, 89, 89); border-radius: 10%;">`;
-      }
-      if (username2 && ffzSupporter.includes(username2)) {
-        badgesImg += `<img class="badge" src="${FFZSupporterBadge}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
-      }
-      if (username2 && ffzSubwoofer.includes(username2)) {
-        badgesImg += `<img class="badge" src="${FFZSubwooferBadge}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
-      }
-
-      //dankchat
-      if (userId && userIdsWithDankBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${DankChatBadge}">`;
-      }
-      if (userId && userIdsWithDankChatenteBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${DankChatenteBadge}">`;
-      }
-      if (userId && DankChatBorgirBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${DankChatBorgirBadge}">`;
-      }
-      if (userId && userIdsWithDankChatmaxBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${DankChatmaxBadge}">`;
-      }
-      if (userId && userIdsWithDankChatqaBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${DankChatqaBadge}">`;
-      }
-      if (userId && userIdsWithDankChatkkrikeyBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${DankChatKKrikeyBadge}">`;
-      }
-      if (userId && userIdsWithDankChatDeveloperBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${DankChatDevBadge}">`;
-      }
-      if (userId && userIdsWithDankChatcontributorBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${DankChatContributorBadge}">`;
-      }
-
-      //homies
-      if (userId && userIdsWithHomiesSubBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${HomiesSubBadge}">`;
-      }
-      if (userId && userIdsWithHomiesModBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${HomiesModBadge}">`;
-      }
-      if (userId && userIdsWithHomiesSeniorModBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${HomiesSeniorModBadge}">`;
-      }
-      if (userId && userIdsWithHomiesSubOGBadge.includes(userId)) {
-        badgesImg += `<img class="badge" src="${HomiesSubBadgeOG}">`;
-      }
-
-      if (userId && userId in HomiesBadges) {
-        badgesImg += `<img class="badge" src="${HomiesBadges[userId]}">`;
-      }
-      
-      //const sevenTVBadgeUrl = await fetch7tvBadge(userId);
-      //if (sevenTVBadgeUrl) {
-      // badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
-      //}
-    }
-
-    if(message.includes("ACTION")){
-      document.getElementById("chat").innerHTML += (
-        `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}</span><span ${usernameStyle}>${replaceEmotes(message.slice(1).slice(0, -1).slice(0, -1).slice(0, -1).replace("ACTION",""), emote_links)}</span><br>`
-      );
-    }
-    else{   
-      document.getElementById("chat").innerHTML += (
-        `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}:</span><span style="color: white;">${replaceEmotes(message, emote_links)}</span></p>`
-      );
-    }
-
     
   }
 });
@@ -565,4 +538,4 @@ function scrollToBottom(){
 
 setInterval(cleanup, 3000)
 setInterval(fetchEmotes, 60000)
-setInterval(scrollToBottom, 100)
+setInterval(scrollToBottom, 200)
