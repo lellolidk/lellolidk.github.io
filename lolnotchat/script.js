@@ -11,9 +11,6 @@ var ChatterinoDevBadge = 'https://fourtf.com/chatterino/badges/dev3x.png';
 var ChatterinoPepeBadge = 'https://fourtf.com/chatterino/badges/pepe3x.png';
 //7tv
 var sevenTVBadge = 'https://cdn.7tv.app/badge/62f97c05e46eb00e438a696a/3x';
-var FFZBadge = 'https://cdn.frankerfacez.com/badge/3/4';
-var testBadge = 'https://itzalex.github.io/badgesusers/supporter2/badge3x.png';
-var userIdsWithtestBadge = ['lellolidk'];
 //Homies
 var HomiesSubBadge = 'https://itzalex.github.io/badgesusers/supporter2/badge3x.png';
 var HomiesModBadge = 'https://itzalex.github.io/badgesusers/mod/badge3x.png';
@@ -51,10 +48,10 @@ var userIdsWithChatterinoContibuterBadge = [];
 var userIdsWithChatterinoDevBadge = [];
 var userIdsWithChatterinopepeBadge = [];
 //FFZ
-var FFZ1Badge = 'https://cdn.frankerfacez.com/badge/1/4';
-var FFZ2Badge = 'https://cdn.frankerfacez.com/badge/2/4';
-var FFZ3Badge = 'https://cdn.frankerfacez.com/badge/3/4';
-var FFZ4Badge = 'https://cdn.frankerfacez.com/badge/4/4';
+var FFZdeveloperBadge = 'https://cdn.frankerfacez.com/badge/1/4';
+var FFZBotBadge = 'https://cdn.frankerfacez.com/badge/2/4';
+var FFZSupporterBadge = 'https://cdn.frankerfacez.com/badge/3/4';
+var FFZSubwooferBadge = 'https://cdn.frankerfacez.com/badge/4/4';
 //Bots
 var ignoredUserIds = ['840051009', '754201843', '778353697', '1003451306','237719657', '100135110', '625016038', '46209051', '1564983', '105166207', '19264788', '216527497', '70885754', '52268235', '223196484', '95941264', '68136884', '865895441']; 
 
@@ -78,11 +75,10 @@ async function fetchFFZAPI() {
   try {
     const response = await fetch('https://api.frankerfacez.com/v1/badges');
     const data = await response.json();
-    const ffzUsers = data.users;
-    ffz1 = ffzUsers[1]
-    ffz2 = ffzUsers[2]
-    ffz3 = ffzUsers[3]
-    ffz4 = ffzUsers[1]
+    ffzdeveloper = data.users[1]
+    ffzBot = data.users[2]
+    ffzSupporter = data.users[3]
+    ffzSubwoofer = data.users[4]
 
   } catch (error) {
     console.error('Failed to Fetch FFZ', error);
@@ -137,7 +133,7 @@ async function loadHomiesSubBadges() {
     console.error('Fehler beim Laden der Homies-Badges:', error);
   }
 }
-
+  
 async function loadDankBadges() {
   try {
     const response = await fetch('Dank_badges.json');
@@ -187,7 +183,7 @@ function getBadgeNames(message) {
 
   for (let i = 0; i < badgeNames.length; i++) {
     if(badgeNames[i].includes("moderator")){
-      imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}" style="background: #00ad03; border-radius:20%;">`;
+      imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}" style="background: #00ad03; border-radius:10%;">`;
     }
     else if(badgeNames[i].includes("subscriber")){
       imgString += `<img class="badge" src="${SubBadgeDict[parseInt(message.split("badges=")[1].split("subscriber/")[1].match(/^\d+/)[0])]}">`;
@@ -422,6 +418,7 @@ socket.addEventListener('message', async event => {
   if (event.data.includes("PRIVMSG")) {
     const message = getMessage(event.data);
     const username = getUserName(event.data);
+    const username2 = getUserName(event.data).toLowerCase();
     const badgesInfo = getBadgeNames(event.data);
     const usernameColor = getUsernameColor(event.data);
 
@@ -434,7 +431,7 @@ socket.addEventListener('message', async event => {
       userId = userIdMatch[1];
     }
 
-    if (message.startsWith('!reloadoverlay')) {
+    if (message.startsWith('!lolnot reload')) {
       //handleChatCommand(message.trim());
       if (lolnotAdmins.includes(userId)){
         location.reload()
@@ -484,17 +481,17 @@ socket.addEventListener('message', async event => {
       }
 
       //FFZ
-      if (username && ffz1.includes(username)) {
-        badgesImg += `<img class="badge" src="${FFZ1Badge}" style="background-color: rgb(250, 175, 25); border-radius: 10%;">`;
+      if (username2 && ffzdeveloper.includes(username2)) {
+        badgesImg += `<img class="badge" src="${FFZdeveloperBadge}" style="background-color: rgb(250, 175, 25); border-radius: 10%;">`;
       }
-      if (username && ffz2.includes(username)) {
-        badgesImg += `<img class="badge" src="${FFZ2Badge}" style="background-color: rgb(89, 89, 89); border-radius: 10%;">`;
+      if (username2 && ffzBot.includes(username2)) {
+        badgesImg += `<img class="badge" src="${FFZBotBadge}" style="background-color: rgb(89, 89, 89); border-radius: 10%;">`;
       }
-      if (username && ffz3.includes(username)) {
-        badgesImg += `<img class="badge" src="${FFZ3Badge}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
+      if (username2 && ffzSupporter.includes(username2)) {
+        badgesImg += `<img class="badge" src="${FFZSupporterBadge}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
       }
-      if (username && ffz4.includes(username)) {
-        badgesImg += `<img class="badge" src="${FFZ4Badge}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
+      if (username2 && ffzSubwoofer.includes(username2)) {
+        badgesImg += `<img class="badge" src="${FFZSubwooferBadge}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
       }
 
       //dankchat
