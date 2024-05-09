@@ -15,7 +15,8 @@ var sevenTVBadge = 'https://cdn.7tv.app/badge/62f97c05e46eb00e438a696a/3x';
 var HomiesSubBadge = 'https://itzalex.github.io/badgesusers/supporter2/badge3x.png';
 var HomiesModBadge = 'https://itzalex.github.io/badgesusers/mod/badge3x.png';
 var HomiesSeniorModBadge = 'https://itzalex.github.io/badgesusers/senior_mod/badge3x.png';
-var HomiesSubBadgeOG = 'https://itzalex.github.io/badgesusers/supporter_founder2/badge3x.png';
+var HomiesSubBadgeFounder = 'https://itzalex.github.io/badgesusers/supporter_founder2/badge3x.png';
+var HomiesFounder = 'https://itzalex.github.io/badgesusers/founder2/badge3x.png';
 var HomiesDevBadge = 'https://itzalex.github.io/badgesusers/dev/badge3x.png';
 //Dankchat
 var DankChatBadge = 'https://flxrs.com/dankchat/badges/dank.png';
@@ -26,12 +27,6 @@ var DankChatqaBadge = 'https://flxrs.com/dankchat/badges/qa.png';
 var DankChatKKrikeyBadge = 'https://flxrs.com/dankchat/badges/kkrikey.png';
 var DankChatDevBadge = 'https://flxrs.com/dankchat/badges/gold.png';
 var DankChatContributorBadge = 'https://flxrs.com/dankchat/badges/contributor.png';
-//Homies
-var userIdsWithHomiesSubBadge = [];
-var userIdsWithHomiesModBadge = [];
-var userIdsWithHomiesSeniorModBadge = [];
-var userIdsWithHomiesSubOGBadge = [];
-var userIdsWithHomiesDevBadge = [];
 //Dankchat
 var userIdsWithDankBadge = [];
 var userIdsWithDankChatenteBadge = [];
@@ -41,12 +36,6 @@ var userIdsWithDankChatqaBadge = [];
 var userIdsWithDankChatkkrikeyBadge = [];
 var userIdsWithDankChatDeveloperBadge = [];
 var userIdsWithDankChatcontributorBadge = [];
-//Chatterino
-var userIdsWithChatterinoBadge = [];
-var userIdsWithtopdonaterChatterinoBadge = [];
-var userIdsWithChatterinoContibuterBadge = [];
-var userIdsWithChatterinoDevBadge = [];
-var userIdsWithChatterinopepeBadge = [];
 //FFZ
 var FFZdeveloperBadge = 'https://cdn.frankerfacez.com/badge/1/4';
 var FFZBotBadge = 'https://cdn.frankerfacez.com/badge/2/4';
@@ -57,6 +46,8 @@ var ignoredUserIds = ['840051009', '754201843', '778353697', '1003451306','23771
 
 const SubBadgeDict = {};
 var HomiesBadges = {};
+var DankBadges = {};
+
 
 async function fetchlolnotAPI() {
   try {
@@ -85,6 +76,90 @@ async function fetchFFZAPI() {
   }
 }
 
+async function fetchChatterino() {
+  try {
+    const response = await fetch('https://corsproxy.io/?https%3A%2F%2Fapi.chatterino.com%2Fbadges');
+    const data = await response.json();
+    userIdsWithChatterinoBadge = [];
+    userIdsWithtopdonaterChatterinoBadge = [];
+    userIdsWithChatterinoContibuterBadge = [];
+    userIdsWithChatterinoDevBadge = [];
+    userIdsWithChatterinopepeBadge = [];
+
+    for (const badge of data.badges) {
+      if (badge.tooltip === "Chatterino Top Donator") {
+        userIdsWithtopdonaterChatterinoBadge = badge.users;
+      } else if (badge.tooltip === "Chatterino Contributor") {
+        userIdsWithChatterinoContibuterBadge = badge.users;
+      } else if (badge.tooltip === "Chatterino Supporter") {
+        userIdsWithChatterinoBadge = badge.users;
+      } else if (badge.tooltip === "Chatterino Developer") {
+        userIdsWithChatterinoDevBadge = badge.users;
+      } else if (badge.tooltip === "Chatterino Special Pepe Badge") {
+        userIdsWithChatterinopepeBadge = badge.users;
+      }
+    }
+
+    for (const badge of data.badges) {
+      customBadges[badge.tooltip.toLowerCase()] = badge.image3;
+    }
+  } catch (error) {
+    console.error('Fehler beim Laden der Chatterino-Badges:', error);
+  }
+}
+
+async function fetchHomiesSubBadges() {
+  try {
+    const response = await fetch('https://corsproxy.io/?https%3A%2F%2Fraw.githubusercontent.com%2FitzAlex%2Fitzalex.github.io%2Fmaster%2Fbadges');
+    const data = await response.json();
+    userIdsWithHomiesDev = [];
+    userIdsWithHomiesSupporterFounder = [];
+    userIdsWithHomiesSupporter = [];
+    userIdsWithHomiesFounder = [];
+
+    for (const badge of data.badges) {
+      if (badge.tooltip === "Homies Developer") {
+        userIdsWithHomiesDev = badge.users;
+      } else if (badge.tooltip === "Homies Supporter (Founder)") {
+        userIdsWithHomiesSupporterFounder = badge.users;
+      } else if (badge.tooltip === "Homies Supporter") {
+        userIdsWithHomiesSupporter = badge.users;
+      } else if (badge.tooltip === "Homies Founder") {
+        userIdsWithHomiesFounder = badge.users;
+      }
+    }
+
+    for (const badge of data.badges) {
+      customBadges[badge.tooltip.toLowerCase()] = badge.image3;
+    }
+  } catch (error) {
+    console.error('Fehler beim Laden der Chatterino-Badges:', error);
+  }
+}
+
+async function fetchHomiesModBadges() {
+  try {
+    const response = await fetch('https://corsproxy.io/?https%3A%2F%2Fraw.githubusercontent.com%2FitzAlex%2Fitzalex.github.io%2Fmaster%2Fbadges2');
+    const data = await response.json();
+    userIdsWithHomiesMod = [];
+    userIdsWithHomiesSeniorMod = [];
+
+    for (const badge of data.badges) {
+      if (badge.tooltip === "Homies Mod") {
+        userIdsWithHomiesMod = badge.users;
+      } else if (badge.tooltip === "Senior Homies Mod") {
+        userIdsWithHomiesSeniorMod = badge.users;
+      }
+    }
+
+    for (const badge of data.badges) {
+      customBadges[badge.tooltip.toLowerCase()] = badge.image3;
+    }
+  } catch (error) {
+    console.error('Fehler beim Laden der Chatterino-Badges:', error);
+  }
+}
+
 async function fetchBadges() {
   try {
     const customResponse = await fetch(`badges.json`);
@@ -94,17 +169,17 @@ async function fetchBadges() {
   }
 } 
 
-async function loadChatterinoBadges() {
+async function fetchDankBadges() {
   try {
-    const response = await fetch('chatterino_badges.json');
+    const response = await fetch('https://corsproxy.io/?https%3A%2F%2Fflxrs.com%2Fapi%2Fbadges');
     const data = await response.json();
-    userIdsWithChatterinoBadge = data.userIdsWithChatterinoBadge;
-    userIdsWithtopdonaterChatterinoBadge = data.userIdsWithtopdonaterChatterinoBadge;
-    userIdsWithChatterinoContibuterBadge = data.userIdsWithChatterinoContibuterBadge;
-    userIdsWithChatterinoDevBadge = data.userIdsWithChatterinoDevBadge;
-    userIdsWithChatterinopepeBadge = data.userIdsWithChatterinopepeBadge;
+    data.forEach(badge => {
+      badge.users.forEach(userId => {
+        DankBadges[userId] = badge.url;
+      });
+    });
   } catch (error) {
-    console.error('Fehler beim Laden der Chatterino-Badges:', error);
+    console.error('Fehler beim Laden der Dank-Badges:', error);
   }
 }
 
@@ -117,37 +192,6 @@ async function fetchHomiesBadges() {
     }
   } catch (error) {
     console.error('Fehler beim Laden der Homies-Badges:', error);
-  }
-}
-
-async function loadHomiesSubBadges() {
-  try {
-    const response = await fetch('HomiesSub_badges.json');
-    const data = await response.json();
-    userIdsWithHomiesSubBadge = data.userIdsWithHomiesSubBadge;
-    userIdsWithHomiesModBadge = data.userIdsWithHomiesModBadge;
-    userIdsWithHomiesSeniorModBadge = data.userIdsWithHomiesSeniorModBadge;
-    userIdsWithHomiesSubOGBadge = data.userIdsWithHomiesSubOGBadge
-    userIdsWithHomiesDevBadge = data.userIdsWithHomiesDevBadge
-  } catch (error) {
-    console.error('Fehler beim Laden der Homies-Badges:', error);
-  }
-}
-  
-async function loadDankBadges() {
-  try {
-    const response = await fetch('Dank_badges.json');
-    const data = await response.json();
-    userIdsWithDankBadge = data.userIdsWithDankBadge;
-    userIdsWithDankChatenteBadge = data.userIdsWithDankChatenteBadge;
-    userIdsWithDankChatborgirBadge = data.userIdsWithDankChatborgirBadge;
-    userIdsWithDankChatmaxBadge = data.userIdsWithDankChatmaxBadge;
-    userIdsWithDankChatqaBadge = data.userIdsWithDankChatqaBadge;
-    userIdsWithDankChatkkrikeyBadge = data.userIdsWithDankChatkkrikeyBadge
-    userIdsWithDankChatDeveloperBadge = data.userIdsWithDankChatDeveloperBadge
-    userIdsWithDankChatcontributorBadge = data.userIdsWithDankChatcontributorBadge
-  } catch (error) {
-    console.error('Fehler beim Laden der Chatterino-Badges:', error);
   }
 }
 
@@ -306,6 +350,36 @@ function replaceEmotes(message, emoteLinks) {
   return newMessage.trim();
 }
 
+
+async function getAll7tvPaints() {
+  let results = await fetch('https://7tv.io/v3/gql', {
+    method: 'POST',
+
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify({
+      query: `query Cosmetics {
+        cosmetics {
+            paints {
+                id
+                kind
+                name
+                function
+                color
+                angle
+                shape
+                image_url
+                repeat
+            }
+        }
+    }`
+    })
+  })
+  let characters = await results.json();
+  console.log(characters.data)
+}
 const url = new URL(window.location.href);
 const searchParams = url.searchParams;
 index = 0
@@ -342,13 +416,10 @@ show_commands = searchParams.get('commands').toLowerCase();
 
 //link = `https://lellolik.de/lolnotchat?ch=${values['channel']}&si=${values['size']}&sh=${values['shadow']}&bg=${values['background']}&fo=${values['font']}&an=${values['animated']}&ba=${values['badges']}&sb=${values['special_badges']}&bo=${values['bots']}&co=${values['commands']}`;
 
-
-
-
-
-
 async function start(){
   loadingStatus = document.getElementById("loadingStatus");
+  loadingStatus.innerHTML = "Loading 7tv Paints"
+  await getAll7tvPaints();
   loadingStatus.innerHTML = "Loading Emotes"
   await fetchEmotes(channel);
   loadingStatus.innerHTML = "Twitch Badges"
@@ -356,14 +427,15 @@ async function start(){
   loadingStatus.innerHTML = "lolnot Badges"
   await fetchlolnotAPI();
   loadingStatus.innerHTML = "Chatterino Badges"
-  await loadChatterinoBadges();
+  await fetchChatterino();
   loadingStatus.innerHTML = "DankChat Badges"
-  await loadDankBadges();
+  await fetchDankBadges();
   loadingStatus.innerHTML = "FFZ Badges"
   await fetchFFZAPI();
   loadingStatus.innerHTML = "Homies Badges"
-  await loadHomiesSubBadges();
   await fetchHomiesBadges();
+  await fetchHomiesSubBadges();
+  await fetchHomiesModBadges();
   loadingStatus.innerHTML = "FFZ VIP / Mod Badges"
   await fetchFFZModVipBadges(channel);
   loadingStatus.innerHTML = "Sub Badges"
@@ -468,8 +540,8 @@ socket.addEventListener('message', async event => {
           }
     
           //dankchat
-          if (userId && userIdsWithDankBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${DankChatBadge}">`;
+          if (userId && userId in DankBadges) {
+            badgesImg += `<img class="badge" src="${DankBadges[userId]}">`;
           }
           if (userId && userIdsWithDankChatenteBadge.includes(userId)) {
             badgesImg += `<img class="badge" src="${DankChatenteBadge}">`;
@@ -494,23 +566,27 @@ socket.addEventListener('message', async event => {
           }
     
           //homies
-          if (userId && userIdsWithHomiesSubBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${HomiesSubBadge}">`;
-          }
-          if (userId && userIdsWithHomiesModBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${HomiesModBadge}">`;
-          }
-          if (userId && userIdsWithHomiesSeniorModBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${HomiesSeniorModBadge}">`;
-          }
-          if (userId && userIdsWithHomiesSubOGBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${HomiesSubBadgeOG}">`;
-          }
-    
           if (userId && userId in HomiesBadges) {
             badgesImg += `<img class="badge" src="${HomiesBadges[userId]}">`;
           }
-          
+          if (userId && userIdsWithHomiesSupporter.includes(userId)) {
+            badgesImg += `<img class="badge" src="${HomiesSubBadge}">`;
+          }
+          if (userId && userIdsWithHomiesMod.includes(userId)) {
+            badgesImg += `<img class="badge" src="${HomiesModBadge}">`;
+          }
+          if (userId && userIdsWithHomiesSeniorMod.includes(userId)) {
+            badgesImg += `<img class="badge" src="${HomiesSeniorModBadge}">`;
+          }
+          if (userId && userIdsWithHomiesSupporterFounder.includes(userId)) {
+            badgesImg += `<img class="badge" src="${HomiesSubBadgeFounder}">`;
+          }
+          if (userId && userIdsWithHomiesFounder.includes(userId)) {
+            badgesImg += `<img class="badge" src="${HomiesFounder}">`;
+          }
+          if (userId && userIdsWithHomiesDev.includes(userId)) {
+            badgesImg += `<img class="badge" src="${HomiesDevBadge}">`;
+          }
           //const sevenTVBadgeUrl = await fetch7tvBadge(userId);
           //if (sevenTVBadgeUrl) {
             //badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
