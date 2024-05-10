@@ -1,177 +1,76 @@
-body {
-    height: 100vh;
+@font-face {
+    font-family: noto;
+    src: url(fonts/Noto.ttf);
+}
+@font-face {
+    font-family: minecraft;
+    src: url(fonts/Minecraft.ttf);
+}
+@font-face {
+    font-family: shantell;
+    src: url(fonts/ShantellSans.ttf);
+}
+
+:root{
+    --text-size: 20px;
+    --text-shadow: 1px 1px 5px black;
+}
+
+body{
+    padding: 0;
     margin: 0;
+    background: transparent;
+    font-family: minecraft;
 }
-#main_container{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+#chat{
+    width: 100vw;
     height: 100vh;
-    margin: 0;
-    background: linear-gradient(40deg, #300033, #180033, #330021);
-}
-#container{
-    background: #000000;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 0%;
-    width: 0%;
-    border-radius: 3vh;
-    box-shadow: 0px 0px 30px black;
-    gap: 1vmin;
-    padding: 2vmin;
-    opacity: 0;
-
-    /* From https://css.glass */
-    background: rgba(0, 0, 0, 0.28);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(9.8px);
-    -webkit-backdrop-filter: blur(9.8px);
-    border: 1px solid rgba(0, 0, 0, 0.3);
-}
-#title{
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: 0vmin;
-    background: linear-gradient(40deg, #fb00ff, #8c00ff, #00d5ff);
-    background-clip: text;
-    color: transparent;
-}
-#twitch, #ig, #yt, #dc {
-    cursor: pointer;
-    border-radius: 3vh;
-    width: 100%;
-    font-size: 0vmin;
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-#twitch{
-    text-shadow: #850a9b 0px 0px 5vmin;
-    border: solid #d900ff 0.8vmin;
-    color: #d900ff;
     background: transparent;
-    box-shadow: inset 0px 0px 5vmin #850a9b, 0px 0px 5vmin #850a9b;
-}
-#twitch:hover {
-    cursor: pointer;
-    background: #d900ff;
-    color: #42004e;
-    border: solid #d900ff 10px;
-    box-shadow: #d900ff 0px 0px 20vmin;
-    transform: scale(1.01);
-}
-
-#ig{
-    text-shadow: #5109a3 0px 0px 5vmin;
-    border: solid #7700ff 0.8vmin;
-    color: #7700ff;
-    background: transparent;
-    box-shadow: inset 0px 0px 5vmin #5109a3, 0px 0px 5vmin #5109a3;
-}
-#ig:hover {
-    cursor: pointer;
-    background: #7700ff;
-    color: #120324;
-    border: solid #7700ff 10px;
-    box-shadow: #7700ff 0px 0px 20vmin;
-    transform: scale(1.01);
-}
-
-#yt{
-    text-shadow: #b30933 0px 0px 5vmin;
-    border: solid #ff0040 0.8vmin;
-    color: #ff0040;
-    background: transparent;
-    box-shadow: inset 0px 0px 5vmin #b30933, 0px 0px 5vmin #b30933;
-}
-#yt:hover {
-    cursor: pointer;
-    background: #ff0040;
-    color: #25030c;
-    border: solid #ff0040 10px;
-    box-shadow: #ff0040 0px 0px 20vmin;
-    transform: scale(1.01);
-}
-
-#dc{
-    text-shadow: #048099 0px 0px 5vmin;
-    border: solid #00d5ff 0.8vmin;
-    color: #00d5ff;
-    background: transparent;
-    box-shadow: inset 0px 0px 5vmin #048099, 0px 0px 5vmin #048099;
-}
-#dc:hover {
-    cursor: pointer;
-    background: #00d5ff;
-    color: #042d35;
-    border: solid #00d5ff 10px;
-    box-shadow: #00d5ff 0px 0px 20vmin;
-    transform: scale(1.01);
-}
-
-#dc_alert{
-    background: #000000;
-    display: none;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    height: 50%;
-    width: 50%;
-    border-radius: 3vh;
-    box-shadow: 0px 0px 30px black;
-    gap: 1vmin;
-    padding: 2vmin;
-    opacity: 0;
-}
-
-#dc_info_text{
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: 6vmin;
-    background: linear-gradient(0deg, #00d5ff, #002c35);
-    background-clip: text;
-    color: transparent;
-    text-align: center;
-    text-shadow: #00d5ff 0px 0px 5vmin;
-}
-
-#dc_escape{
-    cursor: pointer;
-    border-radius: 3vh;
-    width: 40%;
-    font-size: 5vmin;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    text-shadow: #00d5ff 0px 0px 5vmin;
-    border: solid #00d5ff 0.8vmin;
-    color: #00d5ff;
-    background: transparent;
-    box-shadow: inset 0px 0px 5vmin #00d5ff, 0px 0px 5vmin #00d5ff;
-}
-#dc_escape:hover {
-    cursor: pointer;
-    background: #00d5ff;
-    color: #000e11;
-    border: solid #00d5ff 10px;
-    box-shadow: #00d5ff 0px 0px 20vmin;
-    transform: scale(1.01);
-}
-
-*{
-    transition: ease-in-out all 0.2s;
-}
-#secret_btn{
-    background: transparent;
-    width: 10vmin;
-    height: 10vmin;
+    border: none;
+    color: #ffffff;
+    overflow: hidden;
+    resize: none;
     position: absolute;
-    right: 0;
-    bottom: 0;
+    top: 0;
+    left: 0;
+    font-size: var(--text-size);
+    font-optical-sizing: auto;
+    box-shadow: inset 0 0 100px #00ff80;
+}
+.emote{
+    height: var(--text-size);
+    margin-left: calc(var(--text-size) / 8);
+    margin-right: calc(var(--text-size) / 8);
+}
+.badge{
+    height: var(--text-size);
+    margin-left: calc(var(--text-size) / 5);
+
+    position: relative;
+    top: calc(var(--text-size) / 6);
+}
+.message{
+    filter: drop-shadow(var(--text-shadow));
+    margin: calc(var(--text-size) / 4.5);
+    width: fit-content;
+    overflow-wrap: break-word;
+}
+
+#loading{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+#loadingStatus{
+    background:#00000098;
+    padding: 3vmin;
+    font-size: 8vmin;
+    color: white;
+    border-radius: 3vmin;
+}
+#ppcircle{
+    width: 50vmin;
 }
