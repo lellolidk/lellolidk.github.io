@@ -48,7 +48,7 @@ const SubBadgeDict = {};
 var HomiesBadges = {};
 var DankBadges = {};
 var bttvBadges = {};
-
+let chattyBadges = {};
 
 async function fetchlolnotAPI() {
   try {
@@ -139,6 +139,28 @@ async function fetchChatterino() {
     }
   } catch (error) {
     console.error('Error while loading Chatterino Badges:', error);
+  }
+}
+
+async function fetchChattyBadges() {
+  try {
+    const response = await fetch('https://corsproxy.io/?https%3A%2F%2Ftduva.com%2Fres%2Fbadges');
+    const data = await response.json();
+    
+    const chattyBadges = {};
+
+    data.forEach(badge => {
+      const { usernames, image_url_4 } = badge;
+      usernames.forEach(username => {
+        chattyBadges[username] = image_url_4;
+      });
+    });
+
+    console.log('Chatty Badges:', chattyBadges);
+    return chattyBadges;
+  } catch (error) {
+    console.error('Fehler beim Laden der Chatty-Badges:', error);
+    return {};
   }
 }
 
@@ -457,6 +479,8 @@ async function start(){
   await fetchFFZAPI();
   loadingStatus.innerHTML = "BTTV Badges"
   await fetchBTTVBadges();
+  loadingStatus.innerHTML = "Chatty Badges"
+  await fetchChattyBadges();
   loadingStatus.innerHTML = "Homies Badges"
   await fetchHomiesBadges();
   await fetchHomiesSubBadges();
@@ -486,7 +510,7 @@ async function fetch7tvBadge(userid) {
   SevenTvID = data.user.id
   //console.log(SevenTvID)
   //get subscription status from 7tv id
-  UserCosmetics = await fetch(`https://7tv.io/v3/gql`, {
+  response = await fetch(`https://7tv.io/v3/gql`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -512,8 +536,8 @@ async function fetch7tvBadge(userid) {
                   `,
     }),
   });
-  hurensohn = await UserCosmetics.json()
-  //console.log(hurensohn)
+  UserCosmetics = await response.json();
+  console.log(UserCosmetics.data)
 }
 
 socket.addEventListener('message', async event => {
@@ -631,6 +655,12 @@ socket.addEventListener('message', async event => {
             badgesImg += `<img class="badge" src="${bttvBadges[username]}">`;
           }
 
+          if (userId && username2 in chattyBadges) {
+            badgesImg += `<img class="badge" src="${chattyBadges[username2]}">`;
+        } else {
+            console.log("Username not found in chattyBadges.");
+        }
+
           //homies
           if (userId && userId in HomiesBadges) {
             badgesImg += `<img class="badge" src="${HomiesBadges[userId]}">`;
@@ -653,28 +683,27 @@ socket.addEventListener('message', async event => {
           if (userId && userIdsWithHomiesDev.includes(userId)) {
             badgesImg += `<img class="badge" src="${HomiesDevBadge}">`;
           }
-          const sevenTVBadgeUrl = await fetch7tvBadge(userId);
-          if (sevenTVBadgeUrl) {
-            badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
-          }
+
+          //const sevenTVBadgeUrl = await fetch7tvBadge(userId);
+          //if (sevenTVBadgeUrl) {
+          //  badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
+          //}
         }
     
         if(message.includes("ACTION")){
           document.getElementById("chat").innerHTML += (
-            `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}</span><span ${usernameStyle}>${replaceEmotes(message.slice(1).slice(0, -1).slice(0, -1).slice(0, -1).replace("ACTION",""), emote_links)}</span><br>`
+            `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}</span> <span ${usernameStyle}>${replaceEmotes(message.slice(1).slice(0, -1).slice(0, -1).slice(0, -1).replace("ACTION",""), emote_links)}</span><br>`
           );
         }
         else{   
           document.getElementById("chat").innerHTML += (
-            `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}:</span><span style="color: white;">${replaceEmotes(message, emote_links)}</span></p>`
+            `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}: </span><span style="color: white;">${replaceEmotes(message, emote_links)}</span></p>`
           );
         }
       }
     
   }
 });
-
-// wenn du wieder da bist call mich
 
 function scrollToBottom(){
   document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
