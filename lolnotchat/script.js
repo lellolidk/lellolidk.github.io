@@ -27,7 +27,12 @@ var DankChatqaBadge = 'https://flxrs.com/dankchat/badges/qa.png';
 var DankChatKKrikeyBadge = 'https://flxrs.com/dankchat/badges/kkrikey.png';
 var DankChatDevBadge = 'https://flxrs.com/dankchat/badges/gold.png';
 var DankChatContributorBadge = 'https://flxrs.com/dankchat/badges/contributor.png';
-//Dankchat
+//FFZ
+var FFZdeveloperBadge = 'https://cdn.frankerfacez.com/badge/1/4';
+var FFZBotBadge = 'https://cdn.frankerfacez.com/badge/2/4';
+var FFZSupporterBadge = 'https://cdn.frankerfacez.com/badge/3/4';
+var FFZSubwooferBadge = 'https://cdn.frankerfacez.com/badge/4/4';
+
 var userIdsWithDankBadge = [];
 var userIdsWithDankChatenteBadge = [];
 var userIdsWithDankChatborgirBadge = [];
@@ -36,17 +41,13 @@ var userIdsWithDankChatqaBadge = [];
 var userIdsWithDankChatkkrikeyBadge = [];
 var userIdsWithDankChatDeveloperBadge = [];
 var userIdsWithDankChatcontributorBadge = [];
-//FFZ
-var FFZdeveloperBadge = 'https://cdn.frankerfacez.com/badge/1/4';
-var FFZBotBadge = 'https://cdn.frankerfacez.com/badge/2/4';
-var FFZSupporterBadge = 'https://cdn.frankerfacez.com/badge/3/4';
-var FFZSubwooferBadge = 'https://cdn.frankerfacez.com/badge/4/4';
 //Bots
 var ignoredUserIds = ['840051009', '754201843', '778353697', '1003451306','237719657', '100135110', '625016038', '46209051', '1564983', '105166207', '19264788', '216527497', '70885754', '52268235', '223196484', '95941264', '68136884', '865895441']; 
 
 const SubBadgeDict = {};
 var HomiesBadges = {};
 var DankBadges = {};
+var bttvBadges = {};
 
 
 async function fetchlolnotAPI() {
@@ -58,7 +59,7 @@ async function fetchlolnotAPI() {
     lolnotFounders = data.founder;
     botsIds = data.bot;
   } catch (error) {
-    console.error('Failed to Fetch lolnot', error);
+    console.error('Error while loading lolnot Badges', error);
   }
 }
 
@@ -72,7 +73,40 @@ async function fetchFFZAPI() {
     ffzSubwoofer = data.users[4]
 
   } catch (error) {
-    console.error('Failed to Fetch FFZ', error);
+    console.error('Error while loading ffz badges', error);
+  }
+}
+
+async function fetchDankBadges() {
+  try {
+    const response = await fetch('https://corsproxy.io/?https%3A%2F%2Fflxrs.com%2Fapi%2Fbadges');
+    const data = await response.json();
+    data.forEach(badge => {
+      badge.users.forEach(userId => {
+        DankBadges[userId] = badge.url;
+      });
+    });
+  } catch (error) {
+    console.error('Fehler beim Laden der Dank-Badges:', error);
+  }
+}
+
+async function fetchBTTVBadges() {
+  try {
+    const response = await fetch('https://api.betterttv.net/3/cached/badges/twitch');
+    const data = await response.json();
+    
+    data.forEach(badge => {
+      const username = badge.displayName.toLowerCase();
+      const badgeUrl = badge.badge.svg;
+      bttvBadges[username] = badgeUrl;
+    });
+
+    console.log('BTTV Badges:', bttvBadges);
+    return bttvBadges;
+  } catch (error) {
+    console.error('Fehler beim Laden der BTTV-Badges:', error);
+    return {};
   }
 }
 
@@ -104,7 +138,7 @@ async function fetchChatterino() {
       customBadges[badge.tooltip.toLowerCase()] = badge.image3;
     }
   } catch (error) {
-    console.error('Fehler beim Laden der Chatterino-Badges:', error);
+    console.error('Error while loading Chatterino Badges:', error);
   }
 }
 
@@ -133,7 +167,7 @@ async function fetchHomiesSubBadges() {
       customBadges[badge.tooltip.toLowerCase()] = badge.image3;
     }
   } catch (error) {
-    console.error('Fehler beim Laden der Chatterino-Badges:', error);
+    console.error('Error while loading Homies Sub Badges:', error);
   }
 }
 
@@ -156,30 +190,7 @@ async function fetchHomiesModBadges() {
       customBadges[badge.tooltip.toLowerCase()] = badge.image3;
     }
   } catch (error) {
-    console.error('Fehler beim Laden der Chatterino-Badges:', error);
-  }
-}
-
-async function fetchBadges() {
-  try {
-    const customResponse = await fetch(`badges.json`);
-    customBadges = await customResponse.json();
-  } catch (error) {
-    console.error(error);
-  }
-} 
-
-async function fetchDankBadges() {
-  try {
-    const response = await fetch('https://corsproxy.io/?https%3A%2F%2Fflxrs.com%2Fapi%2Fbadges');
-    const data = await response.json();
-    data.forEach(badge => {
-      badge.users.forEach(userId => {
-        DankBadges[userId] = badge.url;
-      });
-    });
-  } catch (error) {
-    console.error('Fehler beim Laden der Dank-Badges:', error);
+    console.error('Error while loading Homies Mod Badges:', error);
   }
 }
 
@@ -194,6 +205,15 @@ async function fetchHomiesBadges() {
     console.error('Fehler beim Laden der Homies-Badges:', error);
   }
 }
+
+async function fetchBadges() {
+  try {
+    const customResponse = await fetch(`badges.json`);
+    customBadges = await customResponse.json();
+  } catch (error) {
+    console.error(error);
+  }
+} 
 
 function getUserName(message) {
   const parts = message.split('display-name=');
@@ -378,8 +398,9 @@ async function getAll7tvPaints() {
     })
   })
   let characters = await results.json();
-  console.log(characters.data)
+  //console.log(characters.data)
 }
+
 const url = new URL(window.location.href);
 const searchParams = url.searchParams;
 index = 0
@@ -418,6 +439,8 @@ show_commands = searchParams.get('commands').toLowerCase();
 
 async function start(){
   loadingStatus = document.getElementById("loadingStatus");
+  loadingStatus.innerHTML = "Sub Badges"
+  await fetchSubBadges(channel);
   loadingStatus.innerHTML = "Loading 7tv Paints"
   await getAll7tvPaints();
   loadingStatus.innerHTML = "Loading Emotes"
@@ -432,14 +455,14 @@ async function start(){
   await fetchDankBadges();
   loadingStatus.innerHTML = "FFZ Badges"
   await fetchFFZAPI();
+  loadingStatus.innerHTML = "BTTV Badges"
+  await fetchBTTVBadges();
   loadingStatus.innerHTML = "Homies Badges"
   await fetchHomiesBadges();
   await fetchHomiesSubBadges();
   await fetchHomiesModBadges();
   loadingStatus.innerHTML = "FFZ VIP / Mod Badges"
   await fetchFFZModVipBadges(channel);
-  loadingStatus.innerHTML = "Sub Badges"
-  await fetchSubBadges(channel);
   loadingStatus.remove()
   document.getElementById("loading").remove()
   document.getElementById("chat").style.boxShadow = "none"
@@ -455,6 +478,43 @@ socket.addEventListener('open', () =>{
   socket.send(`CAP REQ :twitch.tv/commands twitch.tv/membership twitch.tv/tags`);
   document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
 })
+
+async function fetch7tvBadge(userid) {
+  //get the 7tv id from twitch id
+  response = await fetch(`https://corsproxy.io/?https%3A%2F%2F7tv.io%2Fv3%2Fusers%2Ftwitch%2F${userid}`)
+  data = await response.json()
+  SevenTvID = data.user.id
+  //console.log(SevenTvID)
+  //get subscription status from 7tv id
+  UserCosmetics = await fetch(`https://7tv.io/v3/gql`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      operationName: 'GetUserCosmetics',
+      variables: {
+        id: String(SevenTvID),
+      },
+      query: `
+                      query GetUserCosmetics($id: ObjectID!) {
+                          user(id: $id) {
+                              id
+                              cosmetics {
+                                  id
+                                  kind
+                                  selected
+                                  __typename
+                              }
+                              __typename
+                          }
+                      }
+                  `,
+    }),
+  });
+  hurensohn = await UserCosmetics.json()
+  //console.log(hurensohn)
+}
 
 socket.addEventListener('message', async event => {
   if (event.data.includes("PING")) {
@@ -538,6 +598,8 @@ socket.addEventListener('message', async event => {
           if (username2 && ffzSubwoofer.includes(username2)) {
             badgesImg += `<img class="badge" src="${FFZSubwooferBadge}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
           }
+
+
     
           //dankchat
           if (userId && userId in DankBadges) {
@@ -564,7 +626,11 @@ socket.addEventListener('message', async event => {
           if (userId && userIdsWithDankChatcontributorBadge.includes(userId)) {
             badgesImg += `<img class="badge" src="${DankChatContributorBadge}">`;
           }
-    
+
+          if (username && username in bttvBadges) {
+            badgesImg += `<img class="badge" src="${bttvBadges[username]}">`;
+          }
+
           //homies
           if (userId && userId in HomiesBadges) {
             badgesImg += `<img class="badge" src="${HomiesBadges[userId]}">`;
@@ -587,10 +653,10 @@ socket.addEventListener('message', async event => {
           if (userId && userIdsWithHomiesDev.includes(userId)) {
             badgesImg += `<img class="badge" src="${HomiesDevBadge}">`;
           }
-          //const sevenTVBadgeUrl = await fetch7tvBadge(userId);
-          //if (sevenTVBadgeUrl) {
-            //badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
-          //}
+          const sevenTVBadgeUrl = await fetch7tvBadge(userId);
+          if (sevenTVBadgeUrl) {
+            badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
+          }
         }
     
         if(message.includes("ACTION")){
@@ -607,6 +673,8 @@ socket.addEventListener('message', async event => {
     
   }
 });
+
+// wenn du wieder da bist call mich
 
 function scrollToBottom(){
   document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
