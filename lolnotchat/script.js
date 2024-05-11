@@ -357,20 +357,39 @@ async function fetchFFZModVipBadges(channel){
   catch(error){
   }
 }
-
 async function fetchSubBadges(channel){
   try{
-    const response = await fetch(`https://api.ivr.fi/v2/twitch/badges/channel?login=${channel}`);
-    const data = await response.json();
-    customBadges['subscriber'] = data[0].versions[0].image_url_4x;
+    // Zuerst den Kanal abrufen, um die ID zu erhalten
+    const channelResponse = await fetch(`https://api.twitch.tv/helix/users?login=${channel}`, {
+      headers: {
+        'Client-ID': process.env.clientid,
+        'Authorization': 'Bearer ' + process.env.token
+      }
+    });
+    const channelData = await channelResponse.json();
+    const channelId = channelData.data[0].id;
 
-    for (const version of data[0].versions) {
-      const id = version.id;
-      const imageUrl = version.image_url_4x;
-      SubBadgeDict[id] = imageUrl;
+    // Dann die Badges abrufen
+    const response = await fetch(`https://api.twitch.tv/helix/chat/badges?broadcaster_id=${channelId}`, {
+      headers: {
+        'Client-ID': process.env.clientid,
+        'Authorization': 'Bearer ' + process.env.token
+      }
+    });
+    const data = await response.json();
+
+    for (const badgeSet of data.data) {
+      if (badgeSet.set_id === 'subscriber') {
+        for (const version of badgeSet.versions) {
+          const id = version.id;
+          const imageUrl = version.image_url_4x;
+          SubBadgeDict[id] = imageUrl;
+        }
+      }
     }
   }
   catch(error){
+    console.error('Fehler beim Abrufen der Subscriber-Badges:', error);
   }
 }
 
