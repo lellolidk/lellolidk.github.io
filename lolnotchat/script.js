@@ -429,25 +429,49 @@ async function getAll7tvPaints() {
     },
 
     body: JSON.stringify({
-      query: `query Cosmetics {
-        cosmetics {
-            paints {
-                id
-                kind
-                name
-                function
+      query: `
+query GetCosmestics($list: [ObjectID!]) {
+    cosmetics(list: $list) {
+        paints {
+            id
+            kind
+            name
+            function
+            color
+            angle
+            shape
+            image_url
+            repeat
+            stops {
+                at
                 color
-                angle
-                shape
-                image_url
-                repeat
+                __typename
             }
+            shadows {
+                x_offset
+                y_offset
+                radius
+                color
+                __typename
+            }
+            __typename
         }
-    }`
+        badges {
+            id
+            kind
+            name
+            tooltip
+            tag
+            __typename
+        }
+        __typename
+    }
+}
+`,
     })
   })
   let characters = await results.json();
-  //console.log(characters.data)
+  console.log(characters.data)
 }
 
 const url = new URL(window.location.href);
@@ -530,7 +554,59 @@ socket.addEventListener('open', () =>{
   document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
 })
 
+async function fetch7tvBadge(userid) {
+  //get the 7tv id from twitch id
+  response = await fetch(`https://corsproxy.io/?https%3A%2F%2F7tv.io%2Fv3%2Fusers%2Ftwitch%2F${userid}`)
+  data = await response.json()
+  SevenTvID = data.user.id
 
+  response = await fetch(`https://corsproxy.io/?https%3A%2F%2Fegvault.7tv.io%2Fv1%2Fsubscriptions%2F${SevenTvID}`)
+  data = await response.json()
+
+  if (data.active == false){
+    return;
+  }
+
+  //console.log(SevenTvID)
+  //get subscription status from 7tv id
+  response = await fetch(`https://7tv.io/v3/gql`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      operationName: 'GetUserCosmetics',
+      variables: {
+        id: String(SevenTvID),
+      },
+      query: `
+                      query GetUserCosmetics($id: ObjectID!) {
+                          user(id: $id) {
+                              id
+                              cosmetics {
+                                  id
+                                  kind
+                                  selected
+                                  __typename
+                              }
+                              __typename
+                          }
+                      }
+                  `,
+    }),
+  });
+  UserCosmetics = await response.json();
+  console.log(UserCosmetics)
+
+  //find the cosmetic with selected: true and kind:"BADGE"
+  for (cosmetic of UserCosmetics.data.user.cosmetics) {
+    console.log(cosmetic)
+    if (cosmetic.selected == true && cosmetic.kind == "BADGE") {
+      SevenTvBadgeId = cosmetic.id;
+      return `https://cdn.7tv.app/badge/${cosmetic.id}/3x`;
+    }
+  }
+}
 
 socket.addEventListener('message', async event => {
   if (event.data.includes("PING")) {
@@ -566,7 +642,7 @@ socket.addEventListener('message', async event => {
     
         let badgesImg = badgesInfo;
         
-        if(show_badges == "1"){// Überprüfen ob Bages gezeigt werden sollen und sie hinzufügen
+        if(show_badges == "1"){// ÃœberprÃ¼fen ob Bages gezeigt werden sollen und sie hinzufÃ¼gen
     
           //lolnot
           if (userId && lolnotAdmins.includes(userId)) {
@@ -676,10 +752,10 @@ socket.addEventListener('message', async event => {
             badgesImg += `<img class="badge" src="${HomiesDevBadge}">`;
           }
 
-          //const sevenTVBadgeUrl = await fetch7tvBadge(userId);
-          //if (sevenTVBadgeUrl) {
-            //badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
-          //}
+          const sevenTVBadgeUrl = await fetch7tvBadge(userId);
+          if (sevenTVBadgeUrl) {
+            badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
+          }
         }
     
         if(message.includes("ACTION")){
