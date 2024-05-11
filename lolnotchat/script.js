@@ -99,7 +99,7 @@ async function fetchBTTVBadges() {
       bttvBadges[username] = badgeUrl;
     });
 
-    console.log('BTTV Badges:', bttvBadges);
+    //console.log('BTTV Badges:', bttvBadges);
     return bttvBadges;
   } catch (error) {
     console.error('Fehler beim Laden der BTTV-Badges:', error);
@@ -153,7 +153,7 @@ async function fetchChattyBadges() {
       });
     });
 
-    console.log('Chatty Badges:', chattyBadges);
+    //console.log('Chatty Badges:', chattyBadges);
     return chattyBadges;
   } catch (error) {
     console.error('Fehler beim Laden der Chatty-Badges:', error);
