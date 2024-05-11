@@ -356,21 +356,19 @@ async function fetchFFZModVipBadges(channel){
 }
 async function fetchSubBadges(channel){
   try{
-    // Zuerst den Kanal abrufen, um die ID zu erhalten
     const channelResponse = await fetch(`https://api.twitch.tv/helix/users?login=${channel}`, {
       headers: {
-        'Client-ID': process.env.TWITCH_CLIENTID,
-        'Authorization': 'Bearer ' + process.env.TWITCH_TOKEN
+        'Client-ID': 'gp762nuuoqcoxypju8c569th9wz7q5',
+        'Authorization': 'Bearer vh7kq5y8raig9rko5byve6zcs6s1yg'
       }
     });
     const channelData = await channelResponse.json();
     const channelId = channelData.data[0].id;
 
-    // Dann die Badges abrufen
     const response = await fetch(`https://api.twitch.tv/helix/chat/badges?broadcaster_id=${channelId}`, {
       headers: {
-        'Client-ID': process.env.TWITCH_CLIENTID,
-        'Authorization': 'Bearer ' + process.env.TWITCH_TOKEN
+        'Client-ID': 'gp762nuuoqcoxypju8c569th9wz7q5',
+        'Authorization': 'Bearer vh7kq5y8raig9rko5byve6zcs6s1yg'
       }
     });
     const data = await response.json();
