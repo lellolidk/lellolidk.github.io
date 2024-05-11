@@ -341,19 +341,32 @@ async function fetchEmotes(){
 }
 
 async function fetchFFZModVipBadges(channel){
-  try{
+  try {
     const response = await fetch(`https://api.frankerfacez.com/v1/room/${channel}`);
     const data = await response.json();
-    try{
-      customBadges['moderator'] = data.room.mod_urls[4];
-    }catch(error){}
-    try{
-      customBadges['vip'] = data.room.vip_badge[4];
-    }catch(error){}
-  }
-  catch(error){
+
+    if (data.room.mod_urls) {
+      for (let i = 4; i >= 1; i--) {
+        if (data.room.mod_urls[i]) {
+          customBadges['moderator'] = data.room.mod_urls[i];
+          break;
+        }
+      }
+    }
+
+    if (data.room.vip_badge) {
+      for (let i = 4; i >= 1; i--) {
+        if (data.room.vip_badge[i]) {
+          customBadges['vip'] = data.room.vip_badge[i];
+          break;
+        }
+      }
+    }
+  } catch(error) {
+    console.error('Fehler beim Abrufen der FFZ-Mod- und VIP-Badges:', error);
   }
 }
+
 async function fetchSubBadges(channel){
   try{
     const channelResponse = await fetch(`https://api.twitch.tv/helix/users?login=${channel}`, {
@@ -517,42 +530,7 @@ socket.addEventListener('open', () =>{
   document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
 })
 
-async function fetch7tvBadge(userid) {
-  //get the 7tv id from twitch id
-  response = await fetch(`https://corsproxy.io/?https%3A%2F%2F7tv.io%2Fv3%2Fusers%2Ftwitch%2F${userid}`)
-  data = await response.json()
-  SevenTvID = data.user.id
-  //console.log(SevenTvID)
-  //get subscription status from 7tv id
-  response = await fetch(`https://7tv.io/v3/gql`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      operationName: 'GetUserCosmetics',
-      variables: {
-        id: String(SevenTvID),
-      },
-      query: `
-                      query GetUserCosmetics($id: ObjectID!) {
-                          user(id: $id) {
-                              id
-                              cosmetics {
-                                  id
-                                  kind
-                                  selected
-                                  __typename
-                              }
-                              __typename
-                          }
-                      }
-                  `,
-    }),
-  });
-  UserCosmetics = await response.json();
-  console.log(UserCosmetics.data)
-}
+
 
 socket.addEventListener('message', async event => {
   if (event.data.includes("PING")) {
@@ -700,7 +678,7 @@ socket.addEventListener('message', async event => {
 
           //const sevenTVBadgeUrl = await fetch7tvBadge(userId);
           //if (sevenTVBadgeUrl) {
-          //  badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
+            //badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
           //}
         }
     
