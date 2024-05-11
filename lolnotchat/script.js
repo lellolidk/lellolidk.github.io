@@ -9,8 +9,6 @@ var ChatterinoTopDonaterBadge = 'https://fourtf.com/chatterino/badges/topd3x.png
 var ChatterinoContributerBadge = 'https://fourtf.com/chatterino/badges/helper3x.png';
 var ChatterinoDevBadge = 'https://fourtf.com/chatterino/badges/dev3x.png';
 var ChatterinoPepeBadge = 'https://fourtf.com/chatterino/badges/pepe3x.png';
-//7tv
-var sevenTVBadge = 'https://cdn.7tv.app/badge/62f97c05e46eb00e438a696a/3x';
 //Homies
 var HomiesSubBadge = 'https://itzalex.github.io/badgesusers/supporter2/badge3x.png';
 var HomiesModBadge = 'https://itzalex.github.io/badgesusers/mod/badge3x.png';
@@ -32,7 +30,6 @@ var FFZdeveloperBadge = 'https://cdn.frankerfacez.com/badge/1/4';
 var FFZBotBadge = 'https://cdn.frankerfacez.com/badge/2/4';
 var FFZSupporterBadge = 'https://cdn.frankerfacez.com/badge/3/4';
 var FFZSubwooferBadge = 'https://cdn.frankerfacez.com/badge/4/4';
-
 var userIdsWithDankBadge = [];
 var userIdsWithDankChatenteBadge = [];
 var userIdsWithDankChatborgirBadge = [];
@@ -362,8 +359,8 @@ async function fetchSubBadges(channel){
     // Zuerst den Kanal abrufen, um die ID zu erhalten
     const channelResponse = await fetch(`https://api.twitch.tv/helix/users?login=${channel}`, {
       headers: {
-        'Client-ID': process.env.clientid,
-        'Authorization': 'Bearer ' + process.env.token
+        'Client-ID': process.env.TWITCH_CLIENTID,
+        'Authorization': 'Bearer ' + process.env.TWITCH_TOKEN
       }
     });
     const channelData = await channelResponse.json();
@@ -372,8 +369,8 @@ async function fetchSubBadges(channel){
     // Dann die Badges abrufen
     const response = await fetch(`https://api.twitch.tv/helix/chat/badges?broadcaster_id=${channelId}`, {
       headers: {
-        'Client-ID': process.env.clientid,
-        'Authorization': 'Bearer ' + process.env.token
+        'Client-ID': process.env.TWITCH_CLIENTID,
+        'Authorization': 'Bearer ' + process.env.TWITCH_TOKEN
       }
     });
     const data = await response.json();
