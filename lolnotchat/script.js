@@ -290,6 +290,16 @@ function cleanup() {
 
 
 async function fetchEmotes(){
+
+  const channelResponse = await fetch(`https://api.twitch.tv/helix/users?login=${channel}`, {
+    headers: {
+      'Client-ID': 'gp762nuuoqcoxypju8c569th9wz7q5',
+      'Authorization': 'Bearer vh7kq5y8raig9rko5byve6zcs6s1yg'
+    }
+  });
+  const channelData = await channelResponse.json();
+  const channelId = channelData.data[0].id;
+
   //Emotes
   try {
     const response = await fetch(`https://emotes.crippled.dev/v1/channel/${channel}/all`);
@@ -303,10 +313,15 @@ async function fetchEmotes(){
 
   //Global
   try {
-    const response = await fetch(`https://emotes.crippled.dev/v1/global/7tv`);
+    const response = await fetch(`https://corsproxy.io/?https%3A%2F%2F7tv.io%2Fv3%2Fusers%2Ftwitch%2F${channelId}`);
     const data = await response.json();
-    for (let i = 0; i < data.length; i++){
-      emote_links[data[i].code] = data[i].urls[1].url
+    
+    if (data.emote_set && data.emote_set.emotes) {
+      data.emote_set.emotes.forEach(emote => {
+        if (emote.host && emote.host.url) {
+          emote_links[emote.name] = emote.host.url;
+        }
+      });
     }
   } catch(error) {
     console.error(error);
