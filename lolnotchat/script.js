@@ -691,7 +691,10 @@ socket.addEventListener('message', async event => {
             badgesImg += `<img class="badge" src="${FFZSubwooferBadge}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
           }
 
-
+          const sevenTVBadgeUrl = await fetch7tvBadge(userId);
+          if (sevenTVBadgeUrl) {
+            badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
+          }
     
           //dankchat
           if (userId && userId in DankBadges) {
@@ -750,11 +753,6 @@ socket.addEventListener('message', async event => {
           }
           if (userId && userIdsWithHomiesDev.includes(userId)) {
             badgesImg += `<img class="badge" src="${HomiesDevBadge}">`;
-          }
-
-          const sevenTVBadgeUrl = await fetch7tvBadge(userId);
-          if (sevenTVBadgeUrl) {
-            badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
           }
         }
     
