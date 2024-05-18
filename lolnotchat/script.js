@@ -2,7 +2,9 @@ var emote_links = {};
 var customBadges = {};
 var AdminBadge = 'https://lellolidk.de/img/lolnotAdmin.png';
 var ModBadge = 'https://lellolidk.de/img/lolnotMod.png';
+var ContibutorBadge = 'https://lellolidk.de/img/lolnotContributor.png';
 var FounderBadge = 'https://lellolidk.de/img/lolnotFounder.png';
+var SubBadge = '';
 //Chatterino
 var ChatterinoBadge = 'https://fourtf.com/chatterino/badges/supporter3x.png';
 var ChatterinoTopDonaterBadge = 'https://fourtf.com/chatterino/badges/topd3x.png';
@@ -30,6 +32,21 @@ var FFZdeveloperBadge = 'https://cdn.frankerfacez.com/badge/1/4';
 var FFZBotBadge = 'https://cdn.frankerfacez.com/badge/2/4';
 var FFZSupporterBadge = 'https://cdn.frankerfacez.com/badge/3/4';
 var FFZSubwooferBadge = 'https://cdn.frankerfacez.com/badge/4/4';
+//Chatsen
+var chatsen_developer = "https://raw.githubusercontent.com/chatsen/resources/master/assets/nagato.gif";
+var chatsen_early_supporter = "https://raw.githubusercontent.com/chatsen/resources/master/assets/early_supporter.png";
+var chatsen_early_bird = "https://raw.githubusercontent.com/chatsen/resources/master/assets/old_advice.png";
+var chatsen_performance_artist = "https://raw.githubusercontent.com/chatsen/resources/master/assets/CrayonTime.gif";
+var chatsen_patreon_tier1 = "https://raw.githubusercontent.com/chatsen/resources/master/assets/tier1.png";
+var chatsen_patreon_tier1s = "https://raw.githubusercontent.com/chatsen/resources/master/assets/tier1s.png";
+var chatsen_patreon_tier2 = "https://raw.githubusercontent.com/chatsen/resources/master/assets/tier2.png";
+var chatsen_patreon_tier2s = "https://raw.githubusercontent.com/chatsen/resources/master/assets/tier2s.png";
+var chatsen_patreon_tier3 = "https://raw.githubusercontent.com/chatsen/resources/master/assets/tier3.png";
+var chatsen_patreon_tier3s = "https://raw.githubusercontent.com/chatsen/resources/master/assets/tier3s.png";
+var chatsen_patreon_tier4 = "https://raw.githubusercontent.com/chatsen/resources/master/assets/tier4.png";
+var chatsen_test_animated = "https://raw.githubusercontent.com/chatsen/resources/master/assets/tier3a.gif";
+var chatsen_relaxo = "https://raw.githubusercontent.com/chatsen/resources/master/assets/relaxo.png";
+//hurensohn
 var userIdsWithDankBadge = [];
 var userIdsWithDankChatenteBadge = [];
 var userIdsWithDankChatborgirBadge = [];
@@ -42,10 +59,10 @@ var userIdsWithDankChatcontributorBadge = [];
 var ignoredUserIds = ['840051009', '754201843', '778353697', '1003451306','237719657', '100135110', '625016038', '46209051', '1564983', '105166207', '19264788', '216527497', '70885754', '52268235', '223196484', '95941264', '68136884', '865895441']; 
 
 const SubBadgeDict = {};
+let SubEmoteDict = {};
 var HomiesBadges = {};
 var DankBadges = {};
 var bttvBadges = {};
-let chattyBadges = {};
 
 async function fetchlolnotAPI() {
   try {
@@ -53,7 +70,9 @@ async function fetchlolnotAPI() {
     const data = await response.json();
     lolnotAdmins = data.admin;
     lolnotMods = data.mod;
+    lolnotContributor = data.contributor;
     lolnotFounders = data.founder;
+    lolnotSub = data.sub;
     botsIds = data.bot;
   } catch (error) {
     console.error('Error while loading lolnot Badges', error);
@@ -87,6 +106,7 @@ async function fetchDankBadges() {
     console.error('Fehler beim Laden der Dank-Badges:', error);
   }
 }
+
 
 async function fetchBTTVBadges() {
   try {
@@ -139,17 +159,40 @@ async function fetchChatterino() {
   }
 }
 
+
 async function fetchChattyBadges() {
   try {
-    const response = await fetch('https://corsproxy.io/?https%3A%2F%2Ftduva.com%2Fres%2Fbadges');
+    const response = await fetch('');
     const data = await response.json();
-    
-    const chattyBadges = {};
+    userIdsWith = [];
+    userIdsWithHomiesSeniorMod = [];
 
-    data.forEach(badge => {
-      const { usernames, image_url_4 } = badge;
-      usernames.forEach(username => {
-        chattyBadges[username] = image_url_4;
+    for (const badge of data.badges) {
+      if (badge.tooltip === "Homies Mod") {
+        userIdsWithHomiesMod = badge.users;
+      } else if (badge.tooltip === "Senior Homies Mod") {
+        userIdsWithHomiesSeniorMod = badge.users;
+      }
+    }
+
+    for (const badge of data.badges) {
+      customBadges[badge.tooltip.toLowerCase()] = badge.image3;
+    }
+  } catch (error) {
+    console.error('Error while loading Homies Mod Badges:', error);
+  }
+}
+
+
+async function fetchChatsenBadges() {
+  try {
+    const response = await fetch('https://raw.githubusercontent.com/chatsen/resources/master/assets/data.json');
+    const data = await response.json();
+
+    data.forEach(user => {
+      const { name, image_url_4 } = badge;
+      name.forEach(name => {
+        chatsenBadge[name] = image_url_4;
       });
     });
 
@@ -289,8 +332,6 @@ function getMessage(message) {
 function cleanup() {
   document.getElementById("chat").innerHTML = document.getElementById("chat").innerHTML.slice(-30000)
 }
-
-
 
 async function fetchEmotes(){
 
@@ -515,6 +556,8 @@ font = searchParams.get('font').toLowerCase();
 if (font == "0"){document.querySelector('body').style.fontFamily = 'noto';}
 if (font == "1"){document.querySelector('body').style.fontFamily = 'minecraft';}
 if (font == "2"){document.querySelector('body').style.fontFamily = 'shantell';}
+if (font == "3"){document.querySelector('body').style.fontFamily = 'lato';}
+
 
 
 if (searchParams.get('animated').toLowerCase() == "1"){document.getElementById("chat").style.scrollBehavior = "smooth"}
@@ -532,8 +575,6 @@ async function start(){
   loadingStatus = document.getElementById("loadingStatus");
   loadingStatus.innerHTML = "Sub Badges"
   await fetchSubBadges(channel);
-  loadingStatus.innerHTML = "Loading 7tv Paints"
-  await getAll7tvPaints();
   loadingStatus.innerHTML = "Loading Emotes"
   await fetchEmotes(channel);
   loadingStatus.innerHTML = "Twitch Badges"
@@ -548,8 +589,8 @@ async function start(){
   await fetchFFZAPI();
   loadingStatus.innerHTML = "BTTV Badges"
   await fetchBTTVBadges();
-  loadingStatus.innerHTML = "Chatty Badges"
-  await fetchChattyBadges();
+  //loadingStatus.innerHTML = "Chatty Badges"
+  //await fetchChattyBadges()
   loadingStatus.innerHTML = "Homies Badges"
   await fetchHomiesBadges();
   await fetchHomiesSubBadges();
@@ -669,14 +710,15 @@ socket.addEventListener('message', async event => {
           //lolnot
           if (userId && lolnotAdmins.includes(userId)) {
             badgesImg += `<img class="badge" src="${AdminBadge}">`;
-            usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
+            //usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
             //usernameStyle = `style="background-image: url('https://kappa.lol/O9rOG.gif');background-clip: text;-webkit-background-clip: text;color: transparent;"`
           }
-          else{
-            usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
-          }
+          //usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
           if (userId && lolnotMods.includes(userId)) {
             badgesImg += `<img class="badge" src="${ModBadge}">`;
+          }
+          if (userId && lolnotContributor.includes(userId)) {
+            badgesImg += `<img class="badge" src="${ContibutorBadge}">`;
           }
           if (userId && lolnotFounders.includes(userId)) {
             badgesImg += `<img class="badge" src="${FounderBadge}">`;
@@ -712,6 +754,10 @@ socket.addEventListener('message', async event => {
           if (username2 && ffzSubwoofer.includes(username2)) {
             badgesImg += `<img class="badge" src="${FFZSubwooferBadge}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
           }
+          
+          //if (username2 && chattyBadges.includes(username2)) {
+            //badgesImg += `<img class="badge" src="${FFZSubwooferBadge}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
+          //}
 
           const sevenTVBadgeUrl = await fetch7tvBadge(userId);
           if (sevenTVBadgeUrl) {
@@ -748,12 +794,6 @@ socket.addEventListener('message', async event => {
             badgesImg += `<img class="badge" src="${bttvBadges[username]}">`;
           }
 
-          if (userId && username2 in chattyBadges) {
-            badgesImg += `<img class="badge" src="${chattyBadges[username2]}">`;
-        } else {
-            console.log("Username not found in chattyBadges.");
-        }
-
           //homies
           if (userId && userId in HomiesBadges) {
             badgesImg += `<img class="badge" src="${HomiesBadges[userId]}">`;
@@ -785,7 +825,7 @@ socket.addEventListener('message', async event => {
         }
         else{   
           document.getElementById("chat").innerHTML += (
-            `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}: </span><span style="color: white;">${replaceEmotes(message, emote_links)}</span></p>`
+            `<p class="message"><span style="color:${usernameColor};">${badgesImg} ${username}: </span><span style="color: white;">${replaceEmotes(message, emote_links)}</span></p>`
           );
         }
       }
