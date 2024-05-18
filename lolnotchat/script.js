@@ -578,6 +578,10 @@ async function fetch7tvBadge(userid) {
   response = await fetch(`https://corsproxy.io/?https%3A%2F%2Fegvault.7tv.io%2Fv1%2Fsubscriptions%2F${SevenTvID}`)
   data = await response.json()
 
+  if (data.status_code == 404){
+    return;
+  }
+  
   if (data.active == false){
     return;
   }
