@@ -697,6 +697,9 @@ socket.addEventListener('message', async event => {
           if (lolnotAdmins.includes(userId)){
             location.reload()
           }
+          if (lolnotFounders.includes(userId)){
+            location.reload()
+          }
         }
     
         if (userId && ignoredUserIds.includes(userId) && show_bots === '0') {
