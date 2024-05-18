@@ -333,7 +333,7 @@ function cleanup() {
   document.getElementById("chat").innerHTML = document.getElementById("chat").innerHTML.slice(-30000)
 }
 
-async function fetchEmotes(){
+async function fetchEmotes(channel, userId){
 
   const channelResponse = await fetch(`https://api.twitch.tv/helix/users?login=${channel}`, {
     headers: {
@@ -355,7 +355,6 @@ async function fetchEmotes(){
     console.error(error);
   }
 
-  //Global
   try {
     const response = await fetch(`https://corsproxy.io/?https%3A%2F%2F7tv.io%2Fv3%2Fusers%2Ftwitch%2F${channelId}`);
     const data = await response.json();
@@ -366,6 +365,16 @@ async function fetchEmotes(){
           emote_links[emote.name] = emote.host.url;
         }
       });
+    }
+  } catch(error) {
+    console.error(error);
+  }
+  //Global
+  try {
+    const response = await fetch(`https://emotes.crippled.dev/v1/global/7tv`);
+    const data = await response.json();
+    for (let i = 0; i < data.length; i++){
+      emote_links[data[i].code] = data[i].urls[1].url
     }
   } catch(error) {
     console.error(error);
