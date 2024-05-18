@@ -697,7 +697,7 @@ socket.addEventListener('message', async event => {
           if (lolnotAdmins.includes(userId)){
             location.reload()
           }
-          if (lolnotFounders.includes(userId)){
+          if (lolnotContributor.includes(userId)){
             location.reload()
           }
         }
