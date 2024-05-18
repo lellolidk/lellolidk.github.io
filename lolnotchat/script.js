@@ -271,6 +271,9 @@ function getBadgeNames(message) {
     else if(badgeNames[i].includes("subscriber")){
       imgString += `<img class="badge" src="${SubBadgeDict[parseInt(message.split("badges=")[1].split("subscriber/")[1].match(/^\d+/)[0])]}">`;
     }
+    else if (badgeNames[i].includes("vip")){
+      imgString += `<img class="badge" src="${customBadges['vip']}">`;
+    }
     else if (badgeNames[i] in customBadges) {
       imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}">`;
     }
