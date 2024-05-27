@@ -613,7 +613,6 @@ async function start(){
 start()
 
 const socket = new WebSocket("wss://irc-ws.chat.twitch.tv:443");
-
 socket.addEventListener('open', () =>{
   socket.send(`PASS oauth:leckeier`);
   socket.send(`NICK justinfan65345`);
@@ -622,76 +621,83 @@ socket.addEventListener('open', () =>{
   document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
 })
 
+
+
 async function fetch7tvBadge(userid) {
   const keys = Object.keys(sevenTvBadges);
   
-  if ((keys.includes(userid)) == false){ 
-    //get the 7tv id from twitch id
-    response = await fetch(`https://corsproxy.io/?https%3A%2F%2F7tv.io%2Fv3%2Fusers%2Ftwitch%2F${userid}`)
-    data = await response.json()
-    if (data.status_code == 404){
-      sevenTvBadges[userid] = "";
-      return;
-    }
-    SevenTvID = data.user.id
-
-    response = await fetch(`https://corsproxy.io/?https%3A%2F%2Fegvault.7tv.io%2Fv1%2Fsubscriptions%2F${SevenTvID}`)
-    data = await response.json()
-
-    if (data.status_code == 404){
-      sevenTvBadges[userid] = "";
-      return;
-    }
-    
-    if (data.active == false){
-      sevenTvBadges[userid] = "";
-      //console.log(sevenTVBadges[userid])
-      return;
-    }
-
-    //console.log(SevenTvID)
-    //get subscription status from 7tv id
-    response = await fetch(`https://7tv.io/v3/gql`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        operationName: 'GetUserCosmetics',
-        variables: {
-          id: String(SevenTvID),
-        },
-        query: `
-                        query GetUserCosmetics($id: ObjectID!) {
-                            user(id: $id) {
-                                id
-                                cosmetics {
-                                    id
-                                    kind
-                                    selected
-                                    __typename
-                                }
-                                __typename
-                            }
-                        }
-                    `,
-      }),
-    });
-    UserCosmetics = await response.json();
-
-    //find the cosmetic with selected: true and kind:"BADGE"
-    for (cosmetic of UserCosmetics.data.user.cosmetics) {
-      if (cosmetic.selected == true && cosmetic.kind == "BADGE") {
-        SevenTvBadgeId = cosmetic.id;
-        sevenTvBadges[userid] = `https://cdn.7tv.app/badge/${cosmetic.id}/3x`;
-        return `https://cdn.7tv.app/badge/${cosmetic.id}/3x`;
+  if ((keys.includes(userid)) == false){
+    try{
+      //get the 7tv id from twitch id
+      response = await fetch(`https://7tv.io/v3/users/twitch/${userid}`)
+      
+      data = await response.json()
+      if (data.status_code == 404){
+        sevenTvBadges[userid] = "";
+        return;
       }
+      SevenTvID = data.user.id
+
+      response = await fetch(`https://corsproxy.io/?https%3A%2F%2Fegvault.7tv.io%2Fv1%2Fsubscriptions%2F${SevenTvID}`)
+      data = await response.json()
+
+      if (data.status_code == 404){
+        sevenTvBadges[userid] = "";
+        return;
+      }
+
+      if (data.active == false){
+        sevenTvBadges[userid] = "";
+        //console.log(sevenTVBadges[userid])
+        return;
+      }
+
+      //console.log(SevenTvID)
+      //get subscription status from 7tv id
+      response = await fetch(`https://7tv.io/v3/gql`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          operationName: 'GetUserCosmetics',
+          variables: {
+            id: String(SevenTvID),
+          },
+          query: `
+                          query GetUserCosmetics($id: ObjectID!) {
+                              user(id: $id) {
+                                  id
+                                  cosmetics {
+                                      id
+                                      kind
+                                      selected
+                                      __typename
+                                  }
+                                  __typename
+                              }
+                          }
+                      `,
+        }),
+      });
+      UserCosmetics = await response.json();
+
+      //find the cosmetic with selected: true and kind:"BADGE"
+      for (cosmetic of UserCosmetics.data.user.cosmetics) {
+        if (cosmetic.selected == true && cosmetic.kind == "BADGE") {
+          SevenTvBadgeId = cosmetic.id;
+          sevenTvBadges[userid] = `https://cdn.7tv.app/badge/${cosmetic.id}/3x`;
+          return `https://cdn.7tv.app/badge/${cosmetic.id}/3x`;
+        }
+      }
+      }
+    catch (error) {
+      return;
     }
   }
   else{
-    return sevenTvBadges[userid];
+      return sevenTvBadges[userid];
   }
-  
 }
 
 socket.addEventListener('message', async event => {
@@ -846,7 +852,7 @@ socket.addEventListener('message', async event => {
     
         if(message.includes("ACTION")){
           document.getElementById("chat").innerHTML += (
-            `<p class="message"><span ${usernameStyle}>${badgesImg} ${username}</span> <span ${usernameStyle}>${replaceEmotes(message.slice(1).slice(0, -1).slice(0, -1).slice(0, -1).replace("ACTION",""), emote_links)}</span><br>`
+            `<p class="message"><span style="color:${usernameColor};">${badgesImg} ${username}</span> <span style="color:${usernameColor};">${replaceEmotes(message.slice(1).slice(0, -1).slice(0, -1).slice(0, -1).replace("ACTION",""), emote_links)}</span><br>`
           );
         }
         else{   
@@ -864,5 +870,5 @@ function scrollToBottom(){
 }
 
 setInterval(cleanup, 3000)
-setInterval(fetchEmotes, 60000)
+//setInterval(fetchEmotes, 60000)
 setInterval(scrollToBottom, 200)
