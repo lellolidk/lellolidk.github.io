@@ -1,9 +1,9 @@
 var emote_links = {};
 var customBadges = {};
-var AdminBadge = 'https://lellolidk.de/img/lolnotAdmin.png';
-var ModBadge = 'https://lellolidk.de/img/lolnotMod.png';
-var ContibutorBadge = 'https://lellolidk.de/img/lolnotContributor.png';
-var FounderBadge = 'https://lellolidk.de/img/lolnotFounder.png';
+var AdminBadge = 'https://raw.githubusercontent.com/notLe0nard/lolnotapi/main/img/admin.png';
+var ModBadge = 'https://raw.githubusercontent.com/notLe0nard/lolnotapi/main/img/mod.png';
+var ContibutorBadge = 'https://raw.githubusercontent.com/notLe0nard/lolnotapi/main/img/contibutor.png';
+var FounderBadge = 'https://raw.githubusercontent.com/notLe0nard/lolnotapi/main/img/founder.png';
 var SubBadge = '';
 //Chatterino
 var ChatterinoBadge = 'https://fourtf.com/chatterino/badges/supporter3x.png';
@@ -327,7 +327,12 @@ function getBadgeNames(message) {
 }
 
 function getMessage(message) {
-  return message.split(`PRIVMSG #${channel} :`)[1];
+  if (message.split(`PRIVMSG #`)[1].split(" :")[0] == "bedgebot"){
+    return message.split(`PRIVMSG #bedgebot :`)[1];
+  }
+  else{
+    return message.split(`PRIVMSG #${channel} :`)[1];
+  }
 }
 
 function cleanup() {
@@ -616,6 +621,7 @@ const socket = new WebSocket("wss://irc-ws.chat.twitch.tv:443");
 socket.addEventListener('open', () =>{
   socket.send(`PASS oauth:leckeier`);
   socket.send(`NICK justinfan65345`);
+  socket.send(`JOIN #bedgebot`);
   socket.send(`JOIN #${channel}`);
   socket.send(`CAP REQ :twitch.tv/commands twitch.tv/membership twitch.tv/tags`);
   document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
@@ -700,37 +706,44 @@ async function fetch7tvBadge(userid) {
   }
 }
 
+async function handleCommand(message){
+  if (message.startsWith(`!lolnot reload ${channel}`)){
+    location.reload();
+  }
+}
+
 socket.addEventListener('message', async event => {
+  console.log(event.data);
   if (event.data.includes("PING")) {
-    socket.send(`PING`);
+    socket.send(`PONG`);
+  }
+  if (event.data.includes(`:tmi.twitch.tv CLEARCHAT #`) && event.data.startsWith("@room-id")) {
+    document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
   }
   if (event.data.includes("PRIVMSG")) {
       const message = getMessage(event.data);
+      const messageChannel = event.data.split(`PRIVMSG #`)[1].split(" :")[0];
       const username = getUserName(event.data);
       const username2 = getUserName(event.data).toLowerCase();
       const badgesInfo = getBadgeNames(event.data);
       const usernameColor = getUsernameColor(event.data);
 
+      let userId = null;
+      const userIdMatch = event.data.match(/;user-id=(\d+);/);
+      if (userIdMatch) {
+        userId = userIdMatch[1];
+      }
+
+      if (messageChannel == "bedgebot"){
+        if (lolnotAdmins.includes(userId)){
+          handleCommand(message)
+        }
+      }
+      else{
       if (message.startsWith("!") && show_commands == "0"){
         console.log("ok")
       }
       else{
-        let userId = null;
-        const userIdMatch = event.data.match(/;user-id=(\d+);/);
-        if (userIdMatch) {
-          userId = userIdMatch[1];
-        }
-    
-        if (message.startsWith('!lolnot reload')) {
-          //handleChatCommand(message.trim());
-          if (lolnotAdmins.includes(userId)){
-            location.reload()
-          }
-          if (lolnotContributor.includes(userId)){
-            location.reload()
-          }
-        }
-    
         if (userId && ignoredUserIds.includes(userId) && show_bots === '0') {
           return;
         }
@@ -860,6 +873,7 @@ socket.addEventListener('message', async event => {
             `<p class="message"><span style="color:${usernameColor};">${badgesImg} ${username}: </span><span style="color: white;">${replaceEmotes(message, emote_links)}</span></p>`
           );
         }
+      }
       }
     
   }
