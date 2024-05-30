@@ -710,6 +710,9 @@ async function handleCommand(message){
   if (message.startsWith(`!lolnot reload ${channel}`)){
     location.reload();
   }
+  if (message.startsWith(`!lolnot dink ${channel}`)){
+    await document.getElementById("dink").play()
+  }
 }
 
 socket.addEventListener('message', async event => {
