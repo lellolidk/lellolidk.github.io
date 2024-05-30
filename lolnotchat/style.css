@@ -54,7 +54,7 @@ body{
     margin: calc(var(--text-size) / 4.5);
     width: fit-content;
     overflow-wrap: anywhere;
-    line-break: anywhere;
+    line-break: normal;
 }
 
 #loading{
