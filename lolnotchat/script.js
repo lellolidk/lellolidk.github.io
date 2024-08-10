@@ -697,7 +697,7 @@ socket.addEventListener('message', async event => {
         userId = userIdMatch[1];
       }
 
-      if (messageChannel == "bedgebot"){
+      if (messageChannel == "leiiolidk"){
         if (lolnotAdmins.includes(userId)){
           handleCommand(message)
         }
