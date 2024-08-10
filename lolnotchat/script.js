@@ -230,24 +230,13 @@ async function fetchHomiesBadges() {
 
 async function fetchBadges() {
   try {
-    const response = await fetch('https://api.twitch.tv/helix/chat/badges/global', {
-      headers: {
-        'Client-ID': 'gp762nuuoqcoxypju8c569th9wz7q5',
-        'Authorization': `Bearer vh7kq5y8raig9rko5byve6zcs6s1yg`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log(data); 
-    return data;
+    const customResponse = await fetch(badges.json);
+    customBadges = await customResponse.json();
   } catch (error) {
-    console.error('Eror', error);
+    console.error(error);
   }
-}
+} 
+
 
 function getUserName(message) {
   const parts = message.split('display-name=');
@@ -298,8 +287,8 @@ function getBadgeNames(message) {
 }
 
 function getMessage(message) {
-  if (message.split(`PRIVMSG #`)[1].split(" :")[0] == "bedgebot"){
-    return message.split(`PRIVMSG #bedgebot :`)[1];
+  if (message.split(`PRIVMSG #`)[1].split(" :")[0] == "leiiolidk"){
+    return message.split(`PRIVMSG #leiiolidk :`)[1];
   }
   else{
     return message.split(`PRIVMSG #${channel} :`)[1];
@@ -577,7 +566,7 @@ const socket = new WebSocket("wss://irc-ws.chat.twitch.tv:443");
 socket.addEventListener('open', () =>{
   socket.send(`PASS oauth:leckeier`);
   socket.send(`NICK justinfan65345`);
-  socket.send(`JOIN #bedgebot`);
+  socket.send(`JOIN #leiiolidk`);
   socket.send(`JOIN #${channel}`);
   socket.send(`CAP REQ :twitch.tv/commands twitch.tv/membership twitch.tv/tags`);
   document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
