@@ -108,26 +108,6 @@ async function fetchDankBadges() {
   }
 }
 
-
-async function fetchBTTVBadges() {
-  try {
-    const response = await fetch('https://api.betterttv.net/3/cached/badges/twitch');
-    const data = await response.json();
-    
-    data.forEach(badge => {
-      const username = badge.displayName.toLowerCase();
-      const badgeUrl = badge.badge.svg;
-      bttvBadges[username] = badgeUrl;
-    });
-
-    //console.log('BTTV Badges:', bttvBadges);
-    return bttvBadges;
-  } catch (error) {
-    console.error('Fehler beim Laden der BTTV-Badges:', error);
-    return {};
-  }
-}
-
 async function fetchChatterino() {
   try {
     const response = await fetch('https://corsproxy.io/?https%3A%2F%2Fapi.chatterino.com%2Fbadges');
@@ -181,27 +161,6 @@ async function fetchChattyBadges() {
     }
   } catch (error) {
     console.error('Error while loading Homies Mod Badges:', error);
-  }
-}
-
-
-async function fetchChatsenBadges() {
-  try {
-    const response = await fetch('https://raw.githubusercontent.com/chatsen/resources/master/assets/data.json');
-    const data = await response.json();
-
-    data.forEach(user => {
-      const { name, image_url_4 } = badge;
-      name.forEach(name => {
-        chatsenBadge[name] = image_url_4;
-      });
-    });
-
-    //console.log('Chatty Badges:', chattyBadges);
-    return chattyBadges;
-  } catch (error) {
-    console.error('Fehler beim Laden der Chatty-Badges:', error);
-    return {};
   }
 }
 
@@ -271,12 +230,24 @@ async function fetchHomiesBadges() {
 
 async function fetchBadges() {
   try {
-    const customResponse = await fetch(`badges.json`);
-    customBadges = await customResponse.json();
+    const response = await fetch('https://api.twitch.tv/helix/chat/badges/global', {
+      headers: {
+        'Client-ID': 'gp762nuuoqcoxypju8c569th9wz7q5',
+        'Authorization': `Bearer vh7kq5y8raig9rko5byve6zcs6s1yg`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(data); 
+    return data;
   } catch (error) {
-    console.error(error);
+    console.error('Eror', error);
   }
-} 
+}
 
 function getUserName(message) {
   const parts = message.split('display-name=');
@@ -349,17 +320,6 @@ async function fetchEmotes(channel, userId){
   });
   const channelData = await channelResponse.json();
   const channelId = channelData.data[0].id;
-
-  //Emotes
-  try {
-    const response = await fetch(`https://emotes.crippled.dev/v1/channel/${channel}/all`);
-    const data = await response.json();
-    for (let i = 0; i < data.length; i++){
-      emote_links[data[i].code] = data[i].urls[1].url
-    }
-  } catch(error) {
-    console.error(error);
-  }
 
   try {
     const response = await fetch(`https://corsproxy.io/?https%3A%2F%2F7tv.io%2Fv3%2Fusers%2Ftwitch%2F${channelId}`);
