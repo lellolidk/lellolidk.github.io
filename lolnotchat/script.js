@@ -140,30 +140,6 @@ async function fetchChatterino() {
   }
 }
 
-
-async function fetchChattyBadges() {
-  try {
-    const response = await fetch('');
-    const data = await response.json();
-    userIdsWith = [];
-    userIdsWithHomiesSeniorMod = [];
-
-    for (const badge of data.badges) {
-      if (badge.tooltip === "Homies Mod") {
-        userIdsWithHomiesMod = badge.users;
-      } else if (badge.tooltip === "Senior Homies Mod") {
-        userIdsWithHomiesSeniorMod = badge.users;
-      }
-    }
-
-    for (const badge of data.badges) {
-      customBadges[badge.tooltip.toLowerCase()] = badge.image3;
-    }
-  } catch (error) {
-    console.error('Error while loading Homies Mod Badges:', error);
-  }
-}
-
 async function fetchHomiesSubBadges() {
   try {
     const response = await fetch('https://corsproxy.io/?https%3A%2F%2Fraw.githubusercontent.com%2FitzAlex%2Fitzalex.github.io%2Fmaster%2Fbadges');
@@ -310,20 +286,17 @@ async function fetchEmotes(channel, userId){
   const channelData = await channelResponse.json();
   const channelId = channelData.data[0].id;
 
-  try {
-    const response = await fetch(`https://corsproxy.io/?https%3A%2F%2F7tv.io%2Fv3%2Fusers%2Ftwitch%2F${channelId}`);
-    const data = await response.json();
-    
-    if (data.emote_set && data.emote_set.emotes) {
-      data.emote_set.emotes.forEach(emote => {
-        if (emote.host && emote.host.url) {
-          emote_links[emote.name] = emote.host.url;
-        }
-      });
+    //Emotes
+    try {
+      const response = await fetch(`https://emotes.crippled.dev/v1/channel/${channel}/all`);
+      const data = await response.json();
+      for (let i = 0; i < data.length; i++){
+        emote_links[data[i].code] = data[i].urls[1].url
+      }
+    } catch(error) {
+      console.error(error);
     }
-  } catch(error) {
-    console.error(error);
-  }
+
   //Global
   try {
     const response = await fetch(`https://emotes.crippled.dev/v1/global/7tv`);
