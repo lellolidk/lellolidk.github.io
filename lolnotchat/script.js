@@ -62,7 +62,6 @@ const SubBadgeDict = {};
 let SubEmoteDict = {};
 var HomiesBadges = {};
 var DankBadges = {};
-var bttvBadges = {};
 const sevenTvBadges = {};
 
 async function fetchlolnotAPI() {
@@ -212,7 +211,6 @@ async function fetchBadges() {
     console.error(error);
   }
 } 
-
 
 function getUserName(message) {
   const parts = message.split('display-name=');
@@ -509,26 +507,19 @@ show_commands = searchParams.get('commands').toLowerCase();
 
 async function start(){
   loadingStatus = document.getElementById("loadingStatus");
-  loadingStatus.innerHTML = "Sub Badges"
-  await fetchSubBadges(channel);
-  loadingStatus.innerHTML = "Loading Emotes"
-  await fetchEmotes(channel);
-  loadingStatus.innerHTML = "Twitch Badges"
+  loadingStatus.innerHTML = "Loading Badges"
   await fetchBadges();
-  loadingStatus.innerHTML = "lolnot Badges"
+  await fetchSubBadges(channel);
   await fetchlolnotAPI();
-  loadingStatus.innerHTML = "Chatterino Badges"
   await fetchChatterino();
-  loadingStatus.innerHTML = "DankChat Badges"
   await fetchDankBadges();
-  loadingStatus.innerHTML = "FFZ Badges"
   await fetchFFZAPI();
-  loadingStatus.innerHTML = "Homies Badges"
   await fetchHomiesBadges();
   await fetchHomiesSubBadges();
   await fetchHomiesModBadges();
-  loadingStatus.innerHTML = "FFZ VIP / Mod Badges"
   await fetchFFZModVipBadges(channel);
+  loadingStatus.innerHTML = "Loading Emotes"
+  await fetchEmotes(channel);
   loadingStatus.remove()
   document.getElementById("loading").remove()
   document.getElementById("chat").style.boxShadow = "none"
@@ -671,7 +662,7 @@ socket.addEventListener('message', async event => {
     
         let badgesImg = badgesInfo;
         
-        if(show_badges == "1"){// ÃœberprÃ¼fen ob Bages gezeigt werden sollen und sie hinzufÃ¼gen
+        if(show_badges == "1"){
     
           //lolnot
           if (userId && lolnotAdmins.includes(userId)) {
@@ -756,10 +747,6 @@ socket.addEventListener('message', async event => {
             badgesImg += `<img class="badge" src="${DankChatContributorBadge}">`;
           }
 
-          if (username && username in bttvBadges) {
-            badgesImg += `<img class="badge" src="${bttvBadges[username]}">`;
-          }
-
           //homies
           if (userId && userId in HomiesBadges) {
             badgesImg += `<img class="badge" src="${HomiesBadges[userId]}">`;
@@ -805,5 +792,5 @@ function scrollToBottom(){
 }
 
 setInterval(cleanup, 3000)
-//setInterval(fetchEmotes, 60000)
+setInterval(fetchEmotes, 60000)
 setInterval(scrollToBottom, 200)
