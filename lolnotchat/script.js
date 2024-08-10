@@ -561,10 +561,6 @@ async function start(){
   await fetchDankBadges();
   loadingStatus.innerHTML = "FFZ Badges"
   await fetchFFZAPI();
-  loadingStatus.innerHTML = "BTTV Badges"
-  await fetchBTTVBadges();
-  //loadingStatus.innerHTML = "Chatty Badges"
-  //await fetchChattyBadges()
   loadingStatus.innerHTML = "Homies Badges"
   await fetchHomiesBadges();
   await fetchHomiesSubBadges();
