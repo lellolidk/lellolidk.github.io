@@ -258,6 +258,9 @@ function getBadgeNames(message) {
       } else if (badgeName === "sub-gifter") {
         const subGifterBadgeUrl = customBadges[`sub-gifter/${badgeId}`] || customBadges['sub-gifter'];
         imgString += `<img class="badge" src="${subGifterBadgeUrl}">`;
+      } else if (badgeName === "founder") {
+        const founderBadgeUrl = customBadges[`founder/${badgeId}`] || customBadges['founder'];
+        imgString += `<img class="badge" src="${founderBadgeUrl}">`;
       } else if (badgeName === "bits") {
         const BitsBadgeUrl = customBadges[`bits/${badgeId}`] || customBadges['bits'];
         imgString += `<img class="badge" src="${BitsBadgeUrl}">`;
@@ -427,60 +430,6 @@ function replaceEmotes(message, emoteLinks) {
   return newMessage.trim();
 }
 
-
-async function getAll7tvPaints() {
-  let results = await fetch('https://7tv.io/v3/gql', {
-    method: 'POST',
-
-    headers: {
-      "Content-Type": "application/json"
-    },
-
-    body: JSON.stringify({
-      query: `
-query GetCosmestics($list: [ObjectID!]) {
-    cosmetics(list: $list) {
-        paints {
-            id
-            kind
-            name
-            function
-            color
-            angle
-            shape
-            image_url
-            repeat
-            stops {
-                at
-                color
-                __typename
-            }
-            shadows {
-                x_offset
-                y_offset
-                radius
-                color
-                __typename
-            }
-            __typename
-        }
-        badges {
-            id
-            kind
-            name
-            tooltip
-            tag
-            __typename
-        }
-        __typename
-    }
-}
-`,
-    })
-  })
-  let characters = await results.json();
-}
-
 const url = new URL(window.location.href);
 const searchParams = url.searchParams;
 index = 0
@@ -545,81 +494,69 @@ socket.addEventListener('open', () =>{
   document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
 })
 
+const lastFetchTimes = {};
+
 async function fetch7tvBadge(userid) {
-  const keys = Object.keys(sevenTvBadges);
-  
-  if ((keys.includes(userid)) == false){
-    try{
-      //get the 7tv id from twitch id
-      response = await fetch(`https://7tv.io/v3/users/twitch/${userid}`)
-      
-      data = await response.json()
-      if (data.status_code == 404){
-        sevenTvBadges[userid] = "";
-        return;
-      }
-      SevenTvID = data.user.id
+    const keys = Object.keys(sevenTvBadges);
+    const currentTime = Date.now();
+    const fiveMinutes = 5 * 60 * 1000;
 
-      response = await fetch(`https://corsproxy.io/?https%3A%2F%2Fegvault.7tv.io%2Fv1%2Fsubscriptions%2F${SevenTvID}`)
-      data = await response.json()
-
-      if (data.status_code == 404){
-        sevenTvBadges[userid] = "";
-        return;
-      }
-
-      if (data.active == false){
-        sevenTvBadges[userid] = "";
-        //console.log(sevenTVBadges[userid])
-        return;
-      }
-
-      //console.log(SevenTvID)
-      //get subscription status from 7tv id
-      response = await fetch(`https://7tv.io/v3/gql`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          operationName: 'GetUserCosmetics',
-          variables: {
-            id: String(SevenTvID),
-          },
-          query: `
-                          query GetUserCosmetics($id: ObjectID!) {
-                              user(id: $id) {
-                                  id
-                                  cosmetics {
-                                      id
-                                      kind
-                                      selected
-                                      __typename
-                                  }
-                                  __typename
-                              }
-                          }
-                      `,
-        }),
-      });
-      UserCosmetics = await response.json();
-
-      //find the cosmetic with selected: true and kind:"BADGE"
-      for (cosmetic of UserCosmetics.data.user.cosmetics) {
-        if (cosmetic.selected == true && cosmetic.kind == "BADGE") {
-          SevenTvBadgeId = cosmetic.id;
-          sevenTvBadges[userid] = `https://cdn.7tv.app/badge/${cosmetic.id}/3x`;
-          return `https://cdn.7tv.app/badge/${cosmetic.id}/3x`;
-        }
-      }
-      }
-    catch (error) {
-      return;
+    if (keys.includes(userid) && (currentTime - lastFetchTimes[userid]) < fiveMinutes) {
+        return sevenTvBadges[userid];
     }
-  }
-  else{
-      return sevenTvBadges[userid];
-  }
+    
+    try {
+        lastFetchTimes[userid] = currentTime;
+
+        let response = await fetch(`https://7tv.io/v3/users/twitch/${userid}`);
+        let data = await response.json();
+        
+        if (data.status_code === 404) {
+            sevenTvBadges[userid] = "";
+            return;
+        }
+        let SevenTvID = data.user.id;
+        response = await fetch(`https://corsproxy.io/?https%3A%2F%2Fegvault.7tv.io%2Fv1%2Fsubscriptions%2F${SevenTvID}`);
+        data = await response.json();
+        if (data.status_code === 404 || data.active === false) {
+            sevenTvBadges[userid] = "";
+            return;
+        }
+        response = await fetch(`https://7tv.io/v3/gql`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                operationName: 'GetUserCosmetics',
+                variables: { id: String(SevenTvID) },
+                query: `
+                    query GetUserCosmetics($id: ObjectID!) {
+                        user(id: $id) {
+                            id
+                            cosmetics {
+                                id
+                                kind
+                                selected
+                                __typename
+                            }
+                            __typename
+                        }
+                    }
+                `,
+            }),
+        });
+        
+        let UserCosmetics = await response.json();
+        for (const cosmetic of UserCosmetics.data.user.cosmetics) {
+            if (cosmetic.selected === true && cosmetic.kind === "BADGE") {
+                sevenTvBadges[userid] = `https://cdn.7tv.app/badge/${cosmetic.id}/3x`;
+                return `https://cdn.7tv.app/badge/${cosmetic.id}/3x`;
+            }
+        }
+    } catch (error) {
+        return;
+    }
 }
 
 async function handleCommand(message){
