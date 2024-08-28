@@ -264,7 +264,10 @@ function getBadgeNames(message) {
       } else if (badgeName === "bits") {
         const BitsBadgeUrl = customBadges[`bits/${badgeId}`] || customBadges['bits'];
         imgString += `<img class="badge" src="${BitsBadgeUrl}">`;
-      } else if (badgeName === "sub-gift-leader") {
+      } else if (badgeName === "bits-leader") {
+        const BitsLeaderBadgeUrl = customBadges[`bits-leader/${badgeId}`] || customBadges['bits-leader'];
+        imgString += `<img class="badge" src="${BitsLeaderBadgeUrl}">`;
+      } else if (badgeName === "bits-leader") {
         const subGifterLeaderBadgeUrl = customBadges[`sub-gift-leader/${badgeId}`] || customBadges['sub-gift-leader'];
         imgString += `<img class="badge" src="${subGifterLeaderBadgeUrl}">`;
       } else if (badgeName === "vip") {
