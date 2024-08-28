@@ -75,7 +75,7 @@ async function fetchlolnotAPI() {
     lolnotSub = data.sub;
     botsIds = data.bot;
   } catch (error) {
-    console.error('Error while loading lolnot Badges', error);
+    console.error('Error:', error);
   }
 }
 
@@ -89,7 +89,7 @@ async function fetchFFZAPI() {
     ffzSubwoofer = data.users[4]
 
   } catch (error) {
-    console.error('Error while loading ffz badges', error);
+    console.error('Error:', error);
   }
 }
 
@@ -103,7 +103,7 @@ async function fetchDankBadges() {
       });
     });
   } catch (error) {
-    console.error('Fehler beim Laden der Dank-Badges:', error);
+    console.error('Error:', error);
   }
 }
 
@@ -135,7 +135,7 @@ async function fetchChatterino() {
       customBadges[badge.tooltip.toLowerCase()] = badge.image3;
     }
   } catch (error) {
-    console.error('Error while loading Chatterino Badges:', error);
+    console.error('Error:', error);
   }
 }
 
@@ -164,7 +164,7 @@ async function fetchHomiesSubBadges() {
       customBadges[badge.tooltip.toLowerCase()] = badge.image3;
     }
   } catch (error) {
-    console.error('Error while loading Homies Sub Badges:', error);
+    console.error('Error:', error);
   }
 }
 
@@ -187,7 +187,7 @@ async function fetchHomiesModBadges() {
       customBadges[badge.tooltip.toLowerCase()] = badge.image3;
     }
   } catch (error) {
-    console.error('Error while loading Homies Mod Badges:', error);
+    console.error('Error:', error);
   }
 }
 
@@ -199,7 +199,7 @@ async function fetchHomiesBadges() {
       HomiesBadges[data.badges[i].userId] = data.badges[i].image3
     }
   } catch (error) {
-    console.error('Fehler beim Laden der Homies-Badges:', error);
+    console.error('Error:', error);
   }
 }
 
@@ -234,7 +234,7 @@ async function loadBadgeData() {
         const data = await response.json();
         customBadges = data
     } catch (error) {
-        console.error('Fehler beim Laden der Badge-Daten:', error);
+        console.error('Error:', error);
     }
 }
 
@@ -276,6 +276,7 @@ function getBadgeNames(message) {
 
   return imgString;
 }
+
 
 function getMessage(message) {
   if (message.split(`PRIVMSG #`)[1].split(" :")[0] == "leiiolidk"){
@@ -464,19 +465,18 @@ show_commands = searchParams.get('commands').toLowerCase();
 
 async function start(){
   loadingStatus = document.getElementById("loadingStatus");
-  loadingStatus.innerHTML = "Loading Badges"
+  loadingStatus.innerHTML = "Loading"
   await fetchBadges();
   await fetchSubBadges(channel);
-  await fetchlolnotAPI();
-  await fetchChatterino();
-  await fetchDankBadges();
-  await fetchFFZAPI();
-  await loadBadgeData();
-  await fetchHomiesBadges();
-  await fetchHomiesSubBadges();
-  await fetchHomiesModBadges();
-  await fetchFFZModVipBadges(channel);
-  loadingStatus.innerHTML = "Loading Emotes"
+  fetchlolnotAPI();
+  fetchChatterino();
+  fetchDankBadges();
+  fetchFFZAPI();
+  loadBadgeData();
+  fetchHomiesBadges();
+  fetchHomiesSubBadges();
+  fetchHomiesModBadges();
+  fetchFFZModVipBadges(channel);
   await fetchEmotes(channel);
   loadingStatus.remove()
   document.getElementById("loading").remove()
