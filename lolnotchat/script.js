@@ -205,7 +205,7 @@ async function fetchHomiesBadges() {
 
 async function fetchBadges() {
   try {
-    const customResponse = await fetch(badges.json);
+    const customResponse = await fetch(`badges.json`);
     customBadges = await customResponse.json();
   } catch (error) {
     console.error(error);
@@ -492,18 +492,12 @@ if (font == "1"){document.querySelector('body').style.fontFamily = 'minecraft';}
 if (font == "2"){document.querySelector('body').style.fontFamily = 'shantell';}
 if (font == "3"){document.querySelector('body').style.fontFamily = 'lato';}
 
-
-
 if (searchParams.get('animated').toLowerCase() == "1"){document.getElementById("chat").style.scrollBehavior = "smooth"}
 show_badges = searchParams.get('badges').toLowerCase();
 
 show_bots = searchParams.get('bots').toLowerCase()
 
 show_commands = searchParams.get('commands').toLowerCase();
-
-
-
-//link = `https://lellolik.de/lolnotchat?ch=${values['channel']}&si=${values['size']}&sh=${values['shadow']}&bg=${values['background']}&fo=${values['font']}&an=${values['animated']}&ba=${values['badges']}&sb=${values['special_badges']}&bo=${values['bots']}&co=${values['commands']}`;
 
 async function start(){
   loadingStatus = document.getElementById("loadingStatus");
@@ -535,8 +529,6 @@ socket.addEventListener('open', () =>{
   socket.send(`CAP REQ :twitch.tv/commands twitch.tv/membership twitch.tv/tags`);
   document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
 })
-
-
 
 async function fetch7tvBadge(userid) {
   const keys = Object.keys(sevenTvBadges);
