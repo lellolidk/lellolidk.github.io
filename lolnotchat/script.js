@@ -228,33 +228,47 @@ function getUsernameColor(message) {
   return null;
 }
 
+async function loadBadgeData() {
+    try {
+        const response = await fetch('badges.json');
+        const data = await response.json();
+        customBadges = data
+    } catch (error) {
+        console.error('Fehler beim Laden der Badge-Daten:', error);
+    }
+}
+
 function getBadgeNames(message) {
-  const badgeInfoMatch = message.match(/badges=(.*?);/);
+  const badgeInfoMatch = message.match(/badges=([^;]+);/);
 
   if (!badgeInfoMatch) {
-    return '';
+      return '';
   }
 
   const badgeDefs = badgeInfoMatch[1].split(",");
-
-  const badges = badgeDefs.map(badgeDef => badgeDef.split("/")[0]);
-
-  const badgeNames = badges.map((badge) => badge.split("/")[0]);
   let imgString = "";
 
-  for (let i = 0; i < badgeNames.length; i++) {
-    if(badgeNames[i].includes("moderator")){
-      imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}" style="background: #00ad03; border-radius:10%;">`;
-    }
-    else if(badgeNames[i].includes("subscriber")){
-      imgString += `<img class="badge" src="${SubBadgeDict[parseInt(message.split("badges=")[1].split("subscriber/")[1].match(/^\d+/)[0])]}">`;
-    }
-    else if (badgeNames[i].includes("vip")){
-      imgString += `<img class="badge" src="${customBadges['vip']}">`;
-    }
-    else if (badgeNames[i] in customBadges) {
-      imgString += `<img class="badge" src="${customBadges[badgeNames[i]]}">`;
-    }
+  for (const badgeDef of badgeDefs) {
+      const [badgeName, badgeId] = badgeDef.split("/");
+
+      if (badgeName === "moderator") {
+          imgString += `<img class="badge" src="${customBadges[badgeName]}" style="background: #00ad03; border-radius:10%;">`;
+      } else if(badgeName.includes("subscriber")){
+        imgString += `<img class="badge" src="${SubBadgeDict[parseInt(message.split("badges=")[1].split("subscriber/")[1].match(/^\d+/)[0])]}">`;
+      } else if (badgeName === "sub-gifter") {
+        const subGifterBadgeUrl = customBadges[`sub-gifter/${badgeId}`] || customBadges['sub-gifter'];
+        imgString += `<img class="badge" src="${subGifterBadgeUrl}">`;
+      } else if (badgeName === "bits") {
+        const BitsBadgeUrl = customBadges[`bits/${badgeId}`] || customBadges['bits'];
+        imgString += `<img class="badge" src="${BitsBadgeUrl}">`;
+      } else if (badgeName === "sub-gift-leader") {
+        const subGifterLeaderBadgeUrl = customBadges[`sub-gift-leader/${badgeId}`] || customBadges['sub-gift-leader'];
+        imgString += `<img class="badge" src="${subGifterLeaderBadgeUrl}">`;
+      } else if (badgeName === "vip") {
+          imgString += `<img class="badge" src="${customBadges[badgeName]}">`;
+      } else if (badgeName in customBadges) {
+          imgString += `<img class="badge" src="${customBadges[badgeName]}">`;
+      }
   }
 
   return imgString;
@@ -508,6 +522,7 @@ async function start(){
   await fetchChatterino();
   await fetchDankBadges();
   await fetchFFZAPI();
+  await loadBadgeData();
   await fetchHomiesBadges();
   await fetchHomiesSubBadges();
   await fetchHomiesModBadges();
@@ -655,24 +670,7 @@ socket.addEventListener('message', async event => {
         let badgesImg = badgesInfo;
         
         if(show_badges == "1"){
-    
-          //lolnot
-          if (userId && lolnotAdmins.includes(userId)) {
-            badgesImg += `<img class="badge" src="${AdminBadge}">`;
-            //usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
-            //usernameStyle = `style="background-image: url('https://kappa.lol/O9rOG.gif');background-clip: text;-webkit-background-clip: text;color: transparent;"`
-          }
-          //usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
-          if (userId && lolnotMods.includes(userId)) {
-            badgesImg += `<img class="badge" src="${ModBadge}">`;
-          }
-          if (userId && lolnotContributor.includes(userId)) {
-            badgesImg += `<img class="badge" src="${ContibutorBadge}">`;
-          }
-          if (userId && lolnotFounders.includes(userId)) {
-            badgesImg += `<img class="badge" src="${FounderBadge}">`;
-          }
-    
+
           //Chatterino
           if (userId && userIdsWithChatterinoBadge.includes(userId)) {
             badgesImg += `<img class="badge" src="${ChatterinoBadge}">`;
@@ -689,7 +687,7 @@ socket.addEventListener('message', async event => {
           if (userId && userIdsWithChatterinopepeBadge.includes(userId)) {
             badgesImg += `<img class="badge" src="${ChatterinoPepeBadge}">`;
           }
-    
+
           //FFZ
           if (username2 && ffzdeveloper.includes(username2)) {
             badgesImg += `<img class="badge" src="${FFZdeveloperBadge}" style="background-color: rgb(250, 175, 25); border-radius: 10%;">`;
@@ -703,14 +701,27 @@ socket.addEventListener('message', async event => {
           if (username2 && ffzSubwoofer.includes(username2)) {
             badgesImg += `<img class="badge" src="${FFZSubwooferBadge}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
           }
-          
-          //if (username2 && chattyBadges.includes(username2)) {
-            //badgesImg += `<img class="badge" src="${FFZSubwooferBadge}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
-          //}
 
           const sevenTVBadgeUrl = await fetch7tvBadge(userId);
           if (sevenTVBadgeUrl) {
             badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
+          }
+
+          //lolnot
+          if (userId && lolnotAdmins.includes(userId)) {
+            badgesImg += `<img class="badge" src="${AdminBadge}">`;
+            //usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
+            //usernameStyle = `style="background-image: url('https://kappa.lol/O9rOG.gif');background-clip: text;-webkit-background-clip: text;color: transparent;"`
+          }
+          //usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
+          if (userId && lolnotMods.includes(userId)) {
+            badgesImg += `<img class="badge" src="${ModBadge}">`;
+          }
+          if (userId && lolnotContributor.includes(userId)) {
+            badgesImg += `<img class="badge" src="${ContibutorBadge}">`;
+          }
+          if (userId && lolnotFounders.includes(userId)) {
+            badgesImg += `<img class="badge" src="${FounderBadge}">`;
           }
     
           //dankchat
