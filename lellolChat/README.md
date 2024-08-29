@@ -1,10 +1,10 @@
-# lellolChat
+# lolnotChat
 
 This Chat Overlay is for Twitch and is made by NotLe0nard and lellolidk
 
 # How to use:
 
-**1.** Go to https://lellolidk.de/lellolChat/create
+**1.** Go to https://lellolidk.de/lolnotchat/create
 
 **2.** Customize it to your liking
 
