@@ -297,7 +297,7 @@ function cleanup() {
 }
 
 async function fetchEmotes(channel){
-
+    channel = searchParams.get('channel').toLowerCase();
     //Emotes
     try {
       const response = await fetch(`https://emotes.crippled.dev/v1/channel/${channel}/7tv`);
