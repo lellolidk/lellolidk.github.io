@@ -502,7 +502,7 @@ const lastFetchTimes = {};
 async function fetch7tvBadge(userid) {
     const keys = Object.keys(sevenTvBadges);
     const currentTime = Date.now();
-    const fiveMinutes = 5 * 60 * 1000;
+    const fiveMinutes = 30;
 
     if (keys.includes(userid) && (currentTime - lastFetchTimes[userid]) < fiveMinutes) {
         return sevenTvBadges[userid];
