@@ -42,10 +42,3 @@ async function startSite(){
   await sleep(100);
   document.getElementById("dc").style.fontSize = "6vmin";
 }
-
-function secret(){
-  kok++;
-  if(kok == 5){
-
-  }
-  if(kok == 6){
