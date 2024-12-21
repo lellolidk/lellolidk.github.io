@@ -1,34 +1,212 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-  <title>lellolidk</title>
-  <link rel="icon" type="image/x-icon" href="3x.ico">
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
-  <meta property="og:title" content="lellolidk | Main Page">
-  <meta property="og:description" content="kok">
-  <meta property="og:image" content="https://raw.githubusercontent.com/lellolidk/lellolidk.github.io/main/preview.png">
-  <meta property="og:url" content="https://lellolidk.github.io">
-  <meta property="og:type" content="website">
-  <meta name="twitter:card" content="https://c8.alamy.com/comp/2BWX513/chinese-emoticon-with-thumb-up-2BWX513.jpg">
-  <meta name="twitter:title" content="lellolidk | Main Page">
-  <meta name="twitter:description" content="kok">
-  <meta name="twitter:image" content="https://raw.githubusercontent.com/lellolidk/lellolidk.github.io/main/preview.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lellolidk.de</title>
+    <link rel="icon" href="/static/icon10.gif" type="image/gif">
+    <meta property="og:title" content="lellolidk â€¢ Main">
+    <meta property="og:description" content="lellolidk">
+    <meta property="og:image" content="https://cdn.7tv.app/emote/60ae495f0e354776344910c5/4x.webp">
+    <meta property="og:url" content="https://lellolidk.de/">
+    <meta property="og:type" content="website">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #141414;
+            color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 40px;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        .navbar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .nav-sections {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #151515;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            gap: 15px;
+            width: fit-content;
+        }
+
+        .nav-sections:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .social-section {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            background-color: #151515;
+            padding: 10px 80px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            width: fit-content;
+        }
+
+        .social-section:hover {
+            transform: translateX(-50%) scale(1.02);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: bold;
+            background-image: linear-gradient(0deg, #0091ffff 0%, #38b3ffff 25%, #57d5ffff 40%, #ffffffff 55%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow2 1.5s infinite alternate;
+        }
+
+        @keyframes glow2 {
+            from { text-shadow: 0 0 5px #00ECFF, 0 0 10px #00ECFF; }
+            to { text-shadow: 0 0 10px #00ECFF, 0 0 20px #00ECFF; }
+        }
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: background 0.3s ease, transform 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .nav-item span {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .icon {
+            width: 40px;
+            height: 30px;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+	.icon-home { background-image: url('file:///home/ubuntu/www/html/static/chatting.gif'); }
+        .icon-user { background-image: url('/static/user1.png'); }
+        .icon-paper { background-image: url('/static/paper.png'); }
+        .icon-database { background-image: url('/static/mod1.gif'); }
+        .icon-keyboard { background-image: url('/static/chatting.gif'); }
+        .icon-watchtime { background-image: url('/static/watchtime.png'); }
+        .icon-search { background-image: url('/static/search1.png'); }
+
+        .social-icon {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-3px);
+        }
+
+        .twitch { background: #9146FF; }
+        .youtube { background: #FF0000; }
+        .discord { background: #7289DA; }
+        .twitter { background: #1DA1F2; }
+
+        .twitch:hover { box-shadow: 0 0 10px #9146FF; }
+        .youtube:hover { box-shadow: 0 0 10px #FF0000; }
+        .discord:hover { box-shadow: 0 0 10px #7289DA; }
+        .twitter:hover { box-shadow: 0 0 10px #1DA1F2; }
+
+        @media (max-width: 768px) {
+            .nav-sections, .social-section {
+                flex-wrap: wrap;
+                gap: 10px;
+                width: 90%;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="main_container">
-    <p id="title">lellolidk</p>
-    <div id="container">
-      <div id="twitch" onclick="openTwitch()">Twitch</div>
-      <div id="ig" onclick="openIG()">Instagram</div>
-      <div id="yt" onclick="openYT()">YouTube</div>
-      <div id="dc" onclick="openDC()">Discord</div>
-    </div>
-    <div id="dc_alert">
-      <p id="dc_info_text">Discord:<br>@lellolidk</p>
-      <div id="dc_escape" onclick="closeDC()">Ok</div>
-    </div>
-  </div>
-  <div id="secret_btn" onclick="secret()"></div>
+    <nav class="navbar">
+        <div class="nav-sections">
+            <div class="logo-container">
+                <img src="/static/icon10.gif" alt="Logo" class="logo">
+                <span class="logo-text">lellolidk.de</span>
+            </div>
+
+            <a href="/" class="nav-item">
+                <div class="icon icon-home"></div>
+                <span>Startseite</span>
+            </a>
+            <a href="/user/" class="nav-item">
+                <div class="icon icon-user"></div>
+                <span>User</span>
+            </a>
+            <a href="https://logs.lellolidk.de" class="nav-item">
+                <div class="icon icon-paper"></div>
+                <span>Logs</span>
+            </a>
+            <a href="https://logsearch.lellolidk.de/" class="nav-item">
+                <div class="icon icon-search"></div>
+                <span>Logsearch</span>
+            </a>
+            <a href="/topchatter/" class="nav-item">
+                <div class="icon icon-keyboard"></div>
+                <span>Topchatter</span>
+            </a>
+            <a href="/topwatchtime/" class="nav-item">
+                <div class="icon icon-watchtime"></div>
+                <span>Topwatchtime</span>
+            </a>
+        </div>
+
+        <div class="social-section">
+            <a href="https://twitch.tv/lellolidk" class="social-icon twitch">Twitch</a>
+            <a href="https://www.youtube.com/@lellolidk" class="social-icon youtube">YouTube</a>
+            <a href="https://dsc.gg/lellolidk" class="social-icon discord">Discord</a>
+            <a href="https://x.com/lellolidk1" class="social-icon twitter">Twitter</a>
+        </div>
+    </nav>
 </body>
 </html>
