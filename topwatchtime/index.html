@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 50 Watchtime</title>
+    <link rel="icon" href="/static/icon10.gif" type="image/gif">
+    <meta property="og:title" content="lellolidk • Main">
+    <meta property="og:description" content="lellolidk">
+    <meta property="og:image" content="https://cdn.7tv.app/emote/60ae495f0e354776344910c5/4x.webp">
+    <meta property="og:url" content="https://lellolidk.de/">
+    <meta property="og:type" content="website">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #f1f1f1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #9600c4;
+        }
+
+        form {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            font-size: 16px;
+            width: 220px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: #f1f1f1;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #252525;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #222222;
+        }
+
+        @keyframes glow2 {
+            from { text-shadow: 0 0 5px #00ECFF, 0 0 10px #00ECFF; }
+            to { text-shadow: 0 0 10px #00ECFF, 0 0 20px #00ECFF; }
+        }
+
+        #result {
+            margin-top: 30px;
+            width: 80%;
+            max-width: 900px;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            color: #f1f1f1;
+        }
+
+        table, th, td {
+            border: 1px solid #444;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #252525;
+        }
+
+        tr:hover {
+            background-color: #333;
+        }
+
+        #loader {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .error {
+            color: #f44336;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Top 50 Watchtime of StreamElements</h1>
+
+    <form id="channelForm">
+        <input type="text" id="channel" name="channel" placeholder="Channel Name" required>
+        <button type="submit">Zeige Watchtime</button>
+    </form>
+
+    <div id="loader">
+        <p>Lade...</p>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('channelForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const channelName = document.getElementById('channel').value.trim();
+            if (!channelName) {
+                alert('Enter a channel name!');
+                return;
+            }
+
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('result').innerHTML = '';
+
+            try {
+                const channelResponse = await fetch(`https://api.streamelements.com/kappa/v2/channels/${channelName}`);
+                const channelData = await channelResponse.json();
+
+                if (!channelData._id) {
+                    document.getElementById('result').innerHTML = '<p class="error">Channel not found</p>';
+                    return;
+                }
+
+                const SEId = channelData._id;
+
+                const watchtimeResponse = await fetch(`https://api.streamelements.com/kappa/v2/points/${SEId}/watchtime?limit=50&offset=0`);
+                const watchtimeData = await watchtimeResponse.json();
+
+                const users = watchtimeData.users;
+
+                if (users.length === 0) {
+                    document.getElementById('result').innerHTML = '<p class="error">No data found</p>';
+                    return;
+                }
+
+                let tableHtml = '<table><tr><th>Rank</th><th>Username</th><th>Watchtime</th></tr>';
+
+                users.forEach((user, index) => {
+                    const watchtimeInMinutes = user.minutes;
+                    const years = Math.floor(watchtimeInMinutes / (365 * 24 * 60));
+                    const months = Math.floor((watchtimeInMinutes % (365 * 24 * 60)) / (30 * 24 * 60));
+                    const days = Math.floor((watchtimeInMinutes % (30 * 24 * 60)) / (24 * 60));
+                    const hours = Math.floor((watchtimeInMinutes % (24 * 60)) / 60);
+                    const minutes = watchtimeInMinutes % 60;
+
+                    let timeString = '';
+                    if (years > 0) timeString += `${years} year${years > 1 ? 's' : ''} `;
+                    if (months > 0) timeString += `${months} month${months > 1 ? 's' : ''} `;
+                    if (days > 0) timeString += `${days} day${days > 1 ? 's' : ''} `;
+                    if (hours > 0) timeString += `${hours} hour${hours > 1 ? 's' : ''} `;
+                    if (minutes > 0) timeString += `${minutes} minute${minutes > 1 ? 's' : ''}`;
+
+                    tableHtml += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${user.username}</td>
+                            <td>${timeString}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHtml += '</table>';
+                document.getElementById('result').innerHTML = tableHtml;
+
+            } catch (error) {
+                console.error('Fehler:', error);
+                document.getElementById('result').innerHTML = '<p class="error">Error</p>';
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+</html>

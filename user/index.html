@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch User Lookup</title>
+    <link rel="icon" href="/static/icon10.gif" type="image/gif">
+    <meta property="og:title" content="lellolidk • User Lookup">
+    <meta property="og:description" content="lellolidk">
+    <meta property="og:image" content="https://cdn.7tv.app/emote/60ae495f0e354776344910c5/4x.webp">
+    <meta property="og:url" content="https://lellolidk.de/">
+    <meta property="og:type" content="website">
+    <style>
+        :root {
+            --primary: #9146FF;
+            --primary-dark: #7925FF;
+            --background: #0E0E10;
+            --surface: #18181B;
+            --surface-light: #1F1F23;
+            --text: #EFEFF1;
+            --text-secondary: #ADADB8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif, bold;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--surface);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 24px;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            padding-left: 40px;
+            border: 2px solid var(--surface-light);
+            border-radius: 8px;
+            background-color: var(--surface-light);
+            color: var(--text);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(145, 70, 255, 0.15);
+        }
+
+        .input-group::before {
+            content: "@";
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            margin-top: 24px;
+        }
+
+        .results p {
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .results p:last-child {
+            border-bottom: none;
+        }
+
+        .results strong {
+            color: var(--text-secondary);
+        }
+
+        .results span {
+            color: var(--text);
+        }
+
+        .error {
+            color: #FF375F;
+            padding: 16px;
+            background-color: rgba(255, 55, 95, 0.1);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .loading {
+            color: var(--primary);
+            text-align: center;
+            padding: 16px;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+
+        .result-section {
+            background-color: var(--surface-light);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .result-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-section h2 {
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Twitch User Lookup</h1>
+        <div class="input-group">
+            <input id="username" type="text" placeholder="Enter Twitch Username">
+        </div>
+        <button id="lookupButton">Search</button>
+        <div id="result" class="results"></div>
+    </div>
+
+    <script>
+        document.getElementById('lookupButton').addEventListener('click', async () => {
+            const username = document.getElementById('username').value.trim();
+            const resultDiv = document.getElementById('result');
+
+            if (!username) {
+                resultDiv.innerHTML = `<p class="error">\u{FE0F} Enter a valid username</p>`;
+                return;
+            }
+
+            resultDiv.innerHTML = `<p class="loading">\u{1F504} Loading data...</p>`;
+
+            try {
+                // Twitch
+                const twitchData = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${username}`)
+                    .then(res => res.json())
+                    .then(data => data[0]);
+
+                if (!twitchData) {
+                    throw new Error(`User: "${username}" doesnt exist`);
+                }
+                const TwitchID = twitchData.id;
+                const TwitchLogo = twitchData.logo;
+                const TwitchBanner = twitchData.banner;
+                const TwitchAccage = twitchData.createdAt;
+                const TwitchChattercount = twitchData.chatterCount;
+
+
+                const TwitchcreatedAtDate = new Date(twitchData.createdAt);
+                const TwitchformattedDate = TwitchcreatedAtDate.toLocaleString('de-DE', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZone: 'UTC'
+                });
+
+                const FounderData = await fetch(`https://tools.2807.eu/api/getfounders/${username}`)
+                    .then(res => res.json())
+                    .catch(() => []);
+
+                const ModsData = await fetch(`https://tools.2807.eu/api/getfollows/${username}`)
+                    .then(res => res.json())
+                    .catch(() => []);
+
+                const VIPData = await fetch(`https://tools.2807.eu/api/getvips/${username}`)
+                    .then(res => res.json())
+                    .catch(() => []);
+
+                const FollowsData = await fetch(`https://tools.2807.eu/api/getfollows/${username}`)
+                    .then(res => res.json())
+                    .catch(() => []);
+                
+                const FounderCount = Array.isArray(FounderData) ? FounderData.length : 0;
+                const ModsCount = Array.isArray(ModsData) ? ModsData.length : 0;
+                const VIPCount = Array.isArray(VIPData) ? VIPData.length : 0;
+                const FollowsCount = Array.isArray(FollowsData) ? FollowsData.length : 0;
+
+                // 3rd Party Infos
+                const stvID = await fetch('https://7tv.io/v3/gql', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: `
+                            query UserByConnection {
+                                userByConnection(platform: TWITCH, id: "${TwitchID}") {
+                                    id
+                                }
+                            }`
+                    })
+                })
+                .then(res => res.json())
+                .then(data => data?.data?.userByConnection?.id || null);
+
+                const bttvID = await fetch(`https://api.betterttv.net/3/cached/users/twitch/${TwitchID}`)
+                    .then(res => res.json())
+                    .then(data => data?.id || null);
+
+                const ffzID = await fetch(`https://api.frankerfacez.com/v1/user/${username}`)
+                    .then(res => res.json())
+                    .then(data => data?.user?.id || null);
+
+                
+                // Status
+                const modchannels = await fetch(`https://rolez.joet.me/api/summary/moderators/login/${username}`)
+                    .then(res => res.json())
+                    .then(data => data?.data.channels || 0);
+
+                const vipchannels = await fetch(`https://rolez.joet.me/api/summary/vips/login/${username}`)
+                    .then(res => res.json())
+                    .then(data => data?.data.channels || 0);
+
+                const founderchannels = await fetch(`https://rolez.joet.me/api/summary/founder/login/${username}`)
+                    .then(res => res.json())
+                    .then(data => data?.data.channels || 0);
+
+                const artistchannels = await fetch(`https://rolez.joet.me/api/summary/artist/login/${username}`)
+                    .then(res => res.json())
+                    .then(data => data?.data.channels || 0);
+
+                resultDiv.innerHTML = `
+                    <div class="result-section">
+                        <h2>Twitch Info</h2>
+                        <p><strong>User ID:</strong> <span>${TwitchID}</span></p>
+                        <p><strong>Created at:</strong> <span>${TwitchformattedDate}</span></p>
+                        <p><strong>Logo:</strong> <span><a href="${TwitchLogo}" target="_blank">${username}'s Logo</a></span></p>
+                        <p><strong>Banner:</strong> <span><a href="${TwitchBanner}" target="_blank">${username}'s Banner</a></span></p>
+                        <p><strong>Founders:</strong> <a href="https://tools.2807.eu/founders?user=${username}" target="_blank"><span>${FounderCount} channels</span></a></p>
+                        <p><strong>Mods:</strong> <a href="https://tools.2807.eu/mods?user=${username}" target="_blank"><span>${ModsCount} channels</span></a></p>
+                        <p><strong>VIPs:</strong> <a href="https://tools.2807.eu/vips?user=${username}" target="_blank"><span>${VIPCount} channels</span></a></p>
+                        <p><strong>Follows:</strong> <a href="https://tools.2807.eu/follows?user=${username}" target="_blank"><span>${FollowsCount} channels</span></a></p>
+                    </div>
+                    
+                    <div class="result-section">
+                        <h2>Status</h2>
+                        <p><strong>Mod in:</strong> <span>${modchannels} channels</span></p>
+                        <p><strong>VIP in:</strong> <span>${vipchannels} channels</span></p>
+                        <p><strong>Founder in:</strong> <span>${founderchannels} channels</span></p>
+                        <p><strong>Artist in:</strong> <span>${artistchannels} channels</span></p>
+                    </div>
+                    
+                    <div class="result-section">
+                        <h2>3rd Party Infos</h2>
+                        <h2>7TV</h2>
+                        ${stvID ? `<p><strong>7TV ID:</strong> <span>${stvID}</span></p>` : ''}
+                        ${stvID ? `<p><strong>7TV ID:</strong> <span>${stvID}</span></p>` : ''}
+                    
+                        <h2>BTTV</h2>
+                        ${bttvID ? `<p><strong>BTTV ID:</strong> <span>${bttvID}</span></p>` : ''}
+                        
+                        <h2>FFZ</h2>
+                        ${ffzID ? `<p><strong>FFZ ID:</strong> <span>${ffzID}</span></p>` : ''}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
