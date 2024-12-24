@@ -59,7 +59,7 @@ function createLink() {
   values['background'] = document.getElementById("background").value;
   values['font'] = document.getElementById("font").value;
 
-  link = `https://lellolidk.de/lellolchat?channel=${values['channel']}&size=${values['size']}&shadow=${values['shadow']}&background=${values['background']}&font=${values['font']}&animated=${values['animated']}&badges=${values['badges']}&special_badges=${values['special_badges']}&bots=${values['bots']}&commands=${values['commands']}`;
+  link = `https://lellolidk.de/stream/chatoverlay/?channel=${values['channel']}&size=${values['size']}&shadow=${values['shadow']}&background=${values['background']}&font=${values['font']}&animated=${values['animated']}&badges=${values['badges']}&special_badges=${values['special_badges']}&bots=${values['bots']}&commands=${values['commands']}`;
   copyLink();
   copyLink();
   copyLink();
