@@ -715,10 +715,10 @@ async function fetch7tvPaint(userid) {
         
         let SevenTvID = dataid.user.id;
 
-        response = await fetch(`https://7tv.io/egvault/v1/subscriptions/${SevenTvID}`);
-        data = await response.json();
+        responsesub = await fetch(`https://7tv.io/egvault/v1/subscriptions/${SevenTvID}`);
+        datasub = await responsesub .json();
         
-        if (data.status_code === 404 || data.active === false) {
+        if (datasub.status_code === 404 || datasub.active === false) {
             return null;
         }
 
