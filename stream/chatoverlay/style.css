@@ -1,0 +1,77 @@
+@font-face {
+    font-family: noto;
+    src: url(fonts/Noto.ttf);
+}
+@font-face {
+    font-family: minecraft;
+    src: url(fonts/Minecraft.ttf);
+}
+@font-face {
+    font-family: shantell;
+    src: url(fonts/ShantellSans.ttf);
+}
+
+:root{
+    --text-size: 20px;
+    --text-shadow: 1px 1px 5px black;
+}
+
+body{
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    font-family: minecraft;
+}
+#chat{
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    overflow: hidden;
+    resize: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: var(--text-size);
+    font-optical-sizing: auto;
+    box-shadow: inset 0 0 100px #00ff80;
+}
+.emote{
+    height: var(--text-size);
+    margin-left: calc(var(--text-size) / 8);
+    margin-right: calc(var(--text-size) / 8);
+}
+.badge{
+    height: var(--text-size);
+    margin-left: calc(var(--text-size) / 5);
+
+    position: relative;
+    top: calc(var(--text-size) / 6);
+}
+.message{
+    filter: drop-shadow(var(--text-shadow));
+    margin: calc(var(--text-size) / 4.5);
+    width: fit-content;
+    overflow-wrap: anywhere;
+    line-break: normal;
+}
+
+#loading{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+#loadingStatus{
+    background:#00000098;
+    padding: 3vmin;
+    font-size: 8vmin;
+    color: white;
+    border-radius: 3vmin;
+}
+#ppcircle{
+    width: 50vmin;
+}
