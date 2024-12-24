@@ -59,21 +59,21 @@ var userIdsWithDankChatcontributorBadge = [];
 var ignoredUserIds = ['840051009', '754201843', '778353697', '1003451306','237719657', '100135110', '625016038', '46209051', '1564983', '105166207', '19264788', '216527497', '70885754', '52268235', '223196484', '95941264', '68136884', '865895441']; 
 
 const SubBadgeDict = {};
+const BitsBadgeDict = {};
 let SubEmoteDict = {};
-var HomiesBadges = {};
+const customhomieBadges = {};
+const HomiesBadges = {};
 var DankBadges = {};
 const sevenTvBadges = {};
+let personalEmoteSetId = null;
 
 async function fetchlolnotAPI() {
   try {
-    const response = await fetch('https://raw.githubusercontent.com/notLe0nard/lolnotapi/main/users.json');
-    const data = await response.json();
-    lolnotAdmins = data.admin;
-    lolnotMods = data.mod;
-    lolnotContributor = data.contributor;
-    lolnotFounders = data.founder;
-    lolnotSub = data.sub;
-    botsIds = data.bot;
+    lolnotAdmins = '636823070';
+    lolnotMods = '';
+    lolnotContributor = '';
+    lolnotFounders = '';
+    lolnotSub = '';
   } catch (error) {
     console.error('Error:', error);
   }
@@ -81,25 +81,50 @@ async function fetchlolnotAPI() {
 
 async function fetchFFZAPI() {
   try {
-    const response = await fetch('https://api.frankerfacez.com/v1/badges');
+    const response = await fetch('https://api.frankerfacez.com/v1/badges/ids');
     const data = await response.json();
-    ffzdeveloper = data.users[1]
-    ffzBot = data.users[2]
-    ffzSupporter = data.users[3]
-    ffzSubwoofer = data.users[4]
 
+    const badges = data.badges || [];
+
+    badges.forEach(badge => {
+        switch (badge.id) {
+            case 2:
+                BadgeffzBot = badge.urls["4"];
+                break;
+            case 1:
+                BadgeffzDeveloper = badge.urls["4"];
+                break;
+            case 3:
+                BadgeffzSupporter = badge.urls["4"];
+                break;
+            case 4:
+                BadgeffzSubwoofer = badge.urls["4"];
+                break;
+        }
+    });
+      ffzdeveloper = data.users[1] || [];
+      ffzBot = data.users[2] || [];
+      ffzSupporter = data.users[3] || [];
+      ffzSubwoofer = data.users[4] || [];
   } catch (error) {
-    console.error('Error:', error);
+      console.error('Error:', error);
   }
 }
 
 async function fetchDankBadges() {
   try {
-    const response = await fetch('https://corsproxy.io/?https%3A%2F%2Fflxrs.com%2Fapi%2Fbadges');
+    const response = await fetch('https://flxrs.com/api/badges');
     const data = await response.json();
+
+    DankBadges = {}; 
+
     data.forEach(badge => {
+      const badgeUrl = badge.url;
       badge.users.forEach(userId => {
-        DankBadges[userId] = badge.url;
+        if (!DankBadges[userId]) {
+          DankBadges[userId] = [];
+        }
+        DankBadges[userId].push(badgeUrl);
       });
     });
   } catch (error) {
@@ -107,33 +132,46 @@ async function fetchDankBadges() {
   }
 }
 
+const userIdsWithChatterinoBadges = {
+  topDonator: [],
+  contributor: [],
+  supporter: [],
+  developer: [],
+  specialPepe: [],
+};
 async function fetchChatterino() {
   try {
-    const response = await fetch('https://corsproxy.io/?https%3A%2F%2Fapi.chatterino.com%2Fbadges');
+    const response = await fetch('https://api.chatterino.com/badges');
     const data = await response.json();
-    userIdsWithChatterinoBadge = [];
-    userIdsWithtopdonaterChatterinoBadge = [];
-    userIdsWithChatterinoContibuterBadge = [];
-    userIdsWithChatterinoDevBadge = [];
-    userIdsWithChatterinopepeBadge = [];
+
+    Object.keys(userIdsWithChatterinoBadges).forEach(key => {
+      userIdsWithChatterinoBadges[key] = [];
+    });
 
     for (const badge of data.badges) {
-      if (badge.tooltip === "Chatterino Top Donator") {
-        userIdsWithtopdonaterChatterinoBadge = badge.users;
-      } else if (badge.tooltip === "Chatterino Contributor") {
-        userIdsWithChatterinoContibuterBadge = badge.users;
-      } else if (badge.tooltip === "Chatterino Supporter") {
-        userIdsWithChatterinoBadge = badge.users;
-      } else if (badge.tooltip === "Chatterino Developer") {
-        userIdsWithChatterinoDevBadge = badge.users;
-      } else if (badge.tooltip === "Chatterino Special Pepe Badge") {
-        userIdsWithChatterinopepeBadge = badge.users;
+      switch (badge.tooltip) {
+        case "Chatterino Top Donator":
+          userIdsWithChatterinoBadges.topDonator = badge.users;
+          break;
+        case "Chatterino Contributor":
+          userIdsWithChatterinoBadges.contributor = badge.users;
+          break;
+        case "Chatterino Supporter":
+          userIdsWithChatterinoBadges.supporter = badge.users;
+          break;
+        case "Chatterino Developer":
+          userIdsWithChatterinoBadges.developer = badge.users;
+          break;
+        case "Chatterino Special Pepe Badge":
+          userIdsWithChatterinoBadges.specialPepe = badge.users;
+          break;
       }
     }
 
     for (const badge of data.badges) {
       customBadges[badge.tooltip.toLowerCase()] = badge.image3;
     }
+
   } catch (error) {
     console.error('Error:', error);
   }
@@ -141,7 +179,7 @@ async function fetchChatterino() {
 
 async function fetchHomiesSubBadges() {
   try {
-    const response = await fetch('https://corsproxy.io/?https%3A%2F%2Fraw.githubusercontent.com%2FitzAlex%2Fitzalex.github.io%2Fmaster%2Fbadges');
+    const response = await fetch('https://raw.githubusercontent.com/itzAlex/itzalex.github.io/master/badges');
     const data = await response.json();
     userIdsWithHomiesDev = [];
     userIdsWithHomiesSupporterFounder = [];
@@ -170,7 +208,7 @@ async function fetchHomiesSubBadges() {
 
 async function fetchHomiesModBadges() {
   try {
-    const response = await fetch('https://corsproxy.io/?https%3A%2F%2Fraw.githubusercontent.com%2FitzAlex%2Fitzalex.github.io%2Fmaster%2Fbadges2');
+    const response = await fetch('https://raw.githubusercontent.com/itzAlex/itzalex.github.io/master/badges2');
     const data = await response.json();
     userIdsWithHomiesMod = [];
     userIdsWithHomiesSeniorMod = [];
@@ -242,155 +280,68 @@ function getBadgeNames(message) {
   const badgeInfoMatch = message.match(/badges=([^;]+);/);
 
   if (!badgeInfoMatch) {
-      return '';
+    return '';
   }
 
   const badgeDefs = badgeInfoMatch[1].split(",");
   let imgString = "";
 
   for (const badgeDef of badgeDefs) {
-      const [badgeName, badgeId] = badgeDef.split("/");
+    const [badgeName, badgeId] = badgeDef.split("/");
 
-      if (badgeName === "moderator") {
-          imgString += `<img class="badge" src="${customBadges[badgeName]}" style="background: #00ad03; border-radius:10%;">`;
-      } else if(badgeName.includes("subscriber")){
-        imgString += `<img class="badge" src="${SubBadgeDict[parseInt(message.split("badges=")[1].split("subscriber/")[1].match(/^\d+/)[0])]}">`;
-      } else if (badgeName === "moments") {
-        const MomentsBadgeUrl = customBadges[`moments/${badgeId}`] || customBadges['moments'];
-        imgString += `<img class="badge" src="${MomentsBadgeUrl}">`;
-      } else if (badgeName === "sub-gifter") {
-        const subGifterBadgeUrl = customBadges[`sub-gifter/${badgeId}`] || customBadges['sub-gifter'];
-        imgString += `<img class="badge" src="${subGifterBadgeUrl}">`;
-      } else if (badgeName === "founder") {
-        const founderBadgeUrl = customBadges[`founder/${badgeId}`] || customBadges['founder'];
-        imgString += `<img class="badge" src="${founderBadgeUrl}">`;
-      } else if (badgeName === "bits") {
-        const BitsBadgeUrl = customBadges[`bits/${badgeId}`] || customBadges['bits'];
-        imgString += `<img class="badge" src="${BitsBadgeUrl}">`;
-      } else if (badgeName === "bits-leader") {
-        const BitsLeaderBadgeUrl = customBadges[`bits-leader/${badgeId}`] || customBadges['bits-leader'];
-        imgString += `<img class="badge" src="${BitsLeaderBadgeUrl}">`;
-      } else if (badgeName === "bits-leader") {
-        const subGifterLeaderBadgeUrl = customBadges[`sub-gift-leader/${badgeId}`] || customBadges['sub-gift-leader'];
-        imgString += `<img class="badge" src="${subGifterLeaderBadgeUrl}">`;
-      } else if (badgeName === "vip") {
-          imgString += `<img class="badge" src="${customBadges[badgeName]}">`;
-      } else if (badgeName in customBadges) {
-          imgString += `<img class="badge" src="${customBadges[badgeName]}">`;
-      }
+    if (badgeName === "moderator") {
+      imgString += `<img class="badge" src="${customBadges[badgeName]}" style="background: #00ad03; border-radius:10%;">`;
+    } else if (badgeName.includes("subscriber")) {
+      imgString += `<img class="badge" src="${SubBadgeDict[parseInt(message.split("badges=")[1].split("subscriber/")[1].match(/^\d+/)[0])]}">`;
+    } else if (badgeName === "moments") {
+      const MomentsBadgeUrl = customBadges[`moments/${badgeId}`] || customBadges['moments'];
+      imgString += `<img class="badge" src="${MomentsBadgeUrl}">`;
+    } else if (badgeName === "sub-gifter") {
+      const subGifterBadgeUrl = customBadges[`sub-gifter/${badgeId}`] || customBadges['sub-gifter'];
+      imgString += `<img class="badge" src="${subGifterBadgeUrl}">`;
+    } else if (badgeName === "founder") {
+      const founderBadgeUrl = customBadges[`founder/${badgeId}`] || customBadges['founder'];
+      imgString += `<img class="badge" src="${founderBadgeUrl}">`;
+    } else if (badgeName.includes("bits")) {
+      const bitsBadgeId = parseInt(message.split("badges=")[1].split("bits/")[1].match(/^\d+/)[0]);
+      const bitsBadgeUrl = BitsBadgeDict[bitsBadgeId] || customBadges[`bits/${badgeId}`] || customBadges['predictions'];
+      imgString += `<img class="badge" src="${bitsBadgeUrl}">`;
+    } else if (badgeName === "predictions") {
+      const predictionsBadgeUrl = customBadges[`predictions/${badgeId}`] || customBadges['predictions'];
+      imgString += `<img class="badge" src="${predictionsBadgeUrl}">`;
+    } else if (badgeName === "hype-train") {
+      const hypetrainBadgeUrl = customBadges[`hype-train/${badgeId}`] || customBadges['hype-train'];
+      imgString += `<img class="badge" src="${hypetrainBadgeUrl}">`;
+    } else if (badgeName === "bits-leader") {
+      const BitsLeaderBadgeUrl = customBadges[`bits-leader/${badgeId}`] || customBadges['bits-leader'];
+      imgString += `<img class="badge" src="${BitsLeaderBadgeUrl}">`;
+    } else if (badgeName === "sub-gift-leader") {
+      const subGifterLeaderBadgeUrl = customBadges[`sub-gift-leader/${badgeId}`] || customBadges['sub-gift-leader'];
+      imgString += `<img class="badge" src="${subGifterLeaderBadgeUrl}">`;
+    } else if (badgeName === "vip") {
+      imgString += `<img class="badge" src="${customBadges[badgeName]}">`;
+    } else if (badgeName in customBadges) {
+      imgString += `<img class="badge" src="${customBadges[badgeName]}">`;
+    }
   }
 
   return imgString;
 }
 
 function getMessage(message) {
-  if (message.split(`PRIVMSG #`)[1].split(" :")[0] == "lellolidk"){
-    return message.split(`PRIVMSG #lellolidk :`)[1];
-  }
-  else{
+  if (message.split(`PRIVMSG #`)[1].split(" :")[0] == `${channel}`){
     return message.split(`PRIVMSG #${channel} :`)[1];
   }
 }
 
 function cleanup() {
-  document.getElementById("chat").innerHTML = document.getElementById("chat").innerHTML.slice(-30000)
-}
-
-async function fetchEmotes(channel){
-    channel = searchParams.get('channel').toLowerCase();
-    //Emotes
-    try {
-      const response = await fetch(`https://emotes.crippled.dev/v1/channel/${channel}/7tv`);
-      const data = await response.json();
-      for (let i = 0; i < data.length; i++){
-        emote_links[data[i].code] = data[i].urls[1].url
-      }
-    } catch(error) {
-      console.error(error);
-    }
-    try {
-      const response = await fetch(`https://emotes.crippled.dev/v1/channel/${channel}/bttv`);
-      const data = await response.json();
-      for (let i = 0; i < data.length; i++){
-        emote_links[data[i].code] = data[i].urls[1].url
-      }
-    } catch(error) {
-      console.error(error);
-    }
-    try {
-      const response = await fetch(`https://emotes.crippled.dev/v1/channel/${channel}/ffz`);
-      const data = await response.json();
-      for (let i = 0; i < data.length; i++){
-        emote_links[data[i].code] = data[i].urls[1].url
-      }
-    } catch(error) {
-      console.error(error);
-    }
-
-  //Global
-  try {
-    const response = await fetch(`https://emotes.crippled.dev/v1/global/7tv`);
-    const data = await response.json();
-    for (let i = 0; i < data.length; i++){
-      emote_links[data[i].code] = data[i].urls[1].url
-    }
-  } catch(error) {
-    console.error(error);
-  }
-  try {
-    const response = await fetch(`https://emotes.crippled.dev/v1/global/twitch`);
-    const data = await response.json();
-    for (let i = 0; i < data.length; i++){
-      emote_links[data[i].code] = data[i].urls[1].url
-    }
-  } catch(error) {
-    console.error(error);
-  }
-  try {
-    const response = await fetch(`https://emotes.crippled.dev/v1/global/bttv`);
-    const data = await response.json();
-    for (let i = 0; i < data.length; i++){
-      emote_links[data[i].code] = data[i].urls[1].url
-    }
-  } catch(error) {
-    console.error(error);
-  }
-  try {
-    const response = await fetch(`https://emotes.crippled.dev/v1/global/ffz`);
-    const data = await response.json();
-    for (let i = 0; i < data.length; i++){
-      emote_links[data[i].code] = data[i].urls[1].url
-    }
-  } catch(error) {
-    console.error(error);
-  }
-}
-
-async function fetchFFZModVipBadges(channel){
-  try {
-    const response = await fetch(`https://api.frankerfacez.com/v1/room/${channel}`);
-    const data = await response.json();
-
-    if (data.room.mod_urls) {
-      for (let i = 4; i >= 1; i--) {
-        if (data.room.mod_urls[i]) {
-          customBadges['moderator'] = data.room.mod_urls[i];
-          break;
+    const chat = document.getElementById("chat");
+    const messages = chat.getElementsByClassName("message");
+    if (messages.length > 100) {
+        while (messages.length > 100) {
+            chat.removeChild(messages[0]);
         }
-      }
     }
-
-    if (data.room.vip_badge) {
-      for (let i = 4; i >= 1; i--) {
-        if (data.room.vip_badge[i]) {
-          customBadges['vip'] = data.room.vip_badge[i];
-          break;
-        }
-      }
-    }
-  } catch(error) {
-    console.error('Error:', error);
-  }
 }
 
 async function fetchSubBadges(channel){
@@ -427,22 +378,61 @@ async function fetchSubBadges(channel){
   }
 }
 
+async function fetchBitsBadges(channel) {
+  try {
+    const channelResponse = await fetch(`https://api.twitch.tv/helix/users?login=${channel}`, {
+      headers: {
+        'Client-ID': 'gp762nuuoqcoxypju8c569th9wz7q5',
+        'Authorization': 'Bearer vh7kq5y8raig9rko5byve6zcs6s1yg'
+      }
+    });
+    const channelData = await channelResponse.json();
+    const channelId = channelData.data[0].id;
+
+    const response = await fetch(`https://api.twitch.tv/helix/chat/badges?broadcaster_id=${channelId}`, {
+      headers: {
+        'Client-ID': 'gp762nuuoqcoxypju8c569th9wz7q5',
+        'Authorization': 'Bearer vh7kq5y8raig9rko5byve6zcs6s1yg'
+      }
+    });
+    const data = await response.json();
+
+    for (const badgeSet of data.data) {
+      if (badgeSet.set_id === 'bits') {
+        for (const version of badgeSet.versions) {
+          const id = version.id;
+          const imageUrl = version.image_url_4x;
+          BitsBadgeDict[id] = imageUrl;
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
 function reloadOverlay() {
   location.reload();
 }
 
 function replaceEmotes(message, emoteLinks) {
-  let newMessage = "";
-
-  for (const word of message.replace(/^\s+|\s+$/g, '').replace(/<\/?[^>]+(>|$)/g, '').split(" ")) {
-    if (emoteLinks.hasOwnProperty(word)) {
-      newMessage += `<img class="emote" src="${emoteLinks[word]}">`;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(message, 'text/html');
+  const textContent = doc.body.textContent || message;
+  
+  let words = textContent.split(' ');
+  let newMessage = [];
+  
+  for (let word of words) {
+    word = word.trim();
+    if (word in emoteLinks) {
+      newMessage.push(`<img class="emote" src="${emoteLinks[word]}">`);
     } else {
-      newMessage += word + " ";
+      newMessage.push(word);
     }
   }
 
-  return newMessage.trim();
+  return newMessage.join(' ');
 }
 
 const url = new URL(window.location.href);
@@ -450,9 +440,9 @@ const searchParams = url.searchParams;
 index = 0
 
 channel = searchParams.get('channel').toLowerCase();
-if (size = searchParams.get('size').toLowerCase() == "0"){document.querySelector(':root').style.setProperty('--text-size', '20px');}
-if (size = searchParams.get('size').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-size', '40px');}
-if (size = searchParams.get('size').toLowerCase() == "2"){document.querySelector(':root').style.setProperty('--text-size', '60px');}
+if (size = searchParams.get('size').toLowerCase() == "0"){document.querySelector(':root').style.setProperty('--text-size', '30px');}
+if (size = searchParams.get('size').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-size', '35px');}
+if (size = searchParams.get('size').toLowerCase() == "2"){document.querySelector(':root').style.setProperty('--text-size', '40px');}
 
 if (shadow = searchParams.get('shadow').toLowerCase() == "0"){document.querySelector(':root').style.setProperty('--text-shadow', 'none');}
 if (shadow = searchParams.get('shadow').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-shadow', `1px 1px 5px black`);}
@@ -477,37 +467,177 @@ show_bots = searchParams.get('bots').toLowerCase()
 
 show_commands = searchParams.get('commands').toLowerCase();
 
-async function start(){
-  loadingStatus = document.getElementById("loadingStatus");
-  loadingStatus.innerHTML = "Loading"
-  await fetchBadges();
-  fetchSubBadges(channel);
-  fetchlolnotAPI();
-  fetchChatterino();
-  fetchDankBadges();
-  fetchFFZAPI();
-  loadBadgeData();
-  //get7tvColor();
-  fetchHomiesBadges();
-  fetchHomiesSubBadges();
-  fetchHomiesModBadges();
-  fetchFFZModVipBadges(channel);
-  fetchEmotes(channel);
-  loadingStatus.remove()
-  document.getElementById("loading").remove()
-  document.getElementById("chat").style.boxShadow = "none"
-}
-start()
+async function channeltoid(channel) {
+  channel = searchParams.get('channel').toLowerCase();
+  try {
+    const response = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${channel}`);
+    const data = await response.json();
+    const userData = data[0];
+    let channelID = userData.id;
 
-const socket = new WebSocket("wss://irc-ws.chat.twitch.tv:443");
-socket.addEventListener('open', () =>{
-  socket.send(`PASS oauth:leckeier`);
-  socket.send(`NICK justinfan65345`);
-  socket.send(`JOIN #lellolidk`);
-  socket.send(`JOIN #${channel}`);
-  socket.send(`CAP REQ :twitch.tv/commands twitch.tv/membership twitch.tv/tags`);
-  document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
-})
+    return channelID;
+
+  } catch(error) {
+    console.error(error);
+    return null;
+  }
+}
+
+async function fetchEmotes(channel){
+  channel = searchParams.get('channel').toLowerCase();
+  const channelID = await channeltoid(channel)
+  try {
+    const userByConnectionQuery = {
+      query: `
+      query UserByConnection {
+          userByConnection(platform: "TWITCH", id: "${channelID}") {
+              connections {
+                  emote_set_id
+              }
+          }
+      }`
+  };
+
+  const response = await fetch('https://7tv.io/v3/gql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userByConnectionQuery)
+  });
+
+  const data = await response.json();
+  if (data.data && data.data.userByConnection && data.data.userByConnection.connections.length > 0) {
+      emoteSetId = data.data.userByConnection.connections[0].emote_set_id;
+  }
+} catch (error) {
+  console.error('Error getting emote set ID:', error);
+  return;
+}
+
+if (!emoteSetId) {
+  console.error('No emote set ID found for this channel.');
+  return;
+}
+
+try {
+  const emoteSetQuery = {
+      query: `
+      query EmoteSet {
+          emoteSet(id: "${emoteSetId}") {
+              emotes {
+                  id
+                  name
+                  data {
+                      host {
+                          url
+                      }
+                  }
+              }
+          }
+      }`
+  };
+
+  const response = await fetch('https://7tv.io/v3/gql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(emoteSetQuery)
+  });
+
+  const emoteSetData = await response.json();
+  const emotes = emoteSetData.data.emoteSet.emotes;
+
+  for (let i = 0; i < emotes.length; i++) {
+      const emoteUrl = emotes[i].data.host.url;
+      const emoteName = emotes[i].name;
+      emote_links[emoteName] = `https:${emoteUrl}/4x.webp`;
+  } } catch (error) {
+    console.error('Error:', error);
+}
+
+  try {
+    const response = await fetch(`https://emotes.crippled.dev/v1/channel/${channel}/bttv`);
+    const data = await response.json();
+    for (let i = 0; i < data.length; i++){
+      emote_links[data[i].code] = data[i].urls[1].url
+    }
+  } catch(error) {
+    console.error(error);
+  }
+  try {
+    const response = await fetch(`https://emotes.crippled.dev/v1/channel/${channel}/ffz`);
+    const data = await response.json();
+    for (let i = 0; i < data.length; i++){
+      emote_links[data[i].code] = data[i].urls[1].url
+    }
+  } catch(error) {
+    console.error(error);
+  }
+
+//Global
+try {
+  const response = await fetch(`https://emotes.crippled.dev/v1/global/7tv`);
+  const data = await response.json();
+  for (let i = 0; i < data.length; i++){
+    emote_links[data[i].code] = data[i].urls[1].url
+  }
+} catch(error) {
+  console.error(error);
+}
+try {
+  const response = await fetch(`https://emotes.crippled.dev/v1/global/twitch`);
+  const data = await response.json();
+  for (let i = 0; i < data.length; i++){
+    emote_links[data[i].code] = data[i].urls[1].url
+  }
+} catch(error) {
+  console.error(error);
+}
+try {
+  const response = await fetch(`https://emotes.crippled.dev/v1/global/bttv`);
+  const data = await response.json();
+  for (let i = 0; i < data.length; i++){
+    emote_links[data[i].code] = data[i].urls[1].url
+  }
+} catch(error) {
+  console.error(error);
+}
+try {
+  const response = await fetch(`https://emotes.crippled.dev/v1/global/ffz`);
+  const data = await response.json();
+  for (let i = 0; i < data.length; i++){
+    emote_links[data[i].code] = data[i].urls[1].url
+  }
+} catch(error) {
+  console.error(error);
+}
+}
+
+async function fetchFFZModVipBadges(channel){
+  try {
+    const channelID = await channeltoid(channel)
+    const response = await fetch(`https://api.frankerfacez.com/v1/room/id/${channelID}`);
+    const data = await response.json();
+
+    if (data.room.mod_urls) {
+      for (let i = 4; i >= 1; i--) {
+        if (data.room.mod_urls[i]) {
+          customBadges['moderator'] = data.room.mod_urls[i];
+          break;
+        }
+      }
+    }
+
+    if (data.room.vip_badge) {
+      for (let i = 4; i >= 1; i--) {
+        if (data.room.vip_badge[i]) {
+          customBadges['vip'] = data.room.vip_badge[i];
+          break;
+        }
+      }
+    }
+  } catch(error) {
+    console.error('Error:', error);
+  }
+}
 
 async function fetch7tvBadge(userid) {
   try {
@@ -521,7 +651,7 @@ async function fetch7tvBadge(userid) {
       
       let SevenTvID = data.user.id;
 
-      response = await fetch(`https://corsproxy.io/?https%3A%2F%2Fegvault.7tv.io%2Fv1%2Fsubscriptions%2F${SevenTvID}`);
+      response = await fetch(`https://7tv.io/egvault/v1/subscriptions/${SevenTvID}`);
       data = await response.json();
       
       if (data.status_code === 404 || data.active === false) {
@@ -558,7 +688,7 @@ async function fetch7tvBadge(userid) {
 
       for (const cosmetic of UserCosmetics.data.user.cosmetics) {
           if (cosmetic.selected === true && cosmetic.kind === "BADGE") {
-              let badgeUrl = `https://cdn.7tv.app/badge/${cosmetic.id}/3x`;
+              let badgeUrl = `https://cdn.7tv.app/badge/${cosmetic.id}/4x`;
               sevenTvBadges[userid] = badgeUrl;
               return badgeUrl;
           }
@@ -568,71 +698,340 @@ async function fetch7tvBadge(userid) {
       return "";
       
   } catch (error) {
-      console.error('Fehler beim Abrufen des Badges:', error);
+      console.error('Err:', error);
       sevenTvBadges[userid] = "";
       return "";
   }
 }
 
-/* async function get7tvColor() {
-  const id = '676966284'
-  const query = `
-  query UserByConnection {
-      userByConnection(platform: TWITCH, id: "${id}") {
-          style {
-              paint {
-                  id
-              }
-          }
-      }
-  }`;
-  try {
-      const response = await fetch('https://7tv.io/v3/gql', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query })
-      });
+async function fetch7tvPaint(userid) {
+    try {
+        let responseid = await fetch(`https://7tv.io/v3/users/twitch/${userid}`);
+        let dataid = await responseid.json();
+        
+        if (dataid.status_code === 404) {
+            return null;
+        }
+        
+        let SevenTvID = dataid.user.id;
 
-      const data = await response.json();
-      console.log(data)
-  } catch (err) {
-      console.log(err)
-      return null;
+        response = await fetch(`https://7tv.io/egvault/v1/subscriptions/${SevenTvID}`);
+        data = await response.json();
+        
+        if (data.status_code === 404 || data.active === false) {
+            return null;
+        }
+
+        const response = await fetch("https://7tv.io/v3/gql", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                operationName: "User",
+                variables: { id: SevenTvID },
+                query: `
+                    query User($id: ObjectID!) {
+                        user(id: $id) {
+                            style {
+                                paint_id
+                                paint {
+                                    id
+                                    name
+                                    function
+                                    color
+                                    stops {
+                                        at
+                                        color
+                                    }
+                                    repeat
+                                    angle
+                                    shape
+                                    image_url
+                                    shadows {
+                                        x_offset
+                                        y_offset
+                                        radius
+                                        color
+                                    }
+                                }
+                            }
+                        }
+                    }
+                `
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.data?.user?.style?.paint) {
+            return data.data.user.style.paint;
+        }
+        return null;
+    } catch (error) {
+        console.error('Error:', error);
+        return null;
+    }
+}
+
+function applyPaintStyle(paint, baseColor) {    
+    let style = '';
+    
+    if (paint.function === 'LINEAR_GRADIENT' && paint.stops && paint.stops.length) {
+        const gradientStops = paint.stops.map(stop => {
+            const colorString = '#' + (stop.color >>> 0).toString(16).padStart(8, '0');
+            return `${colorString} ${stop.at * 100}%`;
+        });
+        const gradientDirection = `${paint.angle}deg`;
+        const gradient = paint.repeat
+            ? `repeating-linear-gradient(${gradientDirection}, ${gradientStops.join(', ')})`
+            : `linear-gradient(${gradientDirection}, ${gradientStops.join(', ')})`;
+            
+        style += `
+            background-image: ${gradient};
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        `;
+    } 
+    else if (paint.function === 'RADIAL_GRADIENT' && paint.stops && paint.stops.length) {
+        const gradientStops = paint.stops.map(stop => {
+            const colorString = '#' + (stop.color >>> 0).toString(16).padStart(8, '0');
+            return `${colorString} ${stop.at * 100}%`;
+        });
+        const gradient = paint.repeat
+            ? `repeating-radial-gradient(circle, ${gradientStops.join(', ')})`
+            : `radial-gradient(circle, ${gradientStops.join(', ')})`;
+            
+        style += `
+            background-image: ${gradient};
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        `;
+    }
+    else if (paint.function === 'URL' && paint.image_url) {
+        style += `
+            background-image: url('${paint.image_url}');
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: cover;
+            ${paint.repeat ? 'background-repeat: repeat;' : 'background-repeat: no-repeat;'}
+        `;
+    }
+    
+    if (paint.shadows && paint.shadows.length) {
+        const dropShadows = paint.shadows.map(shadow => {
+            const colorString = '#' + (shadow.color >>> 0).toString(16).padStart(8, '0');
+            return `drop-shadow(${colorString} ${shadow.x_offset}px ${shadow.y_offset}px ${shadow.radius}px)`;
+        });
+        style += `filter: ${dropShadows.join(' ')};`;
+    }
+    
+    return `
+        display: inline-block;
+        ${style}
+    `;
+}
+
+async function fetchPersonalEmote(userid) {
+  try {
+    const userByConnectionQuery = {
+        query: `
+        query UserByConnection {
+            userByConnection(platform: "TWITCH", id: "${userid}") {
+                emote_sets {
+                    id
+                    name
+                    flags
+                    owner_id
+                }
+            }
+        }`
+    };
+
+    const response = await fetch('https://7tv.io/v3/gql', {
+      method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userByConnectionQuery)
+    });
+
+    const data = await response.json();
+    if (data.data && data.data.userByConnection && data.data.userByConnection.emote_sets.length > 0) {
+        const emoteSets = data.data.userByConnection.emote_sets;
+
+        for (let i = 0; i < emoteSets.length; i++) {
+            if (emoteSets[i].flags === 4) {
+                personalEmoteSetId = emoteSets[i].id;
+                break;
+            }
+        }
+    }
+} catch (error) {
+    console.error('Error:', error);
+    return;
+}
+
+if (!personalEmoteSetId) {
+    return;
+}
+
+try {
+    const emoteSetQuery = {
+        query: `
+        query EmoteSet {
+            emoteSet(id: "${personalEmoteSetId}") {
+                emotes {
+                    id
+                    name
+                    data {
+                        host {
+                            url
+                        }
+                    }
+                }
+            }
+        }`
+    };
+
+    const response = await fetch('https://7tv.io/v3/gql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(emoteSetQuery)
+    });
+
+    const emoteSetData = await response.json();
+    const emotes = emoteSetData.data.emoteSet.emotes;
+
+    for (let i = 0; i < emotes.length; i++) {
+        const emoteUrl = emotes[i].data.host.url;
+        const emoteName = emotes[i].name;
+        emote_links[emoteName] = `https:${emoteUrl}/4x.webp`;
+    }
+} catch (error) {
+    console.error('Error:', error);
+}
+}
+
+function generateRandomString(length) {
+  const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters[randomIndex];
   }
-} */
+  return result;
+}
+
+const socket = new WebSocket("wss://irc-ws.chat.twitch.tv:443");
+socket.addEventListener('open', () =>{
+  socket.send(`PASS oauth:` + generateRandomString(10));
+  socket.send(`NICK justinfan` + Math.floor(Math.random() * 99999));
+  socket.send(`JOIN #${channel}`);
+  socket.send(`CAP REQ :twitch.tv/commands twitch.tv/membership twitch.tv/tags`);
+  document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
+})
+
+async function start(){
+  const loadingStatus = document.getElementById("loadingStatus");
+  loadingStatus.innerHTML = "Loading";
+  
+  try {
+    await Promise.all([
+      fetchBadges(),
+      fetchSubBadges(channel),
+      fetchBitsBadges(channel),
+      fetchFFZModVipBadges(channel),
+      fetchEmotes(channel),
+      loadBadgeData(),
+      fetchlolnotAPI(),
+      fetchChatterino(),
+      fetchDankBadges(),
+      fetchFFZAPI(),
+      fetchHomiesBadges(),
+      fetchHomiesSubBadges(),
+      fetchHomiesModBadges()
+    ]);
+    
+    loadingStatus.remove();
+    document.getElementById("loading").remove();
+    document.getElementById("chat").style.boxShadow = "none";
+  } catch (error) {
+    console.error('Failed to initialize:', error);
+  }
+}
+
+start().then(() => {
+  setInterval(cleanup, 5000);
+  setInterval(updateEmotes, 60000);
+  setInterval(scrollToBottom, 100);
+});
 
 async function handleCommand(message){
-  if (message.startsWith(`!lellolchat reload ${channel}`)){
-    location.reload();
-  }
-  if (message.startsWith(`!lellolchat dink ${channel}`)){
-    await document.getElementById("dink").play()
-  }
+if (message.startsWith(`!lellolchat reload`)){
+  location.reload();
+}
 }
 
 socket.addEventListener('message', async event => {
   console.log(event.data);
   if (event.data.includes("PING")) {
-    socket.send(`PONG`);
+      socket.send(`PONG`);
   }
-  if (event.data.includes(`:tmi.twitch.tv CLEARCHAT #`) && event.data.startsWith("@room-id")) {
-    document.getElementById("chat").innerHTML = "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
+
+  if (event.data.includes("CLEARCHAT")) {
+    const targetUserMatch = event.data.match(/target-user-id=(\d+)/);
+    if (targetUserMatch) {
+      const targetUserId = targetUserMatch[1];
+      const messages = document.getElementsByClassName("message");
+      Array.from(messages).forEach(message => {
+        if (message.getAttribute("data-user-id") === targetUserId) {
+          message.remove();
+        }
+      });
+    } else if (event.data.includes(`:tmi.twitch.tv CLEARCHAT #`)) {
+      document.getElementById("chat").innerHTML = "";
+    }
   }
+
   if (event.data.includes("PRIVMSG")) {
       const message = getMessage(event.data);
       const messageChannel = event.data.split(`PRIVMSG #`)[1].split(" :")[0];
       const username = getUserName(event.data);
-      const username2 = getUserName(event.data).toLowerCase();
-      const badgesInfo = getBadgeNames(event.data);
       const usernameColor = getUsernameColor(event.data);
+      const badgesInfo = getBadgeNames(event.data);
+
+      const emotes = {};
+      const emotesMatch = event.data.match(/emotes=([^;]*)/);
+      if (emotesMatch && emotesMatch[1] !== '') {
+          const emotesList = emotesMatch[1].split('/');
+
+          emotesList.forEach(emote => {
+              const [emoteId, positions] = emote.split(':');
+
+              positions.split(',').forEach(position => {
+                  const [start, end] = position.split('-');
+                  emotes[emoteId] = {
+                      start: parseInt(start),
+                      end: parseInt(end)
+                  };
+              });
+          });
+      }
 
       let userId = null;
       const userIdMatch = event.data.match(/;user-id=(\d+);/);
       if (userIdMatch) {
-        userId = userIdMatch[1];
+          userId = userIdMatch[1];
       }
 
-      if (messageChannel == "lellolidk"){
+      const response = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${username}`);
+      const data = await response.json();
+      const userData = data[0];
+      let userid = userData.id;
+
+      await fetchPersonalEmote(userid);
+
+      if (messageChannel == "lellol800"){
         if (lolnotAdmins.includes(userId)){
           handleCommand(message)
         }
@@ -644,44 +1043,53 @@ socket.addEventListener('message', async event => {
       else{
         if (userId && ignoredUserIds.includes(userId) && show_bots === '0') {
           return;
-        }
-    
+        }        
         let badgesImg = badgesInfo;
+
         
         if(show_badges == "1"){
 
-          //Chatterino
-          if (userId && userIdsWithChatterinoBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${ChatterinoBadge}">`;
-          }
-          if (userId && userIdsWithtopdonaterChatterinoBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${ChatterinoTopDonaterBadge}">`;
-          }
-          if (userId && userIdsWithChatterinoContibuterBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${ChatterinoContributerBadge}">`;
-          }
-          if (userId && userIdsWithChatterinoDevBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${ChatterinoDevBadge}">`;
-          }
-          if (userId && userIdsWithChatterinopepeBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${ChatterinoPepeBadge}">`;
+          if (userId) {
+            Object.keys(userIdsWithChatterinoBadges).forEach(key => {
+              if (userIdsWithChatterinoBadges[key].includes(userId)) {
+                switch (key) {
+                  case 'topDonator':
+                    badgesImg += `<img class="badge" src="${ChatterinoTopDonaterBadge}">`;
+                    break;
+                  case 'contributor':
+                    badgesImg += `<img class="badge" src="${ChatterinoContributerBadge}">`;
+                    break;
+                  case 'supporter':
+                    badgesImg += `<img class="badge" src="${ChatterinoBadge}">`;
+                    break;
+                  case 'developer':
+                    badgesImg += `<img class="badge" src="${ChatterinoDevBadge}">`;
+                    break;
+                  case 'specialPepe':
+                    badgesImg += `<img class="badge" src="${ChatterinoPepeBadge}">`;
+                    break;
+                }
+              }
+            });
           }
 
           //FFZ
-          if (username2 && ffzdeveloper.includes(username2)) {
-            badgesImg += `<img class="badge" src="${FFZdeveloperBadge}" style="background-color: rgb(250, 175, 25); border-radius: 10%;">`;
-          }
-          if (username2 && ffzBot.includes(username2)) {
-            badgesImg += `<img class="badge" src="${FFZBotBadge}" style="background-color: rgb(89, 89, 89); border-radius: 10%;">`;
-          }
-          if (username2 && ffzSupporter.includes(username2)) {
-            badgesImg += `<img class="badge" src="${FFZSupporterBadge}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
-          }
-          if (username2 && ffzSubwoofer.includes(username2)) {
-            badgesImg += `<img class="badge" src="${FFZSubwooferBadge}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
-          }
+          if (userid) {
+            if (ffzdeveloper.includes(parseInt(userid))) {
+                badgesImg += `<img class="badge" src="${BadgeffzDeveloper}" style="background-color: rgb(250, 175, 25); border-radius: 10%;">`;
+            }
+            if (ffzBot.includes(parseInt(userid))) {
+                badgesImg += `<img class="badge" src="${BadgeffzBot}" style="background-color: rgb(89, 89, 89); border-radius: 10%;">`;
+            }
+            if (ffzSupporter.includes(parseInt(userid))) {
+                badgesImg += `<img class="badge" src="${BadgeffzSupporter}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
+            }
+            if (ffzSubwoofer.includes(parseInt(userid))) {
+                badgesImg += `<img class="badge" src="${BadgeffzSubwoofer}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
+            }
+        }
 
-          const sevenTVBadgeUrl = await fetch7tvBadge(userId);
+          const sevenTVBadgeUrl = await fetch7tvBadge(userid);
           if (sevenTVBadgeUrl) {
             badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
           }
@@ -689,10 +1097,7 @@ socket.addEventListener('message', async event => {
           //lolnot
           if (userId && lolnotAdmins.includes(userId)) {
             badgesImg += `<img class="badge" src="${AdminBadge}">`;
-            //usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
-            //usernameStyle = `style="background-image: url('https://kappa.lol/O9rOG.gif');background-clip: text;-webkit-background-clip: text;color: transparent;"`
           }
-          //usernameStyle = usernameColor ? `style="color: ${usernameColor};"` : 'style="color: #757575;"';
           if (userId && lolnotMods.includes(userId)) {
             badgesImg += `<img class="badge" src="${ModBadge}">`;
           }
@@ -705,28 +1110,10 @@ socket.addEventListener('message', async event => {
     
           //dankchat
           if (userId && userId in DankBadges) {
-            badgesImg += `<img class="badge" src="${DankBadges[userId]}">`;
-          }
-          if (userId && userIdsWithDankChatenteBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${DankChatenteBadge}">`;
-          }
-          if (userId && DankChatBorgirBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${DankChatBorgirBadge}">`;
-          }
-          if (userId && userIdsWithDankChatmaxBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${DankChatmaxBadge}">`;
-          }
-          if (userId && userIdsWithDankChatqaBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${DankChatqaBadge}">`;
-          }
-          if (userId && userIdsWithDankChatkkrikeyBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${DankChatKKrikeyBadge}">`;
-          }
-          if (userId && userIdsWithDankChatDeveloperBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${DankChatDevBadge}">`;
-          }
-          if (userId && userIdsWithDankChatcontributorBadge.includes(userId)) {
-            badgesImg += `<img class="badge" src="${DankChatContributorBadge}">`;
+            const badgeUrls = DankBadges[userId];
+            badgeUrls.forEach(badgeUrl => {
+              badgesImg += `<img class="badge" src="${badgeUrl}">`;
+            });
           }
 
           //homies
@@ -752,27 +1139,78 @@ socket.addEventListener('message', async event => {
             badgesImg += `<img class="badge" src="${HomiesDevBadge}">`;
           }
         }
-    
+        
+        let processedMessage = message;
+        
+        if (Object.keys(emotes).length > 0) {
+            const sortedEmotes = Object.entries(emotes).sort((a, b) => b[1].end - a[1].end);
+            for (const [emoteId, positions] of sortedEmotes) {
+                const emoteUrl = `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark/3.0`;
+                const emoteText = message.substring(positions.start, positions.end + 1);
+                processedMessage = processedMessage.split(emoteText).join(`<img class="emote" src="${emoteUrl}">`);
+            }
+        }
+        
+        let words = processedMessage.split(' ');
+        processedMessage = words.map(word => {
+            word = word.trim();
+            return emote_links[word] ? `<img class="emote" src="${emote_links[word]}">` : word;
+        }).join(' ');
+        
         if(message.includes("ACTION")){
-          document.getElementById("chat").innerHTML += (
-            `<p class="message"><span style="color:${usernameColor};">${badgesImg} ${username}</span> <span style="color:${usernameColor};">${replaceEmotes(message.slice(1).slice(0, -1).slice(0, -1).slice(0, -1).replace("ACTION",""), emote_links)}</span><br>`
-          );
-        }
-        else{   
-          document.getElementById("chat").innerHTML += (
-            `<p class="message"><span style="color:${usernameColor};">${badgesImg} ${username}: </span><span style="color: white;">${replaceEmotes(message, emote_links)}</span></p>`
-          );
+            document.getElementById("chat").innerHTML += (
+                `<p class="message">${badgesImg} <span style="${usernameStyle}">${username}</span> <span style="color:${usernameColor};">${processedMessage}</span><br>`
+            );
+        } else {   
+            const paintData = await fetch7tvPaint(userid);
+            let usernameStyle = '';
+            
+            if (paintData) {
+                usernameStyle = `
+                    color: ${usernameColor};
+                    display: inline-block;
+                    ${applyPaintStyle(paintData, usernameColor)}
+                `;
+            } else {
+                usernameStyle = `color: ${usernameColor};`;
+            }
+            
+            document.getElementById("chat").innerHTML += (
+                `<p class="message" data-user-id="${userId}">${badgesImg} <span style="${usernameStyle}">${username}</span><span style="color: white;">: ${processedMessage}</span></p>`
+            );
         }
       }
-      }
-    
+    }
   }
 });
 
 function scrollToBottom(){
-  document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
+  requestAnimationFrame(() => {
+    const chat = document.getElementById("chat");
+    chat.scrollTop = chat.scrollHeight;
+  });
 }
 
-setInterval(cleanup, 3000)
-setInterval(fetchEmotes, 30)
-setInterval(scrollToBottom, 200)
+async function updateEmotes() {
+  try {
+    await fetchEmotes(channel);
+  } catch (error) {
+    console.error('Failed to update emotes:', error);
+  }
+}
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+socket.addEventListener('close', () => {
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000);
+});
+
+socket.addEventListener('error', () => {
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000);
+});
