@@ -51,7 +51,6 @@ const customhomieBadges = {};
 const HomiesBadges = {};
 var DankBadges = {};
 const sevenTvBadges = {};
-const corsblock = 'https://api.cors.lol/?url='
 let personalEmoteSetId = null;
 
 const userIdsWithHomiesBadges = {
@@ -143,7 +142,7 @@ async function fetchFFZAPI() {
 
 async function fetchDankBadges() {
   try {
-    const response = await fetch(`${corsblock}https://flxrs.com/api/badges`);
+    const response = await fetch(`https://api.cors.lol/?url=https://flxrs.com/api/badges`);
     const data = await response.json();
 
     DankBadges = {}; 
@@ -171,7 +170,7 @@ const userIdsWithChatterinoBadges = {
 };
 async function fetchChatterino() {
   try {
-    const response = await fetch(`${corsblock}https://api.chatterino.com/badges`);
+    const response = await fetch(`https://api.cors.lol/?url=https://api.chatterino.com/badges`);
     const data = await response.json();
 
     userIdsWithChatterinoBadges.topDonatorUrl = '';
