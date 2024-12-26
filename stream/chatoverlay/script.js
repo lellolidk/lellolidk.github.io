@@ -1,9 +1,9 @@
 var emote_links = {};
 var customBadges = {};
-var AdminBadge = 'https://raw.githubusercontent.com/notLe0nard/lolnotapi/main/img/admin.png';
-var ModBadge = 'https://raw.githubusercontent.com/notLe0nard/lolnotapi/main/img/mod.png';
-var ContibutorBadge = 'https://raw.githubusercontent.com/notLe0nard/lolnotapi/main/img/contibutor.png';
-var FounderBadge = 'https://raw.githubusercontent.com/notLe0nard/lolnotapi/main/img/founder.png';
+var AdminBadge = '';
+var ModBadge = '';
+var ContibutorBadge = '';
+var FounderBadge = '';
 var SubBadge = '';
 //Chatterino
 var ChatterinoBadge = 'https://fourtf.com/chatterino/badges/supporter3x.png';
