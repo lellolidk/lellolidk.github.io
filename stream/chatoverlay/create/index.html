@@ -49,14 +49,52 @@
             </div>
             <div id="right_side">
                 <label>Animated (Experimental): <div class="switch"        id="animated"       onclick="toggle('animated')"></div></label>
-                <label>Badges: <div class="switch"          id="badges"         onclick="toggle('badges')"></div></label>
+                <label>Badges: 
+                    <div style="position: relative;">
+                        <div class="switch" id="badges" onclick="toggle('badges')"></div>
+                        <div id="badge_options" style="display: none;">
+                            <div class="badge-select-container">
+                                <div class="badge-select">
+                                    <label class="badge-option">
+                                        <input type="checkbox" id="twitch_badges" onchange="toggleBadge('twitch_badges')">
+                                        <span>Twitch</span>
+                                    </label>
+                                    <label class="badge-option">
+                                        <input type="checkbox" id="ffz_badges" onchange="toggleBadge('ffz_badges')">
+                                        <span>FFZ</span>
+                                    </label>
+                                    <label class="badge-option">
+                                        <input type="checkbox" id="seventv_badges" onchange="toggleBadge('seventv_badges')">
+                                        <span>7TV</span>
+                                    </label>
+                                    <label class="badge-option">
+                                        <input type="checkbox" id="bttv_badges" onchange="toggleBadge('bttv_badges')">
+                                        <span>BTTV</span>
+                                    </label>
+                                    <label class="badge-option">
+                                        <input type="checkbox" id="chatsen_badges" onchange="toggleBadge('chatsen_badges')">
+                                        <span>Chatsen</span>
+                                    </label>
+                                    <label class="badge-option">
+                                        <input type="checkbox" id="chatterino_badges" onchange="toggleBadge('chatterino_badges')">
+                                        <span>Chatterino</span>
+                                    </label>
+                                    <label class="badge-option">
+                                        <input type="checkbox" id="homies_badges" onchange="toggleBadge('homies_badges')">
+                                        <span>Homies</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </label>
                 <label>Special Badges: <div class="switch"  id="special_badges" onclick="toggle('special_badges')"></div></label>
                 <label>Bots: <div class="switch"            id="bots"           onclick="toggle('bots')"></div></label>
                 <label>Commands: <div class="switch"        id="commands"       onclick="toggle('commands')"></div></label>
             </div>
         </div>
         <div id="generate" onclick="document.getElementById('output_link').value = createLink()" class="drop_shadow">Generate</div>
-    <input type="text" id="output_link" onclick="copyLink()" placeholder="https://lellolidk.de/stream/chatoverlay/?channel=lellolidk" class="drop_shadow">
+    <input type="text" id="output_link" onclick="copyLink()" placeholder="https://lellolidk.de/stream/chatoverlay/?channel=lellolidk">
     </div>
     <script src="script.js"></script>
 </body>
