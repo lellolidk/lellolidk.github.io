@@ -141,7 +141,7 @@ async function fetchFFZAPI() {
 
 async function fetchDankBadges() {
   try {
-    const response = await fetch(`https://corsproxy.io/?key=92dfcbfc&url=https://flxrs.com/api/badges`);
+    const response = await fetch(`https://corsproxy.io/?url=https://flxrs.com/api/badges`);
     const data = await response.json();
 
     DankBadges = {}; 
@@ -169,7 +169,7 @@ const userIdsWithChatterinoBadges = {
 };
 async function fetchChatterino() {
   try {
-    const response = await fetch(`https://corsproxy.io/?key=92dfcbfc&url=https://api.chatterino.com/badges`);
+    const response = await fetch(`https://corsproxy.io/?url=https://api.chatterino.com/badges`);
     const data = await response.json();
 
     userIdsWithChatterinoBadges.topDonatorUrl = '';
@@ -360,7 +360,7 @@ async function fetchChatsenBadges() {
       }
     }
 
-    const patreonResponse = await fetch(`https://corsproxy.io/?key=92dfcbfc&url=https://api.chatsen.app/account/badges`);
+    const patreonResponse = await fetch(`https://corsproxy.io/?url=https://api.chatsen.app/account/badges`);
     const patreonData = await patreonResponse.json();
     
     for (const tier of patreonData) {
