@@ -81,7 +81,6 @@ const userIdsWithChatsenBadges = {
   tier3s: [],
   tier4: [],
   relaxo: [],
-  // URLs werden später von der API gefüllt
   developerUrl: '',
   earlySupporterUrl: '',
   earlyBirdUrl: '',
@@ -142,7 +141,7 @@ async function fetchFFZAPI() {
 
 async function fetchDankBadges() {
   try {
-    const response = await fetch(`https://api.cors.lol/?url=https://flxrs.com/api/badges`);
+    const response = await fetch(`https://corsproxy.io/?key=92dfcbfc&url=https://flxrs.com/api/badges`);
     const data = await response.json();
 
     DankBadges = {}; 
@@ -170,7 +169,7 @@ const userIdsWithChatterinoBadges = {
 };
 async function fetchChatterino() {
   try {
-    const response = await fetch(`https://api.cors.lol/?url=https://api.chatterino.com/badges`);
+    const response = await fetch(`https://corsproxy.io/?key=92dfcbfc&url=https://api.chatterino.com/badges`);
     const data = await response.json();
 
     userIdsWithChatterinoBadges.topDonatorUrl = '';
@@ -274,10 +273,9 @@ async function fetchHomiesBadges() {
 
 async function fetchChatsenBadges() {
   try {
-    const response = await fetch(`${corsblock}https://raw.githubusercontent.com/chatsen/resources/master/assets/data.json`);
+    const response = await fetch(`https://raw.githubusercontent.com/chatsen/resources/master/assets/data.json`);
     const data = await response.json();
 
-    // URLs aus den Badge-Definitionen setzen
     for (const badge of data.badges) {
       switch (badge.name) {
         case "developer":
@@ -319,7 +317,6 @@ async function fetchChatsenBadges() {
       }
     }
 
-    // User IDs für jeden Badge-Typ sammeln
     for (const user of data.users) {
       for (const badge of user.badges) {
         switch (badge.badgeName) {
@@ -363,11 +360,9 @@ async function fetchChatsenBadges() {
       }
     }
 
-    // Optional: Hole zusätzliche Patreon-Daten
-    const patreonResponse = await fetch(`${corsblock}https://api.chatsen.app/account/badges`);
+    const patreonResponse = await fetch(`https://corsproxy.io/?key=92dfcbfc&url=https://api.chatsen.app/account/badges`);
     const patreonData = await patreonResponse.json();
     
-    // Aktualisiere Patreon-Badges mit aktuellen Daten
     for (const tier of patreonData) {
       switch (tier.name) {
         case "Chatsen Patreon: Tier 1":
@@ -383,7 +378,7 @@ async function fetchChatsenBadges() {
     }
 
   } catch (error) {
-    console.error('Error fetching Chatsen badges:', error);
+    console.error('Error:', error);
   }
 }
 
@@ -1124,7 +1119,7 @@ if (message.startsWith(`!lellolchat reload`)){
 }
 
 socket.addEventListener('message', async event => {
-  console.log(event.data);
+  //console.log(event.data);
   if (event.data.includes("PING")) {
       socket.send(`PONG`);
   }
