@@ -7,7 +7,14 @@ values = {
 "badges" : 0,
 "special_badges" : 0,
 "bots" : 0,
-"commands" : 0
+"commands" : 0,
+"twitch_badges" : 0,
+"ffz_badges" : 0,
+"seventv_badges" : 0,
+"bttv_badges" : 0,
+"chatsen_badges" : 0,
+"chatterino_badges" : 0,
+"homies_badges" : 0
 }
 
 async function toggle(element){
@@ -59,14 +66,39 @@ function createLink() {
   values['background'] = document.getElementById("background").value;
   values['font'] = document.getElementById("font").value;
 
+  const badgeTypes = ['twitch_badges', 'ffz_badges', 'seventv_badges', 'bttv_badges', 
+                     'chatsen_badges', 'chatterino_badges', 'homies_badges'];
+  
   link = `https://lellolidk.de/stream/chatoverlay/?channel=${values['channel']}&size=${values['size']}&shadow=${values['shadow']}&background=${values['background']}&font=${values['font']}&animated=${values['animated']}&badges=${values['badges']}&special_badges=${values['special_badges']}&bots=${values['bots']}&commands=${values['commands']}`;
+  
+  if (values['badges'] === 1) {
+    badgeTypes.forEach(type => {
+      link += `&${type}=${values[type]}`;
+    });
+  }
+  
   copyLink();
   copyLink();
   copyLink();
   return link;
 }
 
-toggle("badges")
-toggle("special_badges")
-toggle("bots")
-toggle("commands")
+function toggleBadge(badgeType) {
+    const checkbox = document.getElementById(badgeType);
+    values[badgeType] = checkbox.checked ? 1 : 0;
+}
+
+document.getElementById('badges').addEventListener('click', function() {
+    const badgeOptions = document.getElementById('badge_options');
+    if (values['badges'] === 1) {
+        badgeOptions.style.display = 'block';
+    } else {
+        badgeOptions.style.display = 'none';
+        const badgeTypes = ['twitch_badges', 'ffz_badges', 'seventv_badges', 'bttv_badges', 
+                          'chatsen_badges', 'chatterino_badges', 'homies_badges'];
+        badgeTypes.forEach(type => {
+            document.getElementById(type).checked = false;
+            values[type] = 0;
+        });
+    }
+});
