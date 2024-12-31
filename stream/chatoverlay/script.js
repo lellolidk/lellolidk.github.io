@@ -390,22 +390,33 @@ async function fetchChatsenBadges() {
   }
 }
 
-
-async function fetchBadges() {
+async function getUserName(message) {
   try {
-    const customResponse = await fetch(`badges.json`);
-    customBadges = await customResponse.json();
+    const parts = message.split('display-name=');
+    if (parts.length > 1) {
+      const displayName = parts[1].split(';')[0].trim();
+      if (displayName) return displayName;
+    }
+    
+    const userIdMatch = message.match(/user-id=(\d+)/);
+    if (userIdMatch) {
+      const userId = userIdMatch[1];
+      const response = await fetch(`https://api.ivr.fi/v2/twitch/user?id=${userId}`);
+      const data = await response.json();
+      if (data && data[0] && data[0].displayName) {
+        return data[0].displayName;
+      }
+    }
+    
+    return null;
   } catch (error) {
-    console.error(error);
+    console.error('Error getting username:', error);
+    const parts = message.split('display-name=');
+    if (parts.length > 1) {
+      return parts[1].split(';')[0].trim();
+    }
+    return null;
   }
-} 
-
-function getUserName(message) {
-  const parts = message.split('display-name=');
-  if (parts.length > 1) {
-    return parts[1].split(';')[0].trim();
-  }
-  return null;
 }
 
 function getUsernameColor(message) {
@@ -416,7 +427,7 @@ function getUsernameColor(message) {
   return null;
 }
 
-async function loadBadgeData() {
+async function fetchBadges() {
     try {
         const response = await fetch('badges.json');
         const data = await response.json();
@@ -1105,7 +1116,6 @@ async function start(){
       fetchBitsBadges(channel),
       fetchFFZModVipBadges(channel),
       fetchEmotes(channel),
-      loadBadgeData(),
       fetchlolnotAPI(),
       fetchChatterino(),
       fetchDankBadges(),
@@ -1136,7 +1146,7 @@ if (message.startsWith(`!lellolchat reload`)){
 }
 
 socket.addEventListener('message', async event => {
-  console.log(event.data);
+  //console.log(event.data);
   if (event.data.includes("PING")) {
       socket.send(`PONG`);
   }
@@ -1159,7 +1169,7 @@ socket.addEventListener('message', async event => {
   if (event.data.includes("PRIVMSG")) {
       const message = getMessage(event.data);
       const messageChannel = event.data.split(`PRIVMSG #`)[1].split(" :")[0];
-      const username = getUserName(event.data);
+      const username = await getUserName(event.data);
       const usernameColor = getUsernameColor(event.data);
       const badgesInfo = getBadgeNames(event.data);
 
@@ -1187,12 +1197,7 @@ socket.addEventListener('message', async event => {
           userId = userIdMatch[1];
       }
 
-      const response = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${username}`);
-      const data = await response.json();
-      const userData = data[0];
-      let userid = userData.id;
-
-      await fetchPersonalEmote(userid);
+      await fetchPersonalEmote(userId);
 
       if (messageChannel == "lellol800"){
         if (lolnotAdmins.includes(userId)){
@@ -1223,17 +1228,17 @@ socket.addEventListener('message', async event => {
           }
 
           //FFZ
-          if (userid) {
-            if (ffzdeveloper.includes(parseInt(userid))) {
+          if (userId) {
+            if (ffzdeveloper.includes(parseInt(userId))) {
                 badgesImg += `<img class="badge" src="${BadgeffzDeveloper}" style="background-color: rgb(250, 175, 25); border-radius: 10%;">`;
             }
-            if (ffzBot.includes(parseInt(userid))) {
+            if (ffzBot.includes(parseInt(userId))) {
                 badgesImg += `<img class="badge" src="${BadgeffzBot}" style="background-color: rgb(89, 89, 89); border-radius: 10%;">`;
             }
-            if (ffzSupporter.includes(parseInt(userid))) {
+            if (ffzSupporter.includes(parseInt(userId))) {
                 badgesImg += `<img class="badge" src="${BadgeffzSupporter}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
             }
-            if (ffzSubwoofer.includes(parseInt(userid))) {
+            if (ffzSubwoofer.includes(parseInt(userId))) {
                 badgesImg += `<img class="badge" src="${BadgeffzSubwoofer}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
             }
         }
@@ -1250,7 +1255,7 @@ socket.addEventListener('message', async event => {
           }
         }
 
-          const sevenTVBadgeUrl = await fetch7tvBadge(userid);
+          const sevenTVBadgeUrl = await fetch7tvBadge(userId);
           if (sevenTVBadgeUrl) {
             badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
           }
@@ -1313,7 +1318,7 @@ socket.addEventListener('message', async event => {
                 scrollToBottom();
             });
         } else {   
-            const paintData = await fetch7tvPaint(userid);
+            const paintData = await fetch7tvPaint(userId);
             let usernameStyle = '';
             
             if (paintData) {
