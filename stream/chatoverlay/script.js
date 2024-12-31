@@ -81,6 +81,8 @@ const userIdsWithChatsenBadges = {
   tier3s: [],
   tier4: [],
   relaxo: [],
+  testBadge1: [],
+  testBadge2: [],
   developerUrl: '',
   earlySupporterUrl: '',
   earlyBirdUrl: '',
@@ -92,7 +94,7 @@ const userIdsWithChatsenBadges = {
   tier3Url: '',
   tier3sUrl: '',
   tier4Url: '',
-  relaxoUrl: ''
+  relaxoUrl: '',
 };
 
 async function fetchlolnotAPI() {
@@ -314,6 +316,12 @@ async function fetchChatsenBadges() {
         case "relaxo":
           userIdsWithChatsenBadges.relaxoUrl = badge.image;
           break;
+        case "Chatsen Test Badge 1":
+          userIdsWithChatsenBadges.testBadge1Url = badge.image;
+          break;
+        case "Chatsen Test Badge 2":
+          userIdsWithChatsenBadges.testBadge2Url = badge.image;
+          break;
       }
     }
 
@@ -439,7 +447,13 @@ function getBadgeNames(message) {
         imgString += `<img class="badge" src="${subBadge}">`;
       } else {
         imgString += `<img class="badge" src="${customBadges['subscriber']}">`;
-      }    } else if (badgeName === "moments") {
+      }
+    } else if (badgeName === "bits-leader") {
+      const bitsLeaderBadgeUrl = customBadges[`bits-leader/${badgeId}`];
+      if (bitsLeaderBadgeUrl) {
+        imgString += `<img class="badge" src="${bitsLeaderBadgeUrl}">`;
+      }
+    } else if (badgeName === "moments") {
       const MomentsBadgeUrl = customBadges[`moments/${badgeId}`] || customBadges['moments'];
       imgString += `<img class="badge" src="${MomentsBadgeUrl}">`;
     } else if (badgeName === "sub-gifter") {
@@ -586,13 +600,16 @@ const searchParams = url.searchParams;
 index = 0
 
 channel = searchParams.get('channel').toLowerCase();
-if (size = searchParams.get('size').toLowerCase() == "0"){document.querySelector(':root').style.setProperty('--text-size', '30px');}
-if (size = searchParams.get('size').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-size', '35px');}
-if (size = searchParams.get('size').toLowerCase() == "2"){document.querySelector(':root').style.setProperty('--text-size', '40px');}
+const size = parseInt(searchParams.get('size'));
+if (!isNaN(size) && size >= 1 && size <= 100) {
+    document.querySelector(':root').style.setProperty('--text-size', `${size}px`);
+} else {
+    document.querySelector(':root').style.setProperty('--text-size', '15px');
+}
 
 if (shadow = searchParams.get('shadow').toLowerCase() == "0"){document.querySelector(':root').style.setProperty('--text-shadow', 'none');}
-if (shadow = searchParams.get('shadow').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-shadow', `1px 1px 5px black`);}
-if (shadow = searchParams.get('shadow').toLowerCase() == "2"){document.querySelector(':root').style.setProperty('--text-shadow', `1px 1px 10px black`);}
+if (shadow = searchParams.get('shadow').toLowerCase() == "1"){document.querySelector(':root').style.setProperty('--text-shadow', `1px 1px 2px rgba(0, 0, 0, 0.5)`);}
+if (shadow = searchParams.get('shadow').toLowerCase() == "2"){document.querySelector(':root').style.setProperty('--text-shadow', `1px 1px 3px rgba(0, 0, 0, 0.7)`);}
 
 if (background = searchParams.get('background').toLowerCase() == "0"){document.querySelector('#chat').style.setProperty('background', 'transparent');}
 if (background = searchParams.get('background').toLowerCase() == "1"){document.querySelector('#chat').style.setProperty('background', `rgba(0, 0, 0, 0.25)`);}
@@ -1119,7 +1136,7 @@ if (message.startsWith(`!lellolchat reload`)){
 }
 
 socket.addEventListener('message', async event => {
-  //console.log(event.data);
+  console.log(event.data);
   if (event.data.includes("PING")) {
       socket.send(`PONG`);
   }
