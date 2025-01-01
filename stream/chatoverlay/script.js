@@ -1146,7 +1146,7 @@ if (message.startsWith(`!lellolchat reload`)){
 }
 
 socket.addEventListener('message', async event => {
-  //console.log(event.data);
+  console.log(event.data);
   if (event.data.includes("PING")) {
       socket.send(`PONG`);
   }
@@ -1293,7 +1293,7 @@ socket.addEventListener('message', async event => {
           }
         }
         
-        let processedMessage = message;
+        let processedMessage = escapeHtml(message);
         
         if (Object.keys(emotes).length > 0) {
             const sortedEmotes = Object.entries(emotes).sort((a, b) => b[1].end - a[1].end);
@@ -1371,3 +1371,12 @@ socket.addEventListener('error', () => {
     window.location.reload();
   }, 1000);
 });
+
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
