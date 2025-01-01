@@ -582,10 +582,6 @@ async function fetchBitsBadges(channel) {
   }
 }
 
-function reloadOverlay() {
-  location.reload();
-}
-
 function replaceEmotes(message, emoteLinks) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(message, 'text/html');
@@ -788,28 +784,41 @@ try {
 async function fetchFFZModVipBadges(channel){
   try {
     const channelID = await channeltoid(channel)
-    const response = await fetch(`https://api.frankerfacez.com/v1/room/id/${channelID}`);
+    const responseok = await fetch(`https://api.frankerfacez.com/v1/user/id/${channelID}`);
+      
+    if (responseok.status === 404) {
+      return; 
+    }
+    
+    let response = await fetch(`https://api.frankerfacez.com/v1/room/id/${channelID}`);
+    
+    if (response.status === 404) {
+      return;
+    }
+    
     const data = await response.json();
-
-    if (data.room.mod_urls) {
-      for (let i = 4; i >= 1; i--) {
-        if (data.room.mod_urls[i]) {
-          customBadges['moderator'] = data.room.mod_urls[i];
-          break;
+    
+    if (data.room) {
+      if (data.room.mod_urls) {
+        for (let i = 4; i >= 1; i--) {
+          if (data.room.mod_urls[i]) {
+            customBadges['moderator'] = data.room.mod_urls[i];
+            break;
+          }
         }
       }
-    }
 
-    if (data.room.vip_badge) {
-      for (let i = 4; i >= 1; i--) {
-        if (data.room.vip_badge[i]) {
-          customBadges['vip'] = data.room.vip_badge[i];
-          break;
+      if (data.room.vip_badge) {
+        for (let i = 4; i >= 1; i--) {
+          if (data.room.vip_badge[i]) {
+            customBadges['vip'] = data.room.vip_badge[i];
+            break;
+          }
         }
       }
     }
   } catch(error) {
-    console.error('Error:', error);
+    // 
   }
 }
 
@@ -1139,12 +1148,6 @@ start().then(() => {
   setInterval(updateEmotes, 60000);
 });
 
-async function handleCommand(message){
-if (message.startsWith(`!lellolchat reload`)){
-  location.reload();
-}
-}
-
 socket.addEventListener('message', async event => {
   console.log(event.data);
   if (event.data.includes("PING")) {
@@ -1198,150 +1201,140 @@ socket.addEventListener('message', async event => {
       }
 
       await fetchPersonalEmote(userId);
+      if (message.startsWith("!") && show_commands == "0") {
+        console.log("ok");
+      } else {
+          if (userId && ignoredUserIds.includes(userId) && show_bots === '0') {
+            return;
+          }        
+          let badgesImg = badgesInfo;
 
-      if (messageChannel == "lellol800"){
-        if (lolnotAdmins.includes(userId)){
-          handleCommand(message)
-        }
-      }
-      else{
-      if (message.startsWith("!") && show_commands == "0"){
-        console.log("ok")
-      }
-      else{
-        if (userId && ignoredUserIds.includes(userId) && show_bots === '0') {
-          return;
-        }        
-        let badgesImg = badgesInfo;
+          if (show_badges == "1") {
+            if (userId) {
+              Object.keys(userIdsWithChatterinoBadges).forEach(key => {
+                if (key.endsWith('Url')) return;
+                if (userIdsWithChatterinoBadges[key].includes(userId)) {
+                  const urlKey = key + 'Url';
+                  badgesImg += `<img class="badge" src="${userIdsWithChatterinoBadges[urlKey]}">`;
+                }
+              });
+            }
 
-        
-        if(show_badges == "1"){
-
-          if (userId) {
-            Object.keys(userIdsWithChatterinoBadges).forEach(key => {
-              if (key.endsWith('Url')) return;
-              if (userIdsWithChatterinoBadges[key].includes(userId)) {
-                const urlKey = key + 'Url';
-                badgesImg += `<img class="badge" src="${userIdsWithChatterinoBadges[urlKey]}">`;
+            //FFZ
+            if (userId) {
+              if (ffzdeveloper.includes(parseInt(userId))) {
+                  badgesImg += `<img class="badge" src="${BadgeffzDeveloper}" style="background-color: rgb(250, 175, 25); border-radius: 10%;">`;
               }
-            });
-          }
-
-          //FFZ
-          if (userId) {
-            if (ffzdeveloper.includes(parseInt(userId))) {
-                badgesImg += `<img class="badge" src="${BadgeffzDeveloper}" style="background-color: rgb(250, 175, 25); border-radius: 10%;">`;
-            }
-            if (ffzBot.includes(parseInt(userId))) {
-                badgesImg += `<img class="badge" src="${BadgeffzBot}" style="background-color: rgb(89, 89, 89); border-radius: 10%;">`;
-            }
-            if (ffzSupporter.includes(parseInt(userId))) {
-                badgesImg += `<img class="badge" src="${BadgeffzSupporter}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
-            }
-            if (ffzSubwoofer.includes(parseInt(userId))) {
-                badgesImg += `<img class="badge" src="${BadgeffzSubwoofer}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
-            }
-        }
-
-        if (userId) {
-          if (userIdsWithChatsenBadges.developer.includes(userId)) {
-            badgesImg += `<img class="badge" src="${userIdsWithChatsenBadges.developerUrl}">`;
-          }
-          if (userIdsWithChatsenBadges.earlySupporter.includes(userId)) {
-            badgesImg += `<img class="badge" src="${userIdsWithChatsenBadges.earlySupporterUrl}">`;
-          }
-          if (userIdsWithChatsenBadges.earlyBird.includes(userId)) {
-            badgesImg += `<img class="badge" src="${userIdsWithChatsenBadges.earlyBirdUrl}">`;
-          }
-        }
-
-          const sevenTVBadgeUrl = await fetch7tvBadge(userId);
-          if (sevenTVBadgeUrl) {
-            badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
-          }
-
-          if (userId && lolnotAdmins.includes(userId)) {
-            badgesImg += `<img class="badge" src="${AdminBadge}">`;
-          }
-          if (userId && lolnotMods.includes(userId)) {
-            badgesImg += `<img class="badge" src="${ModBadge}">`;
-          }
-          if (userId && lolnotContributor.includes(userId)) {
-            badgesImg += `<img class="badge" src="${ContibutorBadge}">`;
-          }
-          if (userId && lolnotFounders.includes(userId)) {
-            badgesImg += `<img class="badge" src="${FounderBadge}">`;
-          }
-    
-          if (userId && userId in DankBadges) {
-            const badgeUrls = DankBadges[userId];
-            badgeUrls.forEach(badgeUrl => {
-              badgesImg += `<img class="badge" src="${badgeUrl}">`;
-            });
-          }
-          if (userId && userId in HomiesBadges) {
-            badgesImg += `<img class="badge" src="${HomiesBadges[userId]}">`;
-          }
-          if (userId) {
-            Object.keys(userIdsWithHomiesBadges).forEach(key => {
-              if (key.endsWith('Url')) return;
-              if (userIdsWithHomiesBadges[key].includes(userId)) {
-                const urlKey = key + 'Url';
-                badgesImg += `<img class="badge" src="${userIdsWithHomiesBadges[urlKey]}">`;
+              if (ffzBot.includes(parseInt(userId))) {
+                  badgesImg += `<img class="badge" src="${BadgeffzBot}" style="background-color: rgb(89, 89, 89); border-radius: 10%;">`;
               }
-            });
+              if (ffzSupporter.includes(parseInt(userId))) {
+                  badgesImg += `<img class="badge" src="${BadgeffzSupporter}" style="background-color: rgb(117, 80, 0); border-radius: 10%;">`;
+              }
+              if (ffzSubwoofer.includes(parseInt(userId))) {
+                  badgesImg += `<img class="badge" src="${BadgeffzSubwoofer}" style="background-color: rgb(61, 100, 182); border-radius: 10%;">`;
+              }
+            }
+
+            if (userId) {
+              if (userIdsWithChatsenBadges.developer.includes(userId)) {
+                badgesImg += `<img class="badge" src="${userIdsWithChatsenBadges.developerUrl}">`;
+              }
+              if (userIdsWithChatsenBadges.earlySupporter.includes(userId)) {
+                badgesImg += `<img class="badge" src="${userIdsWithChatsenBadges.earlySupporterUrl}">`;
+              }
+              if (userIdsWithChatsenBadges.earlyBird.includes(userId)) {
+                badgesImg += `<img class="badge" src="${userIdsWithChatsenBadges.earlyBirdUrl}">`;
+              }
+            }
+
+            const sevenTVBadgeUrl = await fetch7tvBadge(userId);
+            if (sevenTVBadgeUrl) {
+              badgesImg += `<img class="badge" src="${sevenTVBadgeUrl}">`;
+            }
+
+            if (userId && lolnotAdmins.includes(userId)) {
+              badgesImg += `<img class="badge" src="${AdminBadge}">`;
+            }
+            if (userId && lolnotMods.includes(userId)) {
+              badgesImg += `<img class="badge" src="${ModBadge}">`;
+            }
+            if (userId && lolnotContributor.includes(userId)) {
+              badgesImg += `<img class="badge" src="${ContibutorBadge}">`;
+            }
+            if (userId && lolnotFounders.includes(userId)) {
+              badgesImg += `<img class="badge" src="${FounderBadge}">`;
+            }
+
+            if (userId && userId in DankBadges) {
+              const badgeUrls = DankBadges[userId];
+              badgeUrls.forEach(badgeUrl => {
+                badgesImg += `<img class="badge" src="${badgeUrl}">`;
+              });
+            }
+            if (userId && userId in HomiesBadges) {
+              badgesImg += `<img class="badge" src="${HomiesBadges[userId]}">`;
+            }
+            if (userId) {
+              Object.keys(userIdsWithHomiesBadges).forEach(key => {
+                if (key.endsWith('Url')) return;
+                if (userIdsWithHomiesBadges[key].includes(userId)) {
+                  const urlKey = key + 'Url';
+                  badgesImg += `<img class="badge" src="${userIdsWithHomiesBadges[urlKey]}">`;
+                }
+              });
+            }
           }
-        }
-        
-        let processedMessage = escapeHtml(message);
-        
-        if (Object.keys(emotes).length > 0) {
-            const sortedEmotes = Object.entries(emotes).sort((a, b) => b[1].end - a[1].end);
-            for (const [emoteId, positions] of sortedEmotes) {
-                const emoteUrl = `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark/3.0`;
-                const emoteText = message.substring(positions.start, positions.end + 1);
-                processedMessage = processedMessage.split(emoteText).join(`<img class="emote" src="${emoteUrl}">`);
-            }
-        }
-        
-        let words = processedMessage.split(' ');
-        processedMessage = words.map(word => {
-            word = word.trim();
-            return emote_links[word] ? `<img class="emote" src="${emote_links[word]}">` : word;
-        }).join(' ');
-        
-        if(message.includes("ACTION")){
-            requestAnimationFrame(() => {
-                document.getElementById("chat").innerHTML += (
-                    `<p class="message">${badgesImg} <span style="${usernameStyle}">${username}</span> <span style="color:${usernameColor};">${processedMessage}</span><br>`
-                );
-                scrollToBottom();
-            });
-        } else {   
-            const paintData = await fetch7tvPaint(userId);
-            let usernameStyle = '';
-            
-            if (paintData) {
-                usernameStyle = `
-                    color: ${usernameColor};
-                    display: inline-block;
-                    ${applyPaintStyle(paintData, usernameColor)}
-                `;
-            } else {
-                usernameStyle = `color: ${usernameColor};`;
-            }
-            
-            requestAnimationFrame(() => {
-                document.getElementById("chat").innerHTML += (
-                    `<p class="message" data-user-id="${userId}">${badgesImg} <span style="${usernameStyle}">${username}</span><span style="color: white;">: ${processedMessage}</span></p>`
-                );
-                scrollToBottom();
-            });
+
+          let processedMessage = escapeHtml(message);
+
+          if (Object.keys(emotes).length > 0) {
+              const sortedEmotes = Object.entries(emotes).sort((a, b) => b[1].end - a[1].end);
+              for (const [emoteId, positions] of sortedEmotes) {
+                  const emoteUrl = `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark/3.0`;
+                  const emoteText = message.substring(positions.start, positions.end + 1);
+                  processedMessage = processedMessage.split(emoteText).join(`<img class="emote" src="${emoteUrl}">`);
+              }
+          }
+
+          let words = processedMessage.split(' ');
+          processedMessage = words.map(word => {
+              word = word.trim();
+              return emote_links[word] ? `<img class="emote" src="${emote_links[word]}">` : word;
+          }).join(' ');
+
+          if (message.includes("ACTION")) {
+              requestAnimationFrame(() => {
+                  document.getElementById("chat").innerHTML += (
+                      `<p class="message">${badgesImg} <span style="${usernameStyle}">${username}</span> <span style="color:${usernameColor};">${processedMessage}</span><br>`
+                  );
+                  scrollToBottom();
+              });
+          } else {   
+              const paintData = await fetch7tvPaint(userId);
+              let usernameStyle = '';
+
+              if (paintData) {
+                  usernameStyle = `
+                      color: ${usernameColor};
+                      display: inline-block;
+                      ${applyPaintStyle(paintData, usernameColor)}
+                  `;
+              } else {
+                  usernameStyle = `color: ${usernameColor};`;
+              }
+
+              requestAnimationFrame(() => {
+                  document.getElementById("chat").innerHTML += (
+                      `<p class="message" data-user-id="${userId}">${badgesImg} <span style="${usernameStyle}">${username}</span><span style="color: white;">: ${processedMessage}</span></p>`
+                  );
+                  scrollToBottom();
+              });
+          }
         }
       }
     }
-  }
-});
+);
 
 function scrollToBottom(){
   const chat = document.getElementById("chat");
