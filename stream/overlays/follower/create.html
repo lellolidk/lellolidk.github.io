@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Follower Goal Creator</title>
+    <style>
+        :root {
+            --primary: #9147ff;
+            --bg-dark: #0e0e10;
+            --bg-card: #1f1f23;
+            --text: #efeff1;
+            --text-secondary: #adadb8;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: var(--bg-dark);
+            color: var(--text);
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: var(--bg-dark);
+            border: 1px solid #333;
+            border-radius: 5px;
+            color: var(--text);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(145, 71, 255, 0.2);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        button:hover {
+            background: #7f2fff;
+            transform: translateY(-2px);
+        }
+
+        #urlOutput {
+            margin-top: 20px;
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        #urlOutput p {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        #urlOutput input {
+            background: var(--bg-dark);
+            border: 1px solid #333;
+            padding: 12px;
+            border-radius: 5px;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        #previewFrame {
+            width: 100%;
+            height: 200px;
+            border: 2px solid var(--bg-card);
+            border-radius: 10px;
+            margin-top: 20px;
+            background: transparent;
+        }
+
+        /* Custom styles for color inputs */
+        input[type="color"] {
+            -webkit-appearance: none;
+            padding: 0;
+            width: 60px;
+            height: 40px;
+            border-radius: 5px;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 5px;
+        }
+
+        .color-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .color-group input[type="text"] {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 Follower Goal Creator</h1>
+    
+    <div class="form-group">
+        <label for="channel">CHANNEL NAME</label>
+        <input type="text" id="channel" placeholder="Enter your Twitch channel name">
+    </div>
+
+    <div class="form-group">
+        <label for="goalAmount">FOLLOWER GOAL</label>
+        <input type="number" id="goalAmount" value="100" min="1">
+    </div>
+
+    <div class="form-group">
+        <label for="fontFamily">FONT STYLE</label>
+        <select id="fontFamily">
+            <option value="Inter">Inter</option>
+            <option value="Roboto">Roboto</option>
+            <option value="Poppins">Poppins</option>
+            <option value="Montserrat">Montserrat</option>
+            <option value="Open Sans">Open Sans</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="textColor">COLORS</label>
+        <div class="color-group">
+            <input type="color" id="textColor" value="#ffffff">
+            <input type="text" value="#ffffff" id="textColorHex" readonly>
+        </div>
+        <label for="barColor" style="margin-top: 15px;">PROGRESS BAR COLOR</label>
+        <div class="color-group">
+            <input type="color" id="barColor" value="#9147ff">
+            <input type="text" value="#9147ff" id="barColorHex" readonly>
+        </div>
+    </div>
+
+    <button onclick="generateURL()">Generate Overlay URL</button>
+
+    <div id="urlOutput" style="display: none;">
+        <p>Your Overlay URL (Click to Copy):</p>
+        <input type="text" readonly onclick="this.select(); document.execCommand('copy')">
+    </div>
+    
+    <iframe id="previewFrame" frameborder="0"></iframe>
+
+    <script>
+        // Update hex values when color inputs change
+        document.getElementById('textColor').addEventListener('input', function(e) {
+            document.getElementById('textColorHex').value = e.target.value;
+        });
+        
+        document.getElementById('barColor').addEventListener('input', function(e) {
+            document.getElementById('barColorHex').value = e.target.value;
+        });
+
+        function generateURL() {
+            const channel = document.getElementById('channel').value;
+            const goalAmount = document.getElementById('goalAmount').value;
+            const fontFamily = document.getElementById('fontFamily').value;
+            const textColor = document.getElementById('textColor').value;
+            const barColor = document.getElementById('barColor').value;
+
+            const baseUrl = window.location.origin + '/stream/overlays/follower/index.html';
+            const url = `${baseUrl}?u=${channel}&goal=${goalAmount}&font=${encodeURIComponent(fontFamily)}&color=${textColor.substring(1)}&bar=${barColor.substring(1)}`;
+
+            const urlOutput = document.getElementById('urlOutput');
+            urlOutput.style.display = 'block';
+            urlOutput.querySelector('input').value = url;
+
+            document.getElementById('previewFrame').src = url;
+        }
+    </script>
+</body>
+</html> 

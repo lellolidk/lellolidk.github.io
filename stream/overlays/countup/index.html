@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stream Countup</title>
+    <style>
+        body {
+            font-family: 'Roboto Mono', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #1a1a1a;
+            color: #00ff95;
+            text-shadow: 0 0 10px rgba(0, 255, 149, 0.5);
+        }
+
+        #counter {
+            font-size: 72px;
+            padding: 20px 40px;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            border: 2px solid #00ff95;
+            box-shadow: 0 0 20px rgba(0, 255, 149, 0.2);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="counter">00:00:00</div>
+
+    <script>
+        let seconds = 0;
+        const counterElement = document.getElementById('counter');
+        
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        setInterval(() => {
+            seconds++;
+            counterElement.textContent = formatTime(seconds);
+        }, 1000);
+    </script>
+</body>
+</html>

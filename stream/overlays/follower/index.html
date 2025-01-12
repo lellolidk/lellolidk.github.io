@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Follower Goal</title>
+    <style id="customStyles">
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+        .goal-container {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .progress-bar {
+            background: #444;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress {
+            background: #9147ff;
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="goal-container">
+        <div id="goalText">Follower Goal: 0/100</div>
+        <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const channel = urlParams.get('u');
+        let currentFollowers = 0;
+        let goalAmount = 100;
+
+        async function updateFollowerCount() {
+            try {
+                const response = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${channel}`);
+                const data = await response.json();
+                currentFollowers = data[0].followers;
+                
+                document.getElementById('goalText').textContent = 
+                    `Follower Goal: ${currentFollowers}/${goalAmount}`;
+                
+                const percentage = Math.min((currentFollowers / goalAmount) * 100, 100);
+                document.getElementById('progressBar').style.width = percentage + '%';
+            } catch (error) {
+                console.error('Error fetching follower count:', error);
+            }
+        }
+
+        if (channel) {
+            updateFollowerCount();
+            // Update every 60 seconds
+            setInterval(updateFollowerCount, 60000);
+        } else {
+            document.body.innerHTML = 'Please specify a channel using ?u=channelname';
+        }
+    </script>
+</body>
+</html>
