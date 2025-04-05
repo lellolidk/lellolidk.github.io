@@ -10,116 +10,144 @@
     <meta property="og:image" content="https://cdn.7tv.app/emote/60ae495f0e354776344910c5/4x.webp">
     <meta property="og:url" content="https://lellolidk.de/">
     <meta property="og:type" content="website">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #121212;
-            color: #f1f1f1;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #f1f1f1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             min-height: 100vh;
+            padding: 40px 20px;
         }
 
         h1 {
-            font-size: 36px;
-            margin-bottom: 20px;
-            color: #9600c4;
+            font-size: 40px;
+            margin-bottom: 30px;
+            color: #ffffff;
+            text-shadow: 0 0 10px #9600c4, 0 0 20px #9600c4;
         }
 
         form {
-            background-color: #1e1e1e;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            background-color: rgba(30, 30, 30, 0.9);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
         }
 
         input[type="text"] {
-            padding: 12px;
+            padding: 14px;
             font-size: 16px;
-            width: 220px;
+            width: 260px;
             border: none;
-            border-radius: 5px;
-            background-color: #333;
+            border-radius: 6px;
+            background-color: #2b2b2b;
             color: #f1f1f1;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            background-color: #3a3a3a;
         }
 
         button {
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 16px;
             color: #fff;
-            background-color: #252525;
+            background: linear-gradient(90deg, #8e2de2, #4a00e0);
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: 0.3s ease;
+            box-shadow: 0 0 10px #4a00e0;
         }
 
         button:hover {
-            background-color: #222222;
-        }
-
-        @keyframes glow2 {
-            from { text-shadow: 0 0 5px #00ECFF, 0 0 10px #00ECFF; }
-            to { text-shadow: 0 0 10px #00ECFF, 0 0 20px #00ECFF; }
-        }
-
-        #result {
-            margin-top: 30px;
-            width: 80%;
-            max-width: 900px;
-            background-color: #1e1e1e;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-            color: #f1f1f1;
-        }
-
-        table, th, td {
-            border: 1px solid #444;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: center;
-        }
-
-        th {
-            background-color: #333;
-        }
-
-        tr:nth-child(even) {
-            background-color: #252525;
-        }
-
-        tr:hover {
-            background-color: #333;
+            background: linear-gradient(90deg, #a445b2, #5b00ff);
+            box-shadow: 0 0 15px #5b00ff;
         }
 
         #loader {
             display: none;
+            margin-top: 20px;
+            font-size: 20px;
+            color: #00ecff;
+            animation: glow 1s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #00ecff; }
+            to { text-shadow: 0 0 20px #00ecff; }
+        }
+
+        #result {
+            margin-top: 40px;
+            width: 100%;
+            max-width: 950px;
+            background-color: rgba(30, 30, 30, 0.95);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 14px;
             text-align: center;
-            font-size: 18px;
-            color: #fff;
+        }
+
+        th {
+            background-color: #3a3a3a;
+            color: #ffffff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #2e2e2e;
+        }
+
+        tr:hover {
+            background-color: #444;
+        }
+
+        td {
+            border-bottom: 1px solid #444;
         }
 
         .error {
-            color: #f44336;
+            color: #ff4c4c;
             text-align: center;
             font-size: 18px;
             margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            input, button {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -132,9 +160,7 @@
         <button type="submit">Zeige Watchtime</button>
     </form>
 
-    <div id="loader">
-        <p>Lade...</p>
-    </div>
+    <div id="loader">⏳ Lade Watchtime...</div>
 
     <div id="result"></div>
 
