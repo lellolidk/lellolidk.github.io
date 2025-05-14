@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Twitch Created Checker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0e0e10;
+      --card: #1f1f23;
+      --accent: #9146FF;
+      --text: #ffffff;
+      --muted: #adadb8;
+      --error: #ff4c4c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--card);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      background: #2b2b31;
+      color: var(--text);
+      resize: vertical;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      font-size: 1rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #772ce8;
+    }
+
+    .output {
+      margin-top: 2rem;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .loading {
+      margin-top: 1rem;
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    .error {
+      color: var(--error);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Twitch Erstellungsdatum Checker</h1>
+    <p>Gib Twitch-Benutzernamen ein (durch Komma oder Zeilen getrennt):</p>
+    <textarea id="usernames" placeholder="z. B. ninja, pokimane, montanablack88"></textarea>
+    <button onclick="checkUsernames()">Prüfen</button>
+    <div id="loading" class="loading" style="display: none;">⏳ Abfrage läuft...</div>
+    <div id="output" class="output"></div>
+  </div>
+
+  <script>
+    async function checkUsernames() {
+      const input = document.getElementById("usernames").value;
+      const output = document.getElementById("output");
+      const loading = document.getElementById("loading");
+
+      const usernames = input
+        .split(/[\s,]+/)
+        .map(name => name.trim().toLowerCase())
+        .filter(name => name.length > 0);
+
+      if (usernames.length === 0) {
+        output.innerHTML = '<span class="error">⚠️ Bitte gib mindestens einen Namen ein.</span>';
+        return;
+      }
+
+      output.innerHTML = '';
+      loading.style.display = 'block';
+
+      const results = [];
+
+      for (const name of usernames) {
+        try {
+          const res = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${encodeURIComponent(name)}`, {
+            headers: {
+              'User-Agent': 'TwitchChecker/1.0'
+            }
+          });
+
+          if (!res.ok) {
+            results.push(`<span class="error">${name}: ❌ Fehler (${res.status})</span>`);
+            continue;
+          }
+
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            const created = new Date(data[0].createdAt).toLocaleString("de-DE");
+            results.push(`<strong>${data[0].displayName}</strong>: Erstellt am <code>${created}</code>`);
+          } else {
+            results.push(`<span class="error">${name}: ❌ Kein Benutzer gefunden</span>`);
+          }
+
+        } catch (err) {
+          results.push(`<span class="error">${name}: ❌ Anfragefehler</span>`);
+        }
+      }
+
+      loading.style.display = 'none';
+      output.innerHTML = results.join("<br>");
+    }
+  </script>
+</body>
+</html>
