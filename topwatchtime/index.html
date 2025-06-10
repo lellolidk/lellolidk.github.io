@@ -188,7 +188,7 @@
 
                 const SEId = channelData._id;
 
-                const watchtimeResponse = await fetch(`https://api.streamelements.com/kappa/v2/points/${SEId}/watchtime?limit=50&offset=0`);
+                const watchtimeResponse = await fetch(`https://api.streamelements.com/kappa/v2/points/${SEId}/watchtime?limit=200&offset=0`);
                 const watchtimeData = await watchtimeResponse.json();
 
                 const users = watchtimeData.users;
