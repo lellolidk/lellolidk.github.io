@@ -1,116 +1,30 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>lellolShortener</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #121212; /* Dunkler Hintergrund */
-            color: #e0e0e0; /* Helles Textfarbe */
-        }
-        .container {
-            text-align: center;
-            background: #1e1e1e; /* Dunkelgrauer Container-Hintergrund */
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-        h1 {
-            margin-bottom: 1rem;
-            color: #ffffff; /* Weißer Text für die Überschrift */
-        }
-        input[type="url"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 1rem;
-            border: 1px solid #333;
-            border-radius: 4px;
-            background-color: #333;
-            color: #e0e0e0;
-            font-size: 16px;
-        }
-        input[type="submit"] {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            background-color: #007bff;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        #message {
-            margin-top: 1rem;
-            color: #007bff;
-            font-weight: bold;
-        }
-        a {
-            color: #007bff;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AniWorld Downloader Generator</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <div class="container">
-        <h1>lellolShortener</h1>
-        <input name="text" type="url" id="linkinput" placeholder="Paste a URL to shorten" required>
-        <input type="submit" id="myinput" value="Shorten">
-        <p id="message"></p>
+  <div class="container">
+    <h1>AniWorld Downloader</h1>
+    <p>Gib den Link zu einer AniWorld-Folge ein und erhalte den passenden yt-dlp-Befehl.</p>
+
+    <form id="downloadForm">
+      <input type="url" id="aniworldLink" placeholder="https://aniworld.to/anime/stream/..." required />
+      <button type="submit">Befehl generieren</button>
+    </form>
+
+    <div id="outputBox" class="hidden">
+      <h3>yt-dlp Befehl:</h3>
+      <pre id="ytDlpCommand"></pre>
+      <p>ðŸ“Œ Hinweis: Du brauchst <a href="https://github.com/yt-dlp/yt-dlp" target="_blank">yt-dlp</a> auf deinem PC installiert.</p>
     </div>
-    <script>
-        let lastShortenedTime = 0; // Zeitpunkt der letzten Linkverkürzung
 
-        document.getElementById("myinput").onclick = function() {
-            const cooldown = 60 * 1000; // 60 Sekunden in Millisekunden
-            const now = Date.now(); // Aktuelle Zeit in Millisekunden
-            const link = document.getElementById("linkinput").value;
+    <div id="error" class="error hidden"></div>
+  </div>
 
-            if (link.trim() === '') {
-                alert('Please enter a valid URL.');
-                return;
-            }
-
-            if (now - lastShortenedTime < cooldown) {
-                alert('Please wait 60 seconds before shortening another link.');
-                return;
-            }
-
-            lastShortenedTime = now; // Aktualisiere die Zeit der letzten Linkverkürzung
-
-            var data = {
-                "domain": "link.lellolidk.de",
-                "originalURL": link,
-                "allowDuplicates": false
-            };
-
-            fetch('https://api.short.cm/links/public', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': 'pk_W0JghbpC6GgLGWnK'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("message").innerHTML = "Your short link is <a href='" + data.shortURL + "' target='_blank'>" + data.shortURL + "</a>";
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById("message").innerHTML = "An error occurred while shortening the link.";
-            });
-
-            document.getElementById("linkinput").value = '';
-        }
-    </script>
+  <script src="script.js"></script>
 </body>
 </html>
