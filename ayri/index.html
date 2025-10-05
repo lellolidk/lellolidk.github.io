@@ -10,9 +10,11 @@
       --bg: #0e0e10;
       --card: #1f1f23;
       --accent: #9146FF;
+      --accent-hover: #772ce8;
       --text: #ffffff;
       --muted: #adadb8;
       --error: #ff4c4c;
+      --success: #4caf50;
     }
 
     * {
@@ -26,68 +28,116 @@
       color: var(--text);
       display: flex;
       justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
       padding: 2rem;
     }
 
     .container {
       width: 100%;
-      max-width: 600px;
+      max-width: 650px;
       background: var(--card);
       padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-      animation: fadeIn 0.5s ease-in-out;
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      animation: fadeIn 0.6s ease-in-out;
     }
 
     h1 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      color: var(--accent);
+    }
+
+    p {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
     }
 
     textarea {
       width: 100%;
-      height: 150px;
+      height: 160px;
       padding: 1rem;
       font-size: 1rem;
-      border-radius: 8px;
-      border: none;
+      border-radius: 10px;
+      border: 1px solid #2b2b31;
       background: #2b2b31;
       color: var(--text);
       resize: vertical;
       margin-bottom: 1rem;
+      transition: border 0.3s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border: 1px solid var(--accent);
     }
 
     button {
       width: 100%;
-      padding: 0.9rem;
+      padding: 1rem;
       font-size: 1rem;
       background: var(--accent);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
-      transition: background 0.3s;
+      transition: background 0.3s, transform 0.1s;
     }
 
     button:hover {
-      background: #772ce8;
+      background: var(--accent-hover);
+      transform: scale(1.02);
     }
 
     .output {
       margin-top: 2rem;
-      white-space: pre-wrap;
-      line-height: 1.6;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .result-card {
+      background: #2a2a2e;
+      padding: 1rem 1.2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .result-card strong {
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge.success {
+      background: rgba(76,175,80,0.2);
+      color: var(--success);
+    }
+
+    .badge.error {
+      background: rgba(255,76,76,0.2);
+      color: var(--error);
     }
 
     .loading {
       margin-top: 1rem;
+      text-align: center;
       font-style: italic;
       color: var(--muted);
-    }
-
-    .error {
-      color: var(--error);
     }
 
     @keyframes fadeIn {
@@ -98,9 +148,9 @@
 </head>
 <body>
   <div class="container">
-    <h1>Twitch Erstellungsdatum Checker</h1>
-    <p>Gib Twitch-Benutzernamen oder Combo-Lines ein (z. B. <code>username:pass:mail</code>):</p>
-    <textarea id="usernames" placeholder="z. B. ninja, pokimane, montanablack88 oder user:pass:mail"></textarea>
+    <h1>Twitch Created Checker</h1>
+    <p>Füge Usernames oder Combo-Lines (<code>username:pass:mail</code>) ein:</p>
+    <textarea id="usernames" placeholder="z. B. ninja, pokimane oder user:pass:mail"></textarea>
     <button onclick="checkUsernames()">Prüfen</button>
     <div id="loading" class="loading" style="display: none;">⏳ Abfrage läuft...</div>
     <div id="output" class="output"></div>
@@ -116,10 +166,10 @@
         .split(/[\s,]+/) // Split nach Leerzeichen, Komma oder Zeilenumbruch
         .map(line => line.trim())
         .filter(line => line.length > 0)
-        .map(line => line.split(":")[0].toLowerCase()); // NUR Username vor dem ersten ":" nehmen
+        .map(line => line.split(":")[0].toLowerCase()); // Nur Username vor dem ersten ":" nehmen
 
       if (usernames.length === 0) {
-        output.innerHTML = '<span class="error">⚠️ Bitte gib mindestens einen Namen ein.</span>';
+        output.innerHTML = '<div class="result-card"><span class="badge error">⚠️ Fehler</span> Bitte gib mindestens einen Namen ein.</div>';
         return;
       }
 
@@ -137,25 +187,46 @@
           });
 
           if (!res.ok) {
-            results.push(`<span class="error">${name}: ❌ Fehler (${res.status})</span>`);
+            results.push(`
+              <div class="result-card">
+                <strong>${name}</strong>
+                <span class="badge error">❌ Fehler (${res.status})</span>
+              </div>
+            `);
             continue;
           }
 
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             const created = new Date(data[0].createdAt).toLocaleString("de-DE");
-            results.push(`<strong>${data[0].displayName}</strong>: Erstellt am <code>${created}</code>`);
+            results.push(`
+              <div class="result-card">
+                <strong>${data[0].displayName}</strong>
+                <div>📅 Erstellt am: <code>${created}</code></div>
+                <span class="badge success">✔️ Gefunden</span>
+              </div>
+            `);
           } else {
-            results.push(`<span class="error">${name}: ❌ Kein Benutzer gefunden</span>`);
+            results.push(`
+              <div class="result-card">
+                <strong>${name}</strong>
+                <span class="badge error">❌ Kein Benutzer gefunden</span>
+              </div>
+            `);
           }
 
         } catch (err) {
-          results.push(`<span class="error">${name}: ❌ Anfragefehler</span>`);
+          results.push(`
+            <div class="result-card">
+              <strong>${name}</strong>
+              <span class="badge error">❌ Anfragefehler</span>
+            </div>
+          `);
         }
       }
 
       loading.style.display = 'none';
-      output.innerHTML = results.join("<br>");
+      output.innerHTML = results.join("");
     }
   </script>
 </body>
