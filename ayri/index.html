@@ -10,9 +10,14 @@
       --bg: #0e0e10;
       --card: #1f1f23;
       --accent: #9146FF;
+      --accent-hover: #772ce8;
       --text: #ffffff;
       --muted: #adadb8;
       --error: #ff4c4c;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
@@ -27,69 +32,101 @@
 
     .container {
       width: 100%;
-      max-width: 600px;
+      max-width: 650px;
       background: var(--card);
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      padding: 2rem 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+      animation: fadeIn 0.6s ease-in-out;
     }
 
     h1 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      color: var(--accent);
+    }
+
+    p {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
     }
 
     textarea {
       width: 100%;
-      height: 150px;
+      height: 160px;
       padding: 1rem;
       font-size: 1rem;
-      border-radius: 8px;
+      border-radius: 10px;
       border: none;
       background: #2b2b31;
       color: var(--text);
       resize: vertical;
       margin-bottom: 1rem;
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    textarea:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--accent);
     }
 
     button {
       width: 100%;
-      padding: 0.9rem;
+      padding: 1rem;
       font-size: 1rem;
       background: var(--accent);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
+      transition: background 0.3s, transform 0.1s;
     }
 
     button:hover {
-      background: #772ce8;
+      background: var(--accent-hover);
+      transform: scale(1.02);
     }
 
     .output {
       margin-top: 2rem;
       white-space: pre-wrap;
       line-height: 1.6;
+      font-size: 1rem;
     }
 
     .loading {
       margin-top: 1rem;
+      text-align: center;
       font-style: italic;
       color: var(--muted);
     }
 
     .error {
       color: var(--error);
+      font-weight: 600;
+    }
+
+    code {
+      background: rgba(255,255,255,0.08);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-family: monospace;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Twitch Erstellungsjahr Checker</h1>
-    <p>Füge deine Combo-Lines (<code>username:pass:mail</code>) ein:</p>
-    <textarea id="usernames" placeholder="z. B. user:pass:mail"></textarea>
+    <h1>Twitch Erstellungsdatum Checker</h1>
+    <p>Gib Twitch-Benutzernamen ein (durch Komma oder Zeilen getrennt):</p>
+    <textarea id="usernames" placeholder="z. B. ninja, pokimane, montanablack88"></textarea>
     <button onclick="checkUsernames()">Prüfen</button>
     <div id="loading" class="loading" style="display: none;">⏳ Abfrage läuft...</div>
     <div id="output" class="output"></div>
@@ -101,13 +138,13 @@
       const output = document.getElementById("output");
       const loading = document.getElementById("loading");
 
-      const combos = input
-        .split(/[\n,]+/) // Split nach Zeilen oder Komma
-        .map(line => line.trim())
-        .filter(line => line.length > 0);
+      const usernames = input
+        .split(/[\s,]+/)
+        .map(name => name.trim().toLowerCase())
+        .filter(name => name.length > 0);
 
-      if (combos.length === 0) {
-        output.innerHTML = '<span class="error">⚠️ Bitte gib mindestens eine Combo ein.</span>';
+      if (usernames.length === 0) {
+        output.innerHTML = '<span class="error">⚠️ Bitte gib mindestens einen Namen ein.</span>';
         return;
       }
 
@@ -116,37 +153,32 @@
 
       const results = [];
 
-      for (const combo of combos) {
-        const parts = combo.split(":");
-        const username = parts[0].toLowerCase();
-
+      for (const name of usernames) {
         try {
-          const res = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${encodeURIComponent(username)}`, {
-            headers: {
-              'User-Agent': 'TwitchChecker/1.0'
-            }
+          const res = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${encodeURIComponent(name)}`, {
+            headers: { 'User-Agent': 'TwitchChecker/1.0' }
           });
 
           if (!res.ok) {
-            results.push(`${username}:❌ Fehler (${res.status})`);
+            results.push(`<span class="error">${name}</span>: ❌ Fehler (${res.status})`);
             continue;
           }
 
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
-            const year = new Date(data[0].createdAt).getFullYear();
-            results.push(`${username}:${year}`);
+            const created = new Date(data[0].createdAt).toLocaleString("de-DE");
+            results.push(`<strong>${data[0].displayName}</strong>: Erstellt am <code>${created}</code>`);
           } else {
-            results.push(`${username}:❌ Kein Benutzer gefunden`);
+            results.push(`<span class="error">${name}</span>: ❌ Kein Benutzer gefunden`);
           }
 
         } catch (err) {
-          results.push(`${username}:❌ Anfragefehler`);
+          results.push(`<span class="error">${name}</span>: ❌ Anfragefehler`);
         }
       }
 
       loading.style.display = 'none';
-      output.textContent = results.join("\n");
+      output.innerHTML = results.join("<br>");
     }
   </script>
 </body>
