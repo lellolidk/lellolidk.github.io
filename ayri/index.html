@@ -99,8 +99,8 @@
 <body>
   <div class="container">
     <h1>Twitch Erstellungsdatum Checker</h1>
-    <p>Gib Twitch-Benutzernamen ein (durch Komma oder Zeilen getrennt):</p>
-    <textarea id="usernames" placeholder="z. B. ninja, pokimane, montanablack88"></textarea>
+    <p>Gib Twitch-Benutzernamen oder Combo-Lines ein (z. B. <code>username:pass:mail</code>):</p>
+    <textarea id="usernames" placeholder="z. B. ninja, pokimane, montanablack88 oder user:pass:mail"></textarea>
     <button onclick="checkUsernames()">Prüfen</button>
     <div id="loading" class="loading" style="display: none;">⏳ Abfrage läuft...</div>
     <div id="output" class="output"></div>
@@ -113,9 +113,10 @@
       const loading = document.getElementById("loading");
 
       const usernames = input
-        .split(/[\s,]+/)
-        .map(name => name.trim().toLowerCase())
-        .filter(name => name.length > 0);
+        .split(/[\s,]+/) // Split nach Leerzeichen, Komma oder Zeilenumbruch
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .map(line => line.split(":")[0].toLowerCase()); // NUR Username vor dem ersten ":" nehmen
 
       if (usernames.length === 0) {
         output.innerHTML = '<span class="error">⚠️ Bitte gib mindestens einen Namen ein.</span>';
