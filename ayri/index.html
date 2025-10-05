@@ -10,15 +10,9 @@
       --bg: #0e0e10;
       --card: #1f1f23;
       --accent: #9146FF;
-      --accent-hover: #772ce8;
       --text: #ffffff;
       --muted: #adadb8;
       --error: #ff4c4c;
-      --success: #4caf50;
-    }
-
-    * {
-      box-sizing: border-box;
     }
 
     body {
@@ -28,129 +22,74 @@
       color: var(--text);
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
       padding: 2rem;
     }
 
     .container {
       width: 100%;
-      max-width: 650px;
+      max-width: 600px;
       background: var(--card);
       padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
-      animation: fadeIn 0.6s ease-in-out;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     }
 
     h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-      text-align: center;
-      color: var(--accent);
-    }
-
-    p {
-      text-align: center;
-      color: var(--muted);
-      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
     }
 
     textarea {
       width: 100%;
-      height: 160px;
+      height: 150px;
       padding: 1rem;
       font-size: 1rem;
-      border-radius: 10px;
-      border: 1px solid #2b2b31;
+      border-radius: 8px;
+      border: none;
       background: #2b2b31;
       color: var(--text);
       resize: vertical;
       margin-bottom: 1rem;
-      transition: border 0.3s;
-    }
-
-    textarea:focus {
-      outline: none;
-      border: 1px solid var(--accent);
     }
 
     button {
       width: 100%;
-      padding: 1rem;
+      padding: 0.9rem;
       font-size: 1rem;
       background: var(--accent);
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
-      transition: background 0.3s, transform 0.1s;
     }
 
     button:hover {
-      background: var(--accent-hover);
-      transform: scale(1.02);
+      background: #772ce8;
     }
 
     .output {
       margin-top: 2rem;
-      display: grid;
-      gap: 1rem;
-    }
-
-    .result-card {
-      background: #2a2a2e;
-      padding: 1rem 1.2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      animation: fadeIn 0.4s ease-in-out;
-    }
-
-    .result-card strong {
-      font-size: 1.1rem;
-      color: var(--accent);
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 0.25rem 0.6rem;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .badge.success {
-      background: rgba(76,175,80,0.2);
-      color: var(--success);
-    }
-
-    .badge.error {
-      background: rgba(255,76,76,0.2);
-      color: var(--error);
+      white-space: pre-wrap;
+      line-height: 1.6;
     }
 
     .loading {
       margin-top: 1rem;
-      text-align: center;
       font-style: italic;
       color: var(--muted);
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .error {
+      color: var(--error);
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Twitch Created Checker</h1>
-    <p>Füge Usernames oder Combo-Lines (<code>username:pass:mail</code>) ein:</p>
-    <textarea id="usernames" placeholder="z. B. ninja, pokimane oder user:pass:mail"></textarea>
+    <h1>Twitch Erstellungsjahr Checker</h1>
+    <p>Füge deine Combo-Lines (<code>username:pass:mail</code>) ein:</p>
+    <textarea id="usernames" placeholder="z. B. user:pass:mail"></textarea>
     <button onclick="checkUsernames()">Prüfen</button>
     <div id="loading" class="loading" style="display: none;">⏳ Abfrage läuft...</div>
     <div id="output" class="output"></div>
@@ -162,14 +101,13 @@
       const output = document.getElementById("output");
       const loading = document.getElementById("loading");
 
-      const usernames = input
-        .split(/[\s,]+/) // Split nach Leerzeichen, Komma oder Zeilenumbruch
+      const combos = input
+        .split(/[\n,]+/) // Split nach Zeilen oder Komma
         .map(line => line.trim())
-        .filter(line => line.length > 0)
-        .map(line => line.split(":")[0].toLowerCase()); // Nur Username vor dem ersten ":" nehmen
+        .filter(line => line.length > 0);
 
-      if (usernames.length === 0) {
-        output.innerHTML = '<div class="result-card"><span class="badge error">⚠️ Fehler</span> Bitte gib mindestens einen Namen ein.</div>';
+      if (combos.length === 0) {
+        output.innerHTML = '<span class="error">⚠️ Bitte gib mindestens eine Combo ein.</span>';
         return;
       }
 
@@ -178,55 +116,37 @@
 
       const results = [];
 
-      for (const name of usernames) {
+      for (const combo of combos) {
+        const parts = combo.split(":");
+        const username = parts[0].toLowerCase();
+
         try {
-          const res = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${encodeURIComponent(name)}`, {
+          const res = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${encodeURIComponent(username)}`, {
             headers: {
               'User-Agent': 'TwitchChecker/1.0'
             }
           });
 
           if (!res.ok) {
-            results.push(`
-              <div class="result-card">
-                <strong>${name}</strong>
-                <span class="badge error">❌ Fehler (${res.status})</span>
-              </div>
-            `);
+            results.push(`${username}:❌ Fehler (${res.status})`);
             continue;
           }
 
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
-            const created = new Date(data[0].createdAt).toLocaleString("de-DE");
-            results.push(`
-              <div class="result-card">
-                <strong>${data[0].displayName}</strong>
-                <div>📅 Erstellt am: <code>${created}</code></div>
-                <span class="badge success">✔️ Gefunden</span>
-              </div>
-            `);
+            const year = new Date(data[0].createdAt).getFullYear();
+            results.push(`${username}:${year}`);
           } else {
-            results.push(`
-              <div class="result-card">
-                <strong>${name}</strong>
-                <span class="badge error">❌ Kein Benutzer gefunden</span>
-              </div>
-            `);
+            results.push(`${username}:❌ Kein Benutzer gefunden`);
           }
 
         } catch (err) {
-          results.push(`
-            <div class="result-card">
-              <strong>${name}</strong>
-              <span class="badge error">❌ Anfragefehler</span>
-            </div>
-          `);
+          results.push(`${username}:❌ Anfragefehler`);
         }
       }
 
       loading.style.display = 'none';
-      output.innerHTML = results.join("");
+      output.textContent = results.join("\n");
     }
   </script>
 </body>
