@@ -7,8 +7,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0e0e10;
-      --card: #1f1f23;
+      --bg1: #0e0e10;
+      --bg2: #1f1f23;
       --accent: #9146FF;
       --accent-hover: #772ce8;
       --text: #ffffff;
@@ -23,25 +23,28 @@
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background: var(--bg);
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
       color: var(--text);
       display: flex;
       justify-content: center;
+      align-items: center;
+      min-height: 100vh;
       padding: 2rem;
     }
 
     .container {
       width: 100%;
       max-width: 650px;
-      background: var(--card);
-      padding: 2rem 2.5rem;
-      border-radius: 16px;
-      box-shadow: 0 12px 36px rgba(0,0,0,0.5);
-      animation: fadeIn 0.6s ease-in-out;
+      background: rgba(31,31,35,0.85);
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      animation: fadeIn 0.7s ease-in-out;
     }
 
     h1 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       margin-bottom: 0.5rem;
       text-align: center;
       color: var(--accent);
@@ -50,7 +53,7 @@
     p {
       text-align: center;
       color: var(--muted);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.8rem;
     }
 
     textarea {
@@ -58,18 +61,18 @@
       height: 160px;
       padding: 1rem;
       font-size: 1rem;
-      border-radius: 10px;
+      border-radius: 12px;
       border: none;
       background: #2b2b31;
       color: var(--text);
       resize: vertical;
-      margin-bottom: 1rem;
-      transition: border 0.3s, box-shadow 0.3s;
+      margin-bottom: 1.2rem;
+      transition: box-shadow 0.3s;
     }
 
     textarea:focus {
       outline: none;
-      box-shadow: 0 0 0 2px var(--accent);
+      box-shadow: 0 0 10px var(--accent);
     }
 
     button {
@@ -79,29 +82,37 @@
       background: var(--accent);
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       font-weight: 600;
-      transition: background 0.3s, transform 0.1s;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 20px rgba(145,70,255,0.4);
+      transition: background 0.3s, transform 0.15s, box-shadow 0.3s;
     }
 
     button:hover {
       background: var(--accent-hover);
-      transform: scale(1.02);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(145,70,255,0.6);
     }
 
     .output {
       margin-top: 2rem;
-      white-space: pre-wrap;
-      line-height: 1.6;
-      font-size: 1rem;
+      display: grid;
+      gap: 1rem;
     }
 
-    .loading {
-      margin-top: 1rem;
-      text-align: center;
-      font-style: italic;
-      color: var(--muted);
+    .result {
+      background: #25252b;
+      padding: 1rem 1.2rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .result strong {
+      color: var(--accent);
+      font-size: 1.05rem;
     }
 
     .error {
@@ -116,6 +127,13 @@
       font-family: monospace;
     }
 
+    .loading {
+      margin-top: 1rem;
+      text-align: center;
+      font-style: italic;
+      color: var(--muted);
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -124,10 +142,10 @@
 </head>
 <body>
   <div class="container">
-    <h1>Twitch Erstellungsdatum Checker</h1>
-    <p>Gib Twitch-Benutzernamen ein (durch Komma oder Zeilen getrennt):</p>
-    <textarea id="usernames" placeholder="z. B. ninja, pokimane, montanablack88"></textarea>
-    <button onclick="checkUsernames()">Prüfen</button>
+    <h1>🟣 Twitch Erstellungsdatum Checker</h1>
+    <p>Füge Usernames oder Combo-Lines (<code>username:pass:mail</code>) ein:</p>
+    <textarea id="usernames" placeholder="z. B. ninja, pokimane oder user:pass:mail"></textarea>
+    <button onclick="checkUsernames()">🔍 Prüfen</button>
     <div id="loading" class="loading" style="display: none;">⏳ Abfrage läuft...</div>
     <div id="output" class="output"></div>
   </div>
@@ -138,13 +156,13 @@
       const output = document.getElementById("output");
       const loading = document.getElementById("loading");
 
-      const usernames = input
-        .split(/[\s,]+/)
-        .map(name => name.trim().toLowerCase())
-        .filter(name => name.length > 0);
+      const combos = input
+        .split(/[\n,]+/) // Split nach Zeilen oder Komma
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
 
-      if (usernames.length === 0) {
-        output.innerHTML = '<span class="error">⚠️ Bitte gib mindestens einen Namen ein.</span>';
+      if (combos.length === 0) {
+        output.innerHTML = '<div class="result error">⚠️ Bitte gib mindestens einen Namen ein.</div>';
         return;
       }
 
@@ -153,32 +171,35 @@
 
       const results = [];
 
-      for (const name of usernames) {
+      for (const combo of combos) {
+        const parts = combo.split(":");
+        const username = parts[0].toLowerCase();
+
         try {
-          const res = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${encodeURIComponent(name)}`, {
+          const res = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${encodeURIComponent(username)}`, {
             headers: { 'User-Agent': 'TwitchChecker/1.0' }
           });
 
           if (!res.ok) {
-            results.push(`<span class="error">${name}</span>: ❌ Fehler (${res.status})`);
+            results.push(`<div class="result"><span class="error">${username}</span>: ❌ Fehler (${res.status})</div>`);
             continue;
           }
 
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             const created = new Date(data[0].createdAt).toLocaleString("de-DE");
-            results.push(`<strong>${data[0].displayName}</strong>: Erstellt am <code>${created}</code>`);
+            results.push(`<div class="result"><strong>${data[0].displayName}</strong><br>📅 Erstellt am <code>${created}</code></div>`);
           } else {
-            results.push(`<span class="error">${name}</span>: ❌ Kein Benutzer gefunden`);
+            results.push(`<div class="result"><span class="error">${username}</span>: ❌ Kein Benutzer gefunden</div>`);
           }
 
         } catch (err) {
-          results.push(`<span class="error">${name}</span>: ❌ Anfragefehler`);
+          results.push(`<div class="result"><span class="error">${username}</span>: ❌ Anfragefehler</div>`);
         }
       }
 
       loading.style.display = 'none';
-      output.innerHTML = results.join("<br>");
+      output.innerHTML = results.join("");
     }
   </script>
 </body>
