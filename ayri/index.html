@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Twitch Created Checker</title>
+  <title>Twitch Creation Date Checker</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -142,11 +142,11 @@
 </head>
 <body>
   <div class="container">
-    <h1>🟣 Twitch Erstellungsdatum Checker</h1>
-    <p>Füge Usernames oder Combo-Lines (<code>username:pass:mail</code>) ein:</p>
-    <textarea id="usernames" placeholder="z. B. ninja, pokimane oder user:pass:mail"></textarea>
-    <button onclick="checkUsernames()">🔍 Prüfen</button>
-    <div id="loading" class="loading" style="display: none;">⏳ Abfrage läuft...</div>
+    <h1>🟣 Twitch Account Creation Checker</h1>
+    <p>Enter usernames or combo lines (<code>username:pass:mail</code>):</p>
+    <textarea id="usernames" placeholder="e.g. ninja, pokimane or user:pass:mail"></textarea>
+    <button onclick="checkUsernames()">🔍 Check</button>
+    <div id="loading" class="loading" style="display: none;">⏳ Checking...</div>
     <div id="output" class="output"></div>
   </div>
 
@@ -157,12 +157,12 @@
       const loading = document.getElementById("loading");
 
       const combos = input
-        .split(/[\n,]+/) // Split nach Zeilen oder Komma
+        .split(/[\n,]+/)
         .map(line => line.trim())
         .filter(line => line.length > 0);
 
       if (combos.length === 0) {
-        output.innerHTML = '<div class="result error">⚠️ Bitte gib mindestens einen Namen ein.</div>';
+        output.innerHTML = '<div class="result error">⚠️ Please enter at least one username.</div>';
         return;
       }
 
@@ -181,20 +181,20 @@
           });
 
           if (!res.ok) {
-            results.push(`<div class="result"><span class="error">${username}</span>: ❌ Fehler (${res.status})</div>`);
+            results.push(`<div class="result"><span class="error">${username}</span>: ❌ Error (${res.status})</div>`);
             continue;
           }
 
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
-            const created = new Date(data[0].createdAt).toLocaleString("de-DE");
-            results.push(`<div class="result"><strong>${data[0].displayName}:123aaa321:https://email-fake.com/${data[0].displayName}@twitch.lellolidk.de</strong><br>📅 Erstellt am <code>${created}</code></div>`);
+            const created = new Date(data[0].createdAt).toLocaleString("en-US");
+            results.push(`<div class="result"><strong>${data[0].displayName}:123aaa321:https://email-fake.com/${data[0].displayName}@twitch.lellolidk.de</strong><br>📅 Created on <code>${created}</code></div>`);
           } else {
-            results.push(`<div class="result"><span class="error">${username}</span>: ❌ Kein Benutzer gefunden</div>`);
+            results.push(`<div class="result"><span class="error">${username}</span>: ❌ No user found</div>`);
           }
 
         } catch (err) {
-          results.push(`<div class="result"><span class="error">${username}</span>: ❌ Anfragefehler</div>`);
+          results.push(`<div class="result"><span class="error">${username}</span>: ❌ Request error</div>`);
         }
       }
 
