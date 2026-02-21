@@ -188,7 +188,7 @@
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             const created = new Date(data[0].createdAt).toLocaleString("en-US");
-            results.push(`<div class="result"><strong>${data[0].displayName}:123aaa321:https://email-fake.com/${data[0].displayName}@twitch.lellolidk.de</strong><br>📅 Created on <code>${created}</code></div>`);
+            results.push(`<div class="result"><strong>${data[0].displayName}:123aaa321:https://email-fake.com/${data[0].displayName}@ok.lellolidk.de</strong><br>📅 Created on <code>${created}</code></div>`);
           } else {
             results.push(`<div class="result"><span class="error">${username}</span>: ❌ No user found</div>`);
           }
