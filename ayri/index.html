@@ -1,206 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Twitch Creation Date Checker</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg1: #0e0e10;
-      --bg2: #1f1f23;
-      --accent: #9146FF;
-      --accent-hover: #772ce8;
-      --text: #ffffff;
-      --muted: #adadb8;
-      --error: #ff4c4c;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twitch Checker</title>
 
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, var(--bg1), var(--bg2));
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 2rem;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 650px;
-      background: rgba(31,31,35,0.85);
-      padding: 2.5rem;
-      border-radius: 20px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
-      animation: fadeIn 0.7s ease-in-out;
-    }
-
-    h1 {
-      font-size: 2.2rem;
-      margin-bottom: 0.5rem;
-      text-align: center;
-      color: var(--accent);
-    }
-
-    p {
-      text-align: center;
-      color: var(--muted);
-      margin-bottom: 1.8rem;
-    }
-
-    textarea {
-      width: 100%;
-      height: 160px;
-      padding: 1rem;
-      font-size: 1rem;
-      border-radius: 12px;
-      border: none;
-      background: #2b2b31;
-      color: var(--text);
-      resize: vertical;
-      margin-bottom: 1.2rem;
-      transition: box-shadow 0.3s;
-    }
-
-    textarea:focus {
-      outline: none;
-      box-shadow: 0 0 10px var(--accent);
-    }
-
-    button {
-      width: 100%;
-      padding: 1rem;
-      font-size: 1rem;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 20px rgba(145,70,255,0.4);
-      transition: background 0.3s, transform 0.15s, box-shadow 0.3s;
-    }
-
-    button:hover {
-      background: var(--accent-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(145,70,255,0.6);
-    }
-
-    .output {
-      margin-top: 2rem;
-      display: grid;
-      gap: 1rem;
-    }
-
-    .result {
-      background: #25252b;
-      padding: 1rem 1.2rem;
-      border-radius: 12px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-      animation: fadeIn 0.4s ease-in-out;
-    }
-
-    .result strong {
-      color: var(--accent);
-      font-size: 1.05rem;
-    }
-
-    .error {
-      color: var(--error);
-      font-weight: 600;
-    }
-
-    code {
-      background: rgba(255,255,255,0.08);
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-family: monospace;
-    }
-
-    .loading {
-      margin-top: 1rem;
-      text-align: center;
-      font-style: italic;
-      color: var(--muted);
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+<style>
+body{
+background:#0e0e10;
+color:white;
+font-family:Arial;
+padding:40px;
+}
+input{
+padding:10px;
+width:250px;
+border-radius:8px;
+border:none;
+}
+button{
+padding:10px 20px;
+background:#9146FF;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+.result{
+margin-top:30px;
+background:#1f1f23;
+padding:20px;
+border-radius:12px;
+}
+.badges img{
+height:28px;
+margin-right:6px;
+vertical-align:middle;
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>🟣 Twitch Account Creation Checker</h1>
-    <p>Enter usernames or combo lines (<code>username:pass:mail</code>):</p>
-    <textarea id="usernames" placeholder="e.g. ninja, pokimane or user:pass:mail"></textarea>
-    <button onclick="checkUsernames()">🔍 Check</button>
-    <div id="loading" class="loading" style="display: none;">⏳ Checking...</div>
-    <div id="output" class="output"></div>
-  </div>
 
-  <script>
-    async function checkUsernames() {
-      const input = document.getElementById("usernames").value;
-      const output = document.getElementById("output");
-      const loading = document.getElementById("loading");
+<h2>🟣 Twitch Account Checker</h2>
 
-      const combos = input
-        .split(/[\n,]+/)
-        .map(line => line.trim())
-        .filter(line => line.length > 0);
+<input id="username" placeholder="Enter Twitch username">
+<button onclick="checkUser()">Check</button>
 
-      if (combos.length === 0) {
-        output.innerHTML = '<div class="result error">⚠️ Please enter at least one username.</div>';
-        return;
-      }
+<div id="output"></div>
 
-      output.innerHTML = '';
-      loading.style.display = 'block';
+<script>
 
-      const results = [];
+const sevenTvBadges = {};
 
-      for (const combo of combos) {
-        const parts = combo.split(":");
-        const username = parts[0].toLowerCase();
+async function getUserData(userName){
+    const res = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${userName}`);
+    if(!res.ok) return null;
+    return await res.json();
+}
 
-        try {
-          const res = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${encodeURIComponent(username)}`, {
-            headers: { 'User-Agent': 'TwitchChecker/1.0' }
-          });
+async function getGlobalBadges(){
+    const res = await fetch(`https://api.ivr.fi/v2/twitch/badges/global`);
+    return await res.json();
+}
 
-          if (!res.ok) {
-            results.push(`<div class="result"><span class="error">${username}</span>: ❌ Error (${res.status})</div>`);
-            continue;
-          }
+async function getUserBadges(userID, login){
+    const res = await fetch("https://gql.twitch.tv/gql",{
+        method:"POST",
+        headers:{ "Client-ID":"kimne78kx3ncx6brgo4mv6wki5h1ko" },
+        body: JSON.stringify([{
+            operationName:"ViewerCard",
+            variables:{
+                channelID:userID,
+                channelLogin:login,
+                hasChannelID:true,
+                giftRecipientLogin:login,
+                isViewerBadgeCollectionEnabled:true,
+                withStandardGifting:true,
+                badgeSourceChannelID:userID,
+                badgeSourceChannelLogin:login
+            },
+            extensions:{
+                persistedQuery:{
+                    version:1,
+                    sha256Hash:"80c53fe04c79a6414484104ea573c28d6a8436e031a235fc6908de63f51c74fd"
+                }
+            }
+        }])
+    });
 
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            const created = new Date(data[0].createdAt).toLocaleString("en-US");
-            results.push(`<div class="result"><strong>${data[0].displayName}:123aaa321:https://email-fake.com/${data[0].displayName}@ok.lellolidk.de</strong><br>📅 Created on <code>${created}</code></div>`);
-          } else {
-            results.push(`<div class="result"><span class="error">${username}</span>: ❌ No user found</div>`);
-          }
+    const data = (await res.json())[0]?.data;
+    return data?.channelViewer?.earnedBadges || [];
+}
 
-        } catch (err) {
-          results.push(`<div class="result"><span class="error">${username}</span>: ❌ Request error</div>`);
+/* =========================
+   7TV BADGE
+========================= */
+
+async function fetch7tvBadge(userid) {
+    try {
+        let response = await fetch(`https://7tv.io/v3/users/twitch/${userid}`);
+        let data = await response.json();
+        if (!data.user) return "";
+
+        let SevenTvID = data.user.id;
+
+        response = await fetch(`https://7tv.io/egvault/v1/subscriptions/${SevenTvID}`);
+        data = await response.json();
+        if (!data.active) return "";
+
+        response = await fetch(`https://7tv.io/v3/gql`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operationName: 'GetUserCosmetics',
+                variables: { id: String(SevenTvID) },
+                query: `
+                    query GetUserCosmetics($id: ObjectID!) {
+                        user(id: $id) {
+                            cosmetics {
+                                id
+                                kind
+                                selected
+                            }
+                        }
+                    }
+                `
+            }),
+        });
+
+        let cosmetics = await response.json();
+
+        for (const cosmetic of cosmetics.data.user.cosmetics) {
+            if (cosmetic.selected && cosmetic.kind === "BADGE") {
+                return `https://cdn.7tv.app/badge/${cosmetic.id}/4x`;
+            }
         }
-      }
 
-      loading.style.display = 'none';
-      output.innerHTML = results.join("");
+        return "";
+
+    } catch {
+        return "";
     }
-  </script>
+}
+
+/* =========================
+   7TV PAINT
+========================= */
+
+async function fetch7tvPaint(userid) {
+    try {
+        let res = await fetch(`https://7tv.io/v3/users/twitch/${userid}`);
+        let data = await res.json();
+        if (!data.user) return null;
+
+        let SevenTvID = data.user.id;
+
+        const response = await fetch("https://7tv.io/v3/gql", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                operationName: "User",
+                variables: { id: SevenTvID },
+                query: `
+                    query User($id: ObjectID!) {
+                        user(id: $id) {
+                            style {
+                                paint {
+                                    function
+                                    color
+                                    stops { at color }
+                                    repeat
+                                    angle
+                                    image_url
+                                    shadows { x_offset y_offset radius color }
+                                }
+                            }
+                        }
+                    }
+                `
+            })
+        });
+
+        const paintData = await response.json();
+        return paintData.data?.user?.style?.paint || null;
+
+    } catch {
+        return null;
+    }
+}
+
+function applyPaintStyle(paint) {
+    if (!paint) return "";
+
+    let style = "";
+
+    if (paint.function === "LINEAR_GRADIENT") {
+        const stops = paint.stops.map(s =>
+            `#${(s.color >>> 0).toString(16).padStart(8, '0')} ${s.at*100}%`
+        ).join(", ");
+
+        style += `
+            background-image: linear-gradient(${paint.angle}deg, ${stops});
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        `;
+    }
+
+    if (paint.shadows?.length) {
+        const shadows = paint.shadows.map(sh =>
+            `drop-shadow(#${(sh.color >>> 0).toString(16).padStart(8, '0')} ${sh.x_offset}px ${sh.y_offset}px ${sh.radius}px)`
+        ).join(" ");
+
+        style += `filter:${shadows};`;
+    }
+
+    return `display:inline-block;${style}`;
+}
+
+/* =========================
+   MAIN CHECK
+========================= */
+
+async function checkUser(){
+
+    const username = document.getElementById("username").value.trim().toLowerCase();
+    const output = document.getElementById("output");
+
+    if(!username){
+        output.innerHTML = "Enter username.";
+        return;
+    }
+
+    output.innerHTML = "Loading...";
+
+    const userData = await getUserData(username);
+    if(!userData || !userData.length){
+        output.innerHTML = "User not found.";
+        return;
+    }
+
+    const user = userData[0];
+    const created = new Date(user.createdAt).toLocaleString();
+
+    const earnedBadges = await getUserBadges(user.id, user.login);
+    const globalBadges = await getGlobalBadges();
+    const sevenBadge = await fetch7tvBadge(user.id);
+    const paint = await fetch7tvPaint(user.id);
+
+    let badgeHTML = "";
+
+    for(const badge of globalBadges){
+        const userBadge = earnedBadges.find(b => b.setID === badge.set_id);
+        if(!userBadge) continue;
+
+        const version = badge.versions.find(v => v.id === userBadge.version);
+        if(!version) continue;
+
+        badgeHTML += `<img src="${version.image_url_4x}" title="${version.title}" style="height:26px;margin-right:5px;">`;
+    }
+
+    if(sevenBadge){
+        badgeHTML += `<img src="${sevenBadge}" title="7TV Badge" style="height:26px;margin-right:5px;">`;
+    }
+
+    const paintStyle = applyPaintStyle(paint);
+
+    output.innerHTML = `
+        <div class="result">
+            <h3 style="${paintStyle}">${user.displayName}:123aaa321:${user.displayName}@ok.lellolidk.de</h3>
+            <p>📅 Created: ${created}</p>
+            <div>${badgeHTML || "No badges"}</div>
+        </div>
+    `;
+}
+
+</script>
+
 </body>
 </html>
