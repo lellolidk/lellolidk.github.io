@@ -313,6 +313,7 @@
     </div>
 
     <div class="cards-container">
+        <!-- Username Checker -->
         <div class="card">
             <div class="card-title">
                 <div class="icon">👤</div>
@@ -327,6 +328,7 @@
             </button>
         </div>
 
+        <!-- Token Checker -->
         <div class="card">
             <div class="card-title">
                 <div class="icon">🔑</div>
@@ -484,6 +486,12 @@ async function checkUser(){
 
             const user = userData[0];
             const created = new Date(user.createdAt).toLocaleString();
+            
+            // NEU: Ban-Status abfragen
+            const isBanned = user.banned; 
+            const banText = isBanned 
+                ? "<span style='color: #e74c3c; font-weight: 700;'>🚫 BANNED</span>" 
+                : "<span style='color: #2ecc71;'>✅ Active</span>";
 
             const earnedBadges = await getUserBadges(user.id, user.login);
             const globalBadges = await getGlobalBadges();
@@ -505,11 +513,11 @@ async function checkUser(){
                 badgeHTML += `<img src="${sevenBadge}" title="7TV Badge" alt="7TV">`;
             }
 
-            // Aktualisierte URL und Passwort
+            // Aktualisierte Ausgabe mit Ban-Status
             finalHTML += `
-                <div class="result">
+                <div class="result ${isBanned ? 'token-invalid' : ''}">
                     <h3>${user.displayName}:123aaA321#:https://email-fake.com/${user.displayName}@lellol.dev</h3>
-                    <p>📅 Created: ${created} &nbsp;|&nbsp; 🆔 ID: ${user.id}</p>
+                    <p>📅 Created: ${created} &nbsp;|&nbsp; 🆔 ID: ${user.id} &nbsp;|&nbsp; Status: ${banText}</p>
                     <div class="badges">${badgeHTML || "<span style='color:#adadb8; font-size: 0.9rem;'>No badges found</span>"}</div>
                 </div>
             `;
