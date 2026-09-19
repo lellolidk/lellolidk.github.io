@@ -1,11 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Twitch Checker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
+    :root {
+        --bg-body: #0d0c13;
+        --bg-card: #14131d;
+        --bg-card-hover: #191825;
+        --bg-input: #0a0910;
+        --border: #232133;
+        --border-hover: #3b3756;
+        --primary: #9146ff;
+        --primary-hover: #7e2cf6;
+        --text-main: #f3f3f6;
+        --text-muted: #8a889d;
+        --text-dim: #545267;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+    }
+
     * {
         margin: 0;
         padding: 0;
@@ -13,293 +33,693 @@
     }
 
     body {
-        background: radial-gradient(circle at 50% 0%, #1f1033 0%, #0e0e10 60%);
-        color: #efeff1;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         min-height: 100vh;
-        padding: 40px 20px;
+        overflow-x: hidden;
     }
 
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-        background: #0e0e10;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #3a3a42;
-        border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: #9146ff;
-    }
+    /* Custom Scrollbar - lightweight */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-body); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
     .container {
-        max-width: 1100px;
+        max-width: 880px;
         margin: 0 auto;
+        padding: 32px 18px 80px;
     }
 
+    /* Simple Clean Header */
     .header {
         text-align: center;
-        margin-bottom: 50px;
-        animation: fadeInDown 0.6s ease-out;
+        margin-bottom: 26px;
+    }
+
+    .header-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 6px;
+        background: rgba(145, 70, 255, 0.12);
+        border: 1px solid rgba(145, 70, 255, 0.25);
+        color: #c9a7ff;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+    }
+
+    .live-indicator {
+        width: 6px;
+        height: 6px;
+        background: var(--success);
+        border-radius: 50%;
     }
 
     .header h1 {
-        font-size: 2.8rem;
+        font-size: 2.2rem;
         font-weight: 800;
-        background: linear-gradient(135deg, #bf94ff, #9146ff, #ff6b9d);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 10px;
-        letter-spacing: -0.5px;
+        color: #fff;
+        margin-bottom: 6px;
+        letter-spacing: -0.6px;
     }
 
     .header p {
-        color: #adadb8;
-        font-size: 1.1rem;
+        color: var(--text-muted);
+        font-size: 0.92rem;
     }
 
-    .cards-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        gap: 30px;
-        margin-bottom: 40px;
-    }
-
-    /* Glassmorphism Cards */
+    /* Clean Card Container */
     .card {
-        background: rgba(31, 31, 35, 0.6);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-radius: 20px;
-        padding: 35px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 22px;
+        margin-bottom: 20px;
     }
 
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(145, 70, 255, 0.15);
-        border-color: rgba(145, 70, 255, 0.3);
+    .input-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+        gap: 8px;
     }
 
-    .card-title {
-        font-size: 1.4rem;
-        font-weight: 600;
-        margin-bottom: 25px;
+    .input-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .input-tools {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 6px;
+    }
+
+    .btn-chip {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 9px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease;
+        font-family: inherit;
+    }
+
+    .btn-chip:hover {
+        background: rgba(255, 255, 255, 0.09);
         color: #fff;
     }
 
-    .card-title .icon {
-        width: 32px;
-        height: 32px;
-        background: linear-gradient(135deg, rgba(145,70,255,0.2), rgba(255,107,157,0.2));
-        border: 1px solid rgba(145,70,255,0.5);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-    }
-
-    .input-group {
-        margin-bottom: 25px;
-    }
-
-    .input-group label {
-        display: block;
-        margin-bottom: 10px;
-        color: #dedee3;
-        font-size: 0.95rem;
-        font-weight: 500;
+    .user-pill {
+        font-size: 0.75rem;
+        color: #c9a7ff;
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        background: rgba(145, 70, 255, 0.12);
+        padding: 3px 8px;
+        border-radius: 5px;
+        border: 1px solid rgba(145, 70, 255, 0.25);
     }
 
     textarea {
         width: 100%;
-        padding: 16px;
-        background: rgba(14, 14, 16, 0.8);
-        border: 1px solid #3a3a42;
-        border-radius: 14px;
-        color: #efeff1;
-        font-size: 0.95rem;
+        padding: 14px;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: #fff;
+        font-size: 0.88rem;
         line-height: 1.5;
-        transition: all 0.3s ease;
         resize: vertical;
-        min-height: 140px;
-        font-family: 'JetBrains Mono', 'Monaco', 'Courier New', monospace;
+        min-height: 120px;
+        font-family: 'JetBrains Mono', monospace;
+        outline: none;
+        transition: border-color 0.15s ease;
+    }
+
+    textarea::placeholder {
+        color: var(--text-dim);
     }
 
     textarea:focus {
-        outline: none;
-        border-color: #9146ff;
-        background: #18181b;
-        box-shadow: 0 0 0 4px rgba(145, 70, 255, 0.15);
+        border-color: var(--primary);
     }
 
-    .btn {
-        width: 100%;
-        padding: 14px 24px;
-        border: none;
-        border-radius: 12px;
-        font-size: 1.05rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
+    /* Controls Grid */
+    .controls-row {
+        display: grid;
+        grid-template-columns: 1.3fr 1fr;
+        gap: 14px;
+        margin: 16px 0;
+    }
+
+    .control-item {
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 14px;
+    }
+
+    .control-label {
+        font-size: 0.74rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
         display: flex;
         align-items: center;
-        justify-content: center;
+        gap: 6px;
+    }
+
+    /* Badge Selector Buttons */
+    .badge-pills {
+        display: flex;
+        gap: 5px;
+    }
+
+    .badge-pill {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        padding: 7px 6px;
+        border-radius: 7px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-align: center;
+        font-family: inherit;
+    }
+
+    .badge-pill:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .badge-pill.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+    }
+
+    /* Thread Slider */
+    .slider-row {
+        display: flex;
+        align-items: center;
         gap: 10px;
     }
 
-    .btn-primary {
-        background: linear-gradient(135deg, #9146ff, #7c3aed);
-        color: white;
+    .slider {
+        flex: 1;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 5px;
+        border-radius: 4px;
+        background: #27253a;
+        outline: none;
     }
 
-    .btn-primary:hover:not(:disabled) {
-        background: linear-gradient(135deg, #a970ff, #8b5cf6);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(145, 70, 255, 0.4);
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid var(--primary);
+        cursor: pointer;
     }
 
-    .btn-primary:active:not(:disabled) {
-        transform: translateY(0);
+    .thread-num {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #c9a7ff;
+        background: rgba(145, 70, 255, 0.12);
+        padding: 3px 8px;
+        border-radius: 6px;
+        min-width: 34px;
+        text-align: center;
     }
 
-    .btn-primary:disabled {
-        background: #3a3a42;
-        color: #adadb8;
+    /* Button */
+    .btn-submit {
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: 10px;
+        background: var(--primary);
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: inherit;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+        background: var(--primary-hover);
+    }
+
+    .btn-submit:disabled {
+        opacity: 0.5;
         cursor: not-allowed;
     }
 
-    .loading {
-        display: inline-block;
-        width: 18px;
-        height: 18px;
-        border: 3px solid rgba(255, 255, 255, 0.3);
+    .shortcut-tag {
+        font-size: 0.72rem;
+        opacity: 0.75;
+        font-weight: 600;
+        background: rgba(0, 0, 0, 0.25);
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    /* Stats Ribbon */
+    .stats-ribbon {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        padding: 12px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .stat-card .val {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.25rem;
+        font-weight: 800;
+    }
+
+    .stat-card .lbl {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        margin-top: 2px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    /* Progress Box */
+    .progress-box {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 16px;
+    }
+
+    .progress-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.82rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .progress-bar-bg {
+        width: 100%;
+        height: 6px;
+        background: var(--bg-input);
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        width: 0%;
+        background: var(--primary);
+        border-radius: 999px;
+        transition: width 0.15s linear;
+    }
+
+    /* Results Toolbar */
+    .results-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+    }
+
+    .search-box {
+        position: relative;
+        flex: 1;
+        min-width: 220px;
+    }
+
+    .search-box input {
+        width: 100%;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        color: #fff;
+        padding: 8px 30px 8px 12px;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.85rem;
+        outline: none;
+    }
+
+    .search-box input:focus {
+        border-color: var(--primary);
+    }
+
+    .search-clear-btn {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        cursor: pointer;
+        font-size: 0.8rem;
+        display: none;
+    }
+
+    .search-clear-btn:hover {
+        color: #fff;
+    }
+
+    .toolbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .sort-select {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        color: #fff;
+        padding: 7px 10px;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        outline: none;
+    }
+
+    .sort-select:focus {
+        border-color: var(--primary);
+    }
+
+    .btn-tool {
+        background: rgba(145, 70, 255, 0.12);
+        border: 1px solid rgba(145, 70, 255, 0.25);
+        color: #c9a7ff;
+        padding: 7px 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.15s ease;
+    }
+
+    .btn-tool:hover {
+        background: rgba(145, 70, 255, 0.22);
+        color: #fff;
+    }
+
+    /* Results List */
+    .results-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .result-row {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .result-row:hover {
+        border-color: var(--border-hover);
+        background: var(--bg-card-hover);
+    }
+
+    .result-row.status-active {
+        border-left: 3px solid var(--success);
+    }
+
+    .result-row.status-banned {
+        border-left: 3px solid var(--danger);
+    }
+
+    .result-row.status-error {
+        border-left: 3px solid var(--warning);
+        opacity: 0.85;
+    }
+
+    .avatar-wrapper {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .user-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        object-fit: cover;
+        background: #181724;
+        border: 1px solid var(--border);
+        display: block;
+    }
+
+    .user-avatar.fallback {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .user-main-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* Combo Pill Container */
+    .user-title-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+        flex-wrap: wrap;
+    }
+
+    .combo-box {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        padding: 4px 8px;
+        border-radius: 7px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.82rem;
+        cursor: pointer;
+        transition: border-color 0.15s ease;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    .combo-box:hover {
+        border-color: var(--primary);
+    }
+
+    .combo-user {
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .combo-sep {
+        color: var(--primary);
+        font-weight: 700;
+        user-select: none;
+    }
+
+    .combo-pass {
+        color: #eab308;
+        font-weight: 500;
+    }
+
+    .combo-email {
+        color: #38bdf8;
+        font-weight: 500;
+    }
+
+    .btn-copy-mini {
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        cursor: pointer;
+        padding: 0 4px;
+        font-size: 0.8rem;
+        transition: color 0.15s ease;
+    }
+
+    .btn-copy-mini:hover {
+        color: #fff;
+    }
+
+    /* State Pills */
+    .state-pill {
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        white-space: nowrap;
+    }
+
+    .pill-active {
+        background: rgba(16, 185, 129, 0.12);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .pill-banned {
+        background: rgba(239, 68, 68, 0.12);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .pill-error {
+        background: rgba(245, 158, 11, 0.12);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .user-meta-details {
+        display: flex;
+        gap: 12px;
+        color: var(--text-dim);
+        font-size: 0.74rem;
+        font-family: 'JetBrains Mono', monospace;
+        flex-wrap: wrap;
+    }
+
+    .badges-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-wrap: wrap;
+        max-width: 240px;
+        justify-content: flex-end;
+    }
+
+    .badge-icon {
+        height: 22px;
+        width: 22px;
+        object-fit: contain;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .badge-none {
+        font-size: 0.72rem;
+        color: var(--text-dim);
+        font-style: italic;
+    }
+
+    /* Toast Notification */
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #1f1d2b;
+        border: 1px solid var(--border-hover);
+        color: #fff;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transform: translateY(60px);
+        opacity: 0;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+        pointer-events: none;
+    }
+
+    .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    /* Spinner */
+    .spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.25);
+        border-top-color: #fff;
         border-radius: 50%;
-        border-top-color: white;
-        animation: spin 0.8s linear infinite;
+        animation: spin 0.6s linear infinite;
+        display: inline-block;
     }
 
     @keyframes spin {
         to { transform: rotate(360deg); }
     }
 
-    @keyframes fadeInDown {
-        from { opacity: 0; transform: translateY(-20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .results-container {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    /* Result Cards */
-    .result {
-        background: rgba(31, 31, 35, 0.8);
-        border-radius: 16px;
-        padding: 20px 25px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .result.flex-row {
-        flex-direction: row;
-        align-items: center;
-        gap: 20px;
-    }
-
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateY(15px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .result h3 {
-        font-size: 1.1rem;
-        color: #bf94ff;
-        font-family: 'JetBrains Mono', 'Monaco', monospace;
-        word-break: break-all;
-    }
-
-    .result p {
-        color: #adadb8;
-        font-size: 0.95rem;
-    }
-
-    .badges {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-top: 5px;
-    }
-
-    .badges img {
-        height: 26px;
-        border-radius: 6px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .badges img:hover {
-        transform: scale(1.15) translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
-
-    .status-message {
-        padding: 16px;
-        border-radius: 12px;
-        text-align: center;
-        font-weight: 500;
-        margin-bottom: 20px;
-        animation: slideIn 0.3s ease;
-    }
-
-    .status-success {
-        background: rgba(46, 204, 113, 0.1);
-        border: 1px solid rgba(46, 204, 113, 0.3);
-        color: #2ecc71;
-    }
-
-    .status-error {
-        background: rgba(231, 76, 60, 0.1);
-        border: 1px solid rgba(231, 76, 60, 0.3);
-        color: #e74c3c;
-    }
-
-    .status-loading {
-        background: rgba(145, 70, 255, 0.1);
-        border: 1px solid rgba(145, 70, 255, 0.3);
-        color: #bf94ff;
-    }
-
-    /* Token Result Specifics */
-    .token-valid {
-        border-left: 4px solid #2ecc71;
-    }
-    .token-invalid {
-        border-left: 4px solid #e74c3c;
-    }
-    .token-icon {
-        font-size: 1.5rem;
-    }
-
-    @media (max-width: 768px) {
-        .cards-container {
+    @media (max-width: 640px) {
+        .controls-row {
             grid-template-columns: 1fr;
         }
-        .header h1 {
-            font-size: 2.2rem;
+        .stats-ribbon {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .result-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .badges-container {
+            justify-content: flex-start;
+            max-width: 100%;
+        }
+        .results-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .toolbar-actions {
+            justify-content: space-between;
         }
     }
 </style>
@@ -308,311 +728,707 @@
 
 <div class="container">
     <div class="header">
-        <h1>🟣 Twitch Toolkit</h1>
-        <p>Account Validator & GQL Token Checker</p>
+        <div class="header-tag">
+            <span class="live-indicator"></span>
+            Twitch GQL Engine
+        </div>
+        <h1>Twitch Checker</h1>
+        <p>Schnelle Validierung, Badges-Check & Combo-Anzeige</p>
     </div>
 
-    <div class="cards-container">
-        <!-- Username Checker -->
-        <div class="card">
-            <div class="card-title">
-                <div class="icon">👤</div>
-                Username Checker
+    <div class="card">
+        <div class="input-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="input-title">Usernames / Combos</span>
+                <span class="user-pill" id="inputCount">0 User</span>
             </div>
-            <div class="input-group">
-                <label for="username">Usernames (einer pro Zeile)</label>
-                <textarea id="username" placeholder="ninja&#10;shroud&#10;pokimane"></textarea>
+            <div class="input-tools">
+                <button type="button" class="btn-chip" onclick="pasteSample()">⚡ Beispiel</button>
+                <button type="button" class="btn-chip" onclick="pasteClipboard()">📋 Einfügen</button>
+                <button type="button" class="btn-chip" onclick="clearInput()">🗑️ Leeren</button>
             </div>
-            <button id="checkUsernamesBtn" class="btn btn-primary" onclick="checkUser()">
-                <span>Check Usernames</span>
-            </button>
         </div>
 
-        <!-- Token Checker -->
-        <div class="card">
-            <div class="card-title">
-                <div class="icon">🔑</div>
-                GQL Token Checker
+        <textarea id="usernameInput" placeholder="ninja&#10;shroud&#10;pokimane&#10;lellol:123aaA321#:lellol@lellol.tech" spellcheck="false"></textarea>
+
+        <div class="controls-row">
+            <!-- Badge Modus -->
+            <div class="control-item">
+                <div class="control-label">Badges</div>
+                <div class="badge-pills" id="badgeSelector">
+                    <button type="button" class="badge-pill active" data-mode="both">Alle</button>
+                    <button type="button" class="badge-pill" data-mode="twitch">Twitch</button>
+                    <button type="button" class="badge-pill" data-mode="7tv">7TV</button>
+                    <button type="button" class="badge-pill" data-mode="none">Keine</button>
+                </div>
             </div>
-            <div class="input-group">
-                <label for="tokens">OAuth Tokens (einer pro Zeile)</label>
-                <textarea id="tokens" placeholder="yoursupersecrettoken123&#10;oauth:anothertoken456"></textarea>
+
+            <!-- Thread Speed -->
+            <div class="control-item">
+                <div class="control-label">Threads (Parallel)</div>
+                <div class="slider-row">
+                    <input type="range" class="slider" id="concurrencySlider" min="1" max="15" value="6">
+                    <span class="thread-num" id="threadVal">6</span>
+                </div>
             </div>
-            <button id="checkTokensBtn" class="btn btn-primary" onclick="checkTokens()">
-                <span>Check Tokens</span>
+        </div>
+
+        <button type="button" class="btn-submit" id="startBtn" onclick="startCheck()">
+            <span>Accounts Prüfen</span>
+            <span class="shortcut-tag">Ctrl + Enter</span>
+        </button>
+    </div>
+
+    <!-- Live Progress & Stats -->
+    <div id="progressSection" style="display: none;">
+        <div class="stats-ribbon">
+            <div class="stat-card">
+                <div class="val" id="statTotal" style="color: #fff;">0</div>
+                <div class="lbl">Gesamt</div>
+            </div>
+            <div class="stat-card">
+                <div class="val" id="statActive" style="color: var(--success);">0</div>
+                <div class="lbl">Aktiv</div>
+            </div>
+            <div class="stat-card">
+                <div class="val" id="statBanned" style="color: var(--danger);">0</div>
+                <div class="lbl">Banned</div>
+            </div>
+            <div class="stat-card">
+                <div class="val" id="statNotFound" style="color: var(--warning);">0</div>
+                <div class="lbl">Error</div>
+            </div>
+        </div>
+
+        <div class="progress-box">
+            <div class="progress-meta">
+                <span id="progressText">Prüfe...</span>
+                <span id="progressPercent" style="color: #c9a7ff; font-family: 'JetBrains Mono', monospace;">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar: Sort, Search, Export -->
+    <div class="results-toolbar" id="resultsToolbar" style="display: none;">
+        <div class="search-box">
+            <input type="text" id="badgeSearch" placeholder="🔍 Badge oder Name suchen..." oninput="onSearchInput()">
+            <button type="button" class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()">✕</button>
+        </div>
+        <div class="toolbar-actions">
+            <select id="sortSelector" class="sort-select" onchange="renderAllResults()">
+                <option value="default">Reihenfolge (Default)</option>
+                <option value="badges_desc">Badges (Meiste zuerst)</option>
+                <option value="badges_asc">Badges (Wenigste zuerst)</option>
+                <option value="name_asc">Name (A-Z)</option>
+            </select>
+            <button type="button" class="btn-tool" onclick="copyAllCombos()" title="Alle gültigen Accounts als Combo kopieren">
+                📋 Alle Kopieren
+            </button>
+            <button type="button" class="btn-tool" onclick="exportCombosTxt()" title="Als TXT exportieren">
+                💾 TXT
             </button>
         </div>
     </div>
 
-    <div id="output" class="results-container"></div>
+    <!-- Results List -->
+    <div class="results-wrap" id="resultsContainer"></div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+    <span>📋</span>
+    <span id="toastMsg">Kopiert!</span>
 </div>
 
 <script>
-// --- USERNAME CHECKER LOGIC ---
+const GQL_CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
+const STATIC_PASSWORD = "123aaA321#";
+const DOMAIN_SUFFIX = "@lellol.tech";
 
-async function getUserData(userName){
+let currentBadgeMode = "both";
+let isRunning = false;
+let allResults = [];
+let searchTimeout = null;
+
+// UI References
+const inputArea = document.getElementById("usernameInput");
+const inputCount = document.getElementById("inputCount");
+const concurrencySlider = document.getElementById("concurrencySlider");
+const threadVal = document.getElementById("threadVal");
+const startBtn = document.getElementById("startBtn");
+const progressSection = document.getElementById("progressSection");
+const progressBar = document.getElementById("progressBar");
+const progressPercent = document.getElementById("progressPercent");
+const progressText = document.getElementById("progressText");
+const resultsContainer = document.getElementById("resultsContainer");
+const resultsToolbar = document.getElementById("resultsToolbar");
+const badgeSearchInput = document.getElementById("badgeSearch");
+const searchClearBtn = document.getElementById("searchClearBtn");
+const sortSelector = document.getElementById("sortSelector");
+const toast = document.getElementById("toast");
+
+// Live Input Counter
+inputArea.addEventListener("input", updateCounter);
+
+function updateCounter() {
+    const list = getCleanUsernames();
+    inputCount.textContent = `${list.length} User`;
+}
+
+concurrencySlider.addEventListener("input", (e) => {
+    threadVal.textContent = e.target.value;
+});
+
+// Badge Filter Toggle
+document.querySelectorAll("#badgeSelector .badge-pill").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll("#badgeSelector .badge-pill").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentBadgeMode = btn.dataset.mode;
+    });
+});
+
+function getCleanUsernames() {
+    return inputArea.value
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .map(line => line.split(":")[0].trim().toLowerCase())
+        .filter(name => name.length > 0);
+}
+
+function pasteSample() {
+    inputArea.value = "ninja\nshroud\npokimane\ntarik\nxqc";
+    updateCounter();
+}
+
+async function pasteClipboard() {
     try {
-        const res = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${userName}`);
-        if(!res.ok) return null;
-        return await res.json();
-    } catch (error) {
-        console.error('Error fetching user data:', error);
-        return null;
+        const text = await navigator.clipboard.readText();
+        if (text) {
+            inputArea.value = text;
+            updateCounter();
+            showToast("Eingefügt!");
+        }
+    } catch (e) {
+        showToast("Einfügen nicht erlaubt.");
     }
 }
 
-async function getGlobalBadges(){
-    try {
-        const res = await fetch(`https://api.ivr.fi/v2/twitch/badges/global`);
-        return await res.json();
-    } catch (error) {
-        console.error('Error fetching global badges:', error);
-        return [];
-    }
+function clearInput() {
+    inputArea.value = "";
+    updateCounter();
 }
 
-async function getUserBadges(userID, login){
+function onSearchInput() {
+    searchClearBtn.style.display = badgeSearchInput.value.trim().length > 0 ? "block" : "none";
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(renderAllResults, 120);
+}
+
+function clearSearch() {
+    badgeSearchInput.value = "";
+    searchClearBtn.style.display = "none";
+    renderAllResults();
+}
+
+function showToast(msg) {
+    const toastMsg = document.getElementById("toastMsg");
+    toastMsg.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 1800);
+}
+
+// ----------------------------------------------------
+// TWITCH GQL API FUNCTIONS
+// ----------------------------------------------------
+
+async function gqlPost(body) {
+    const res = await fetch("https://gql.twitch.tv/gql", {
+        method: "POST",
+        headers: {
+            "Client-ID": GQL_CLIENT_ID,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+    });
+    return await res.json();
+}
+
+async function fetchTwitchUserGQL(login) {
     try {
-        const res = await fetch("https://gql.twitch.tv/gql",{
-            method:"POST",
-            headers:{ "Client-ID":"kimne78kx3ncx6brgo4mv6wki5h1ko" },
-            body: JSON.stringify([{
-                operationName:"ViewerCard",
-                variables:{
-                    channelID:userID,
-                    channelLogin:login,
-                    hasChannelID:true,
-                    giftRecipientLogin:login,
-                    isViewerBadgeCollectionEnabled:true,
-                    withStandardGifting:true,
-                    badgeSourceChannelID:userID,
-                    badgeSourceChannelLogin:login
-                },
-                extensions:{
-                    persistedQuery:{
-                        version:1,
-                        sha256Hash:"80c53fe04c79a6414484104ea573c28d6a8436e031a235fc6908de63f51c74fd"
-                    }
+        const query = `
+            query CheckUser($login: String!) {
+                user(login: $login) {
+                    id
+                    login
+                    displayName
+                    createdAt
+                    profileImageURL(width: 70)
                 }
-            }])
+            }
+        `;
+        const res = await gqlPost({
+            query: query,
+            variables: { login: login }
         });
 
-        const data = (await res.json())[0]?.data;
-        return data?.channelViewer?.earnedBadges || [];
-    } catch (error) {
-        console.error('Error fetching user badges:', error);
+        const data = res?.data;
+        if (!data || !data.user) {
+            return {
+                found: false,
+                isBanned: true,
+                user: { login: login, displayName: login, id: "N/A" }
+            };
+        }
+
+        return {
+            found: true,
+            isBanned: false,
+            user: data.user
+        };
+    } catch (e) {
+        return { error: e.message };
+    }
+}
+
+async function fetchTwitchUserBadges(userId, login) {
+    try {
+        const res = await gqlPost([{
+            operationName: "ViewerCard",
+            variables: {
+                channelID: userId,
+                channelLogin: login,
+                hasChannelID: true,
+                giftRecipientLogin: login,
+                isViewerBadgeCollectionEnabled: true,
+                withStandardGifting: true,
+                badgeSourceChannelID: userId,
+                badgeSourceChannelLogin: login
+            },
+            extensions: {
+                persistedQuery: {
+                    version: 1,
+                    sha256Hash: "80c53fe04c79a6414484104ea573c28d6a8436e031a235fc6908de63f51c74fd"
+                }
+            }
+        }]);
+        return res?.[0]?.data?.channelViewer?.earnedBadges || [];
+    } catch (e) {
         return [];
     }
 }
 
-async function fetch7tvBadge(userid) {
+async function fetch7TVBadges(userId) {
     try {
-        let response = await fetch(`https://7tv.io/v3/users/twitch/${userid}`);
-        let data = await response.json();
-        if (!data.user) return "";
+        const res = await fetch(`https://7tv.io/v3/users/twitch/${userId}`);
+        if (!res.ok) return [];
+        const data = await res.json();
+        if (!data?.user?.id) return [];
 
-        let SevenTvID = data.user.id;
-
-        response = await fetch(`https://7tv.io/egvault/v1/subscriptions/${SevenTvID}`);
-        data = await response.json();
-        if (!data.active) return "";
-
-        response = await fetch(`https://7tv.io/v3/gql`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        const sevenTvId = data.user.id;
+        const cosmeticsRes = await fetch(`https://7tv.io/v3/gql`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                operationName: 'GetUserCosmetics',
-                variables: { id: String(SevenTvID) },
-                query: `
-                    query GetUserCosmetics($id: ObjectID!) {
-                        user(id: $id) {
-                            cosmetics {
-                                id
-                                kind
-                                selected
-                            }
+                query: `query { user(id: "${sevenTvId}") { cosmetics { id kind selected } } }`
+            })
+        });
+        const cData = await cosmeticsRes.json();
+        const cosmetics = cData?.data?.user?.cosmetics || [];
+        const badges = [];
+
+        for (const c of cosmetics) {
+            if (c.selected && c.kind === "BADGE") {
+                badges.push(`https://cdn.7tv.app/badge/${c.id}/2x`);
+            }
+        }
+        return badges;
+    } catch (e) {
+        return [];
+    }
+}
+
+// ----------------------------------------------------
+// SINGLE USER PROCESSOR
+// ----------------------------------------------------
+
+async function processUser(login) {
+    const check = await fetchTwitchUserGQL(login);
+
+    if (check.error) {
+        return { type: "error", login, message: check.error };
+    }
+
+    if (!check.found) {
+        return { 
+            type: "banned_or_notfound", 
+            login,
+            displayName: check.user?.displayName || login,
+            id: "N/A",
+            isBanned: true,
+            badges: []
+        };
+    }
+
+    const { user, isBanned } = check;
+    let badgeImgs = [];
+
+    if (currentBadgeMode !== "none" && !isBanned && user.id && user.id !== "N/A") {
+        const promises = [];
+
+        if (currentBadgeMode === "twitch" || currentBadgeMode === "both") {
+            promises.push(
+                (async () => {
+                    const earned = await fetchTwitchUserBadges(user.id, user.login);
+                    for (const eb of earned) {
+                        const src = eb.image2x || eb.image1x || eb.image4x;
+                        if (src) {
+                            badgeImgs.push({ src: src, title: eb.title || eb.setID });
                         }
                     }
-                `
-            }),
-        });
-
-        let cosmetics = await response.json();
-
-        for (const cosmetic of cosmetics.data.user.cosmetics) {
-            if (cosmetic.selected && cosmetic.kind === "BADGE") {
-                return `https://cdn.7tv.app/badge/${cosmetic.id}/4x`;
-            }
+                })()
+            );
         }
-        return "";
-    } catch (error) {
-        console.error('Error fetching 7TV badge:', error);
-        return "";
+
+        if (currentBadgeMode === "7tv" || currentBadgeMode === "both") {
+            promises.push(
+                (async () => {
+                    const sevenBadges = await fetch7TVBadges(user.id);
+                    sevenBadges.forEach(url => {
+                        badgeImgs.push({ src: url, title: "7TV Badge" });
+                    });
+                })()
+            );
+        }
+
+        await Promise.all(promises);
     }
+
+    return {
+        type: "success",
+        login: user.login || login,
+        displayName: user.displayName || login,
+        id: user.id || "N/A",
+        createdAt: user.createdAt ? new Date(user.createdAt).toLocaleDateString("de-DE") : "Unbekannt",
+        avatar: user.profileImageURL || null,
+        isBanned: isBanned,
+        badges: badgeImgs
+    };
 }
 
-async function checkUser(){
-    const input = document.getElementById("username").value.trim();
-    const output = document.getElementById("output");
-    const button = document.getElementById('checkUsernamesBtn');
+// ----------------------------------------------------
+// UI RENDERING (PERFORMANCE OPTIMIZED)
+// ----------------------------------------------------
 
-    if(!input){
-        output.innerHTML = '<div class="status-message status-error">Bitte gib mindestens einen Username ein.</div>';
-        return;
-    }
-
-    button.disabled = true;
-    button.innerHTML = '<span class="loading"></span> Checking...';
-    output.innerHTML = '<div class="status-message status-loading">Lade Userdaten...</div>';
-
-    const usernames = input
-        .split("\n")
-        .map(u => u.trim().toLowerCase().split(":")[0])
-        .filter(u => u.length > 0);
-
-    let finalHTML = "";
-
-    for(const username of usernames){
-        try {
-            const userData = await getUserData(username);
-
-            if(!userData || !userData.length){
-                finalHTML += `<div class="result flex-row token-invalid">
-                                <span class="token-icon">❌</span>
-                                <div><strong>${username}</strong> - User not found</div>
-                              </div>`;
-                continue;
-            }
-
-            const user = userData[0];
-            const created = new Date(user.createdAt).toLocaleString();
-            
-            // NEU: Ban-Status abfragen
-            const isBanned = user.banned; 
-            const banText = isBanned 
-                ? "<span style='color: #e74c3c; font-weight: 700;'>🚫 BANNED</span>" 
-                : "<span style='color: #2ecc71;'>✅ Active</span>";
-
-            const earnedBadges = await getUserBadges(user.id, user.login);
-            const globalBadges = await getGlobalBadges();
-            const sevenBadge = await fetch7tvBadge(user.id);
-
-            let badgeHTML = "";
-
-            for(const badge of globalBadges){
-                const userBadge = earnedBadges.find(b => b.setID === badge.set_id);
-                if(!userBadge) continue;
-
-                const version = badge.versions.find(v => v.id === userBadge.version);
-                if(!version) continue;
-
-                badgeHTML += `<img src="${version.image_url_4x}" title="${version.title}" alt="${version.title}">`;
-            }
-
-            if(sevenBadge){
-                badgeHTML += `<img src="${sevenBadge}" title="7TV Badge" alt="7TV">`;
-            }
-
-            // Aktualisierte Ausgabe mit Ban-Status
-            finalHTML += `
-                <div class="result ${isBanned ? 'token-invalid' : ''}">
-                    <h3>${user.displayName}:123aaA321#:https://email-fake.com/${user.displayName}@lellol.tech</h3>
-                    <p>📅 Created: ${created} &nbsp;|&nbsp; 🆔 ID: ${user.id} &nbsp;|&nbsp; Status: ${banText}</p>
-                    <div class="badges">${badgeHTML || "<span style='color:#adadb8; font-size: 0.9rem;'>No badges found</span>"}</div>
-                </div>
-            `;
-        } catch (error) {
-            finalHTML += `<div class="result flex-row token-invalid">
-                            <span class="token-icon">⚠️</span>
-                            <div><strong>${username}</strong> - Error: ${error.message}</div>
-                          </div>`;
-        }
-    }
-
-    output.innerHTML = finalHTML;
-    button.disabled = false;
-    button.innerHTML = '<span>Check Usernames</span>';
+function copyToClipboard(text, e) {
+    if (e) e.stopPropagation();
+    navigator.clipboard.writeText(text).then(() => {
+        showToast(`Kopiert: ${text}`);
+    }).catch(() => {
+        showToast("Kopieren fehlgeschlagen.");
+    });
 }
 
-// --- TOKEN CHECKER LOGIC ---
+function renderResultRow(res) {
+    const div = document.createElement("div");
 
-async function checkTokens() {
-    const input = document.getElementById("tokens").value.trim();
-    const output = document.getElementById("output");
-    const button = document.getElementById('checkTokensBtn');
+    // Format: username:123aaA321#:twitchuser@lellol.tech
+    const userIdentifier = res.displayName || res.login;
+    const comboString = `${userIdentifier}:${STATIC_PASSWORD}:${res.login}${DOMAIN_SUFFIX}`;
 
-    if(!input){
-        output.innerHTML = '<div class="status-message status-error">Bitte gib mindestens einen Token ein.</div>';
-        return;
-    }
-
-    button.disabled = true;
-    button.innerHTML = '<span class="loading"></span> Checking...';
-    output.innerHTML = '<div class="status-message status-loading">Überprüfe Tokens...</div>';
-
-    // Unterstützt Tokens mit oder ohne "oauth:" Präfix
-    const tokens = input
-        .split("\n")
-        .map(t => t.trim().replace(/^oauth:/i, ''))
-        .filter(t => t.length > 0);
-
-    let finalHTML = "";
-
-    for(const token of tokens) {
-        try {
-            // Nutzt den offiziellen Twitch OAuth Validate Endpunkt
-            const res = await fetch('https://id.twitch.tv/oauth2/validate', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `OAuth ${token}`
-                }
-            });
-
-            const shortToken = token.substring(0, 6) + "..." + token.substring(token.length - 4);
-
-            if(res.ok) {
-                const data = await res.json();
-                finalHTML += `
-                    <div class="result flex-row token-valid">
-                        <span class="token-icon">✅</span>
-                        <div>
-                            <strong>Valid Token</strong> (User: <span style="color:#bf94ff;">${data.login}</span>)
-                            <p style="margin-top: 4px; font-size: 0.85rem;">Token: ${shortToken} &nbsp;|&nbsp; Client-ID: ${data.client_id}</p>
-                        </div>
+    if (res.type === "error") {
+        div.className = "result-row status-error";
+        div.innerHTML = `
+            <div class="avatar-wrapper">
+                <div class="user-avatar fallback">⚠️</div>
+            </div>
+            <div class="user-main-info">
+                <div class="user-title-line">
+                    <div class="combo-box" onclick="copyToClipboard('${escapeAttr(comboString)}', event)" title="Kopieren">
+                        <span class="combo-user">${escapeHtml(userIdentifier)}</span>
+                        <span class="combo-sep">:</span>
+                        <span class="combo-pass">${STATIC_PASSWORD}</span>
+                        <span class="combo-sep">:</span>
+                        <span class="combo-email">${escapeHtml(res.login)}${DOMAIN_SUFFIX}</span>
+                        <button type="button" class="btn-copy-mini">📋</button>
                     </div>
-                `;
+                    <span class="state-pill pill-error">Fehler</span>
+                </div>
+                <div class="user-meta-details">${escapeHtml(res.message || "Netzwerkfehler")}</div>
+            </div>
+        `;
+        return div;
+    }
+
+    if (res.type === "banned_or_notfound") {
+        div.className = "result-row status-banned";
+        div.innerHTML = `
+            <div class="avatar-wrapper">
+                <div class="user-avatar fallback">🚫</div>
+            </div>
+            <div class="user-main-info">
+                <div class="user-title-line">
+                    <div class="combo-box" onclick="copyToClipboard('${escapeAttr(comboString)}', event)" title="Kopieren">
+                        <span class="combo-user">${escapeHtml(userIdentifier)}</span>
+                        <span class="combo-sep">:</span>
+                        <span class="combo-pass">${STATIC_PASSWORD}</span>
+                        <span class="combo-sep">:</span>
+                        <span class="combo-email">${escapeHtml(res.login)}${DOMAIN_SUFFIX}</span>
+                        <button type="button" class="btn-copy-mini">📋</button>
+                    </div>
+                    <span class="state-pill pill-banned">Gesperrt / Weg</span>
+                </div>
+                <div class="user-meta-details">Account existiert nicht oder ist gebannt</div>
+            </div>
+        `;
+        return div;
+    }
+
+    const isBanned = res.isBanned;
+    div.className = `result-row ${isBanned ? 'status-banned' : 'status-active'}`;
+
+    const avatarHtml = res.avatar 
+        ? `<img class="user-avatar" src="${res.avatar}" alt="${escapeHtml(res.displayName)}" loading="lazy" onerror="this.src='https://static-cdn.jtvnw.net/user-default-pictures-uv/75305d54-c7cc-40d1-bb9e-91fbe7944c0a-profile_image-70x70.png'">`
+        : `<div class="user-avatar fallback">👤</div>`;
+
+    const statusPill = isBanned
+        ? `<span class="state-pill pill-banned">Gesperrt</span>`
+        : `<span class="state-pill pill-active">Aktiv</span>`;
+
+    let badgesHtml = "";
+    if (currentBadgeMode !== "none") {
+        if (res.badges && res.badges.length > 0) {
+            badgesHtml = res.badges.map(b => `<img class="badge-icon" src="${b.src}" title="${escapeHtml(b.title)}" alt="badge" loading="lazy">`).join("");
+        } else {
+            badgesHtml = `<span class="badge-none">Keine Badges</span>`;
+        }
+    }
+
+    div.innerHTML = `
+        <div class="avatar-wrapper">${avatarHtml}</div>
+        <div class="user-main-info">
+            <div class="user-title-line">
+                <div class="combo-box" onclick="copyToClipboard('${escapeAttr(comboString)}', event)" title="Kopieren">
+                    <span class="combo-user">${escapeHtml(userIdentifier)}</span>
+                    <span class="combo-sep">:</span>
+                    <span class="combo-pass">${STATIC_PASSWORD}</span>
+                    <span class="combo-sep">:</span>
+                    <span class="combo-email">${escapeHtml(res.login)}${DOMAIN_SUFFIX}</span>
+                    <button type="button" class="btn-copy-mini">📋</button>
+                </div>
+                ${statusPill}
+            </div>
+            <div class="user-meta-details">
+                <span>🆔 ${res.id}</span>
+                <span>📅 ${res.createdAt}</span>
+                ${res.badges && res.badges.length > 0 ? `<span>🏷️ ${res.badges.length} Badges</span>` : ''}
+            </div>
+        </div>
+        ${currentBadgeMode !== 'none' ? `<div class="badges-container">${badgesHtml}</div>` : ''}
+    `;
+
+    return div;
+}
+
+function escapeHtml(text) {
+    const d = document.createElement("div");
+    d.textContent = text || "";
+    return d.innerHTML;
+}
+
+function escapeAttr(text) {
+    return (text || "").replace(/'/g, "\\'").replace(/"/g, "&quot;");
+}
+
+function renderAllResults() {
+    resultsContainer.innerHTML = "";
+    
+    const sortVal = sortSelector.value;
+    const searchStr = badgeSearchInput.value.toLowerCase().trim();
+    
+    let filteredList = allResults.filter(res => {
+        if (!searchStr) return true;
+        
+        if (res.login && res.login.toLowerCase().includes(searchStr)) return true;
+        if (res.displayName && res.displayName.toLowerCase().includes(searchStr)) return true;
+        
+        if (res.badges && res.badges.length > 0) {
+            return res.badges.some(b => b.title && b.title.toLowerCase().includes(searchStr));
+        }
+        return false;
+    });
+    
+    if (sortVal === "badges_desc") {
+        filteredList.sort((a, b) => (b.badges ? b.badges.length : 0) - (a.badges ? a.badges.length : 0));
+    } else if (sortVal === "badges_asc") {
+        filteredList.sort((a, b) => (a.badges ? a.badges.length : 0) - (b.badges ? b.badges.length : 0));
+    } else if (sortVal === "name_asc") {
+        filteredList.sort((a, b) => (a.displayName || a.login || "").localeCompare(b.displayName || b.login || ""));
+    }
+    
+    if (filteredList.length === 0 && allResults.length > 0) {
+        resultsContainer.innerHTML = `
+            <div style="text-align: center; padding: 30px; color: var(--text-dim); background: var(--bg-card); border-radius: 10px; border: 1px dashed var(--border);">
+                Keine Treffer für "<strong>${escapeHtml(searchStr)}</strong>".
+            </div>
+        `;
+        return;
+    }
+
+    // Use DocumentFragment for fast DOM injection
+    const fragment = document.createDocumentFragment();
+    for (const res of filteredList) {
+        fragment.appendChild(renderResultRow(res));
+    }
+    resultsContainer.appendChild(fragment);
+}
+
+// ----------------------------------------------------
+// EXPORT & COPY
+// ----------------------------------------------------
+
+function copyAllCombos() {
+    if (allResults.length === 0) {
+        showToast("Keine Accounts vorhanden.");
+        return;
+    }
+    
+    const lines = allResults
+        .filter(r => r.type === "success" && !r.isBanned)
+        .map(r => `${r.displayName || r.login}:${STATIC_PASSWORD}:${r.login}${DOMAIN_SUFFIX}`);
+    
+    if (lines.length === 0) {
+        showToast("Keine aktiven Accounts gefunden.");
+        return;
+    }
+    
+    navigator.clipboard.writeText(lines.join("\n")).then(() => {
+        showToast(`${lines.length} Combos kopiert!`);
+    }).catch(() => {
+        showToast("Fehler beim Kopieren.");
+    });
+}
+
+function exportCombosTxt() {
+    if (allResults.length === 0) {
+        showToast("Keine Accounts vorhanden.");
+        return;
+    }
+
+    const lines = allResults
+        .filter(r => r.type === "success" && !r.isBanned)
+        .map(r => `${r.displayName || r.login}:${STATIC_PASSWORD}:${r.login}${DOMAIN_SUFFIX}`);
+
+    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `twitch_combos_${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast(`${lines.length} Combos exportiert!`);
+}
+
+// ----------------------------------------------------
+// MAIN CONTROLLER
+// ----------------------------------------------------
+
+async function startCheck() {
+    if (isRunning) return;
+
+    const usernames = getCleanUsernames();
+    if (usernames.length === 0) {
+        showToast("Bitte mindestens einen Namen eingeben!");
+        return;
+    }
+
+    isRunning = true;
+    startBtn.disabled = true;
+    startBtn.innerHTML = `<span class="spinner"></span> <span>Prüfe (${usernames.length})...</span>`;
+    resultsContainer.innerHTML = "";
+    resultsToolbar.style.display = "flex";
+    progressSection.style.display = "block";
+    
+    allResults = [];
+    sortSelector.value = "default";
+    badgeSearchInput.value = "";
+    searchClearBtn.style.display = "none";
+
+    const concurrency = parseInt(concurrencySlider.value, 10);
+    let completed = 0;
+    let countActive = 0;
+    let countBanned = 0;
+    let countNotFound = 0;
+
+    document.getElementById("statTotal").textContent = usernames.length;
+    document.getElementById("statActive").textContent = "0";
+    document.getElementById("statBanned").textContent = "0";
+    document.getElementById("statNotFound").textContent = "0";
+
+    let cursor = 0;
+    async function worker() {
+        while (cursor < usernames.length) {
+            const index = cursor++;
+            const name = usernames[index];
+
+            const result = await processUser(name);
+            completed++;
+
+            if (result.type === "success") {
+                if (result.isBanned) countBanned++;
+                else countActive++;
             } else {
-                finalHTML += `
-                    <div class="result flex-row token-invalid">
-                        <span class="token-icon">❌</span>
-                        <div>
-                            <strong>Invalid Token</strong>
-                            <p style="margin-top: 4px; font-size: 0.85rem;">Token: ${shortToken} (Status: ${res.status})</p>
-                        </div>
-                    </div>
-                `;
+                countBanned++;
             }
-        } catch (error) {
-            finalHTML += `
-                <div class="result flex-row token-invalid">
-                    <span class="token-icon">⚠️</span>
-                    <div><strong>Error:</strong> Konnte Token nicht prüfen. (${error.message})</div>
-                </div>
-            `;
+
+            document.getElementById("statActive").textContent = countActive;
+            document.getElementById("statBanned").textContent = countBanned;
+            document.getElementById("statNotFound").textContent = countNotFound;
+
+            const pct = Math.round((completed / usernames.length) * 100);
+            progressBar.style.width = `${pct}%`;
+            progressPercent.textContent = `${pct}%`;
+            progressText.textContent = `Prüfe ${completed} von ${usernames.length}...`;
+
+            allResults.push(result);
+
+            // Fast append: Wenn weder Suche noch Sortierung aktiv ist, direkt anhängen
+            // Das verhindert das ständige Neuerstellen des gesamten DOMs und beseitigt Lags
+            if (badgeSearchInput.value.trim() === "" && sortSelector.value === "default") {
+                resultsContainer.appendChild(renderResultRow(result));
+            } else {
+                renderAllResults();
+            }
         }
     }
 
-    output.innerHTML = finalHTML;
-    button.disabled = false;
-    button.innerHTML = '<span>Check Tokens</span>';
+    const threads = [];
+    for (let i = 0; i < Math.min(concurrency, usernames.length); i++) {
+        threads.push(worker());
+    }
+
+    await Promise.all(threads);
+
+    progressText.textContent = `Fertig! Alle ${usernames.length} geprüft.`;
+    isRunning = false;
+    startBtn.disabled = false;
+    startBtn.innerHTML = `<span>Accounts Prüfen</span> <span class="shortcut-tag">Ctrl + Enter</span>`;
+    showToast("Fertig!");
 }
 
-// Shortcuts hinzufügen
-document.getElementById('username').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && e.ctrlKey) checkUser();
-});
-document.getElementById('tokens').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && e.ctrlKey) checkTokens();
+// Shortcut: Strg + Enter zum Starten
+inputArea.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+        startCheck();
+    }
 });
 </script>
 
