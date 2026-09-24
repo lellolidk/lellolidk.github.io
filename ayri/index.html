@@ -1140,7 +1140,7 @@ function renderResultRow(res) {
 
     // Format: username:123aaA321#:twitchuser@lellol.tech
     const userIdentifier = res.displayName || res.login;
-    const comboString = `${userIdentifier}:${STATIC_PASSWORD}:${res.login}${DOMAIN_SUFFIX}`;
+    const comboString = `${userIdentifier}:${STATIC_PASSWORD}:https://email-fake.com/${res.login}${DOMAIN_SUFFIX}`;
 
     if (res.type === "error") {
         div.className = "result-row status-error";
